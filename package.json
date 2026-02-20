@@ -4,13 +4,18 @@
 	"private": true,
 	"scripts": {
 		"dev": "next dev",
-		"build": "next build",
+		"build": "bun db:push && bun db:generate && next build",
 		"start": "next start",
 		"lint": "eslint",
 		"test": "vitest run",
 		"test:watch": "vitest",
 		"prepare": "husky",
-		"tunnel": "ngrok http --url=monarch-adequate-subtly.ngrok-free.app 3000"
+		"tunnel": "ngrok http --url=monarch-adequate-subtly.ngrok-free.app 3000",
+		"db:generate": "prisma generate",
+		"db:migrate": "prisma migrate dev",
+		"db:push": "prisma db push --accept-data-loss",
+		"db:push-dev": "prisma db push",
+		"db:studio": "prisma studio"
 	},
 	"dependencies": {
 		"@clerk/nextjs": "^6.38.0",
