@@ -1,0 +1,15 @@
+---
+description: Use Bun as the package manager for this project
+alwaysApply: true
+---
+
+# Package manager: Bun
+
+For this project, **always use Bun** as the package manager.
+
+- **Install dependencies**: `bun install` (not `npm install`, `yarn`, or `pnpm`)
+- **Add a dependency**: `bun add <pkg>` or `bun add -d <pkg>` for dev
+- **Run scripts**: `bun run <script>` (e.g. `bun run dev`, `bun run test`)
+- **Execute a script directly**: `bun run <script>` or `bun <script>` where applicable
+
+When suggesting or running package-manager commands, use `bun` only.
