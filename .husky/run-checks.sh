@@ -35,6 +35,7 @@ else
 fi
 
 # Run a check with spinner; prints result line and returns exit code.
+# Spinner and result go to stderr so they flush and \r overwrites in place.
 # Usage: run_check "Label" "command" "logfile"
 run_check() {
   label="$1"
@@ -46,30 +47,39 @@ run_check() {
     while kill -0 "$pid" 2>/dev/null; do
       for c in ⠋ ⠙ ⠹ ⠸ ⠼ ⠴ ⠦ ⠧ ⠇ ⠏; do
         kill -0 "$pid" 2>/dev/null || break
-        printf "%s  ${GRAY}%s${NC}  %s  ${GRAY}(running...)${NC}   " "$CR" "$c" "$label"
+        printf "%s  ${GRAY}%s${NC}  %s  ${GRAY}(running...)${NC}   " "$CR" "$c" "$label" >&2
         sleep 0.1
       done
     done
     wait "$pid"
     exit_code=$?
-    printf "%s%s" "$CR" "$CLEAR_LINE"
+    printf "%s%s" "$CR" "$CLEAR_LINE" >&2
   else
     eval "$cmd" > "$logfile" 2>&1
     exit_code=$?
   fi
   if [ "$exit_code" = 0 ]; then
-    echo "  ${OK} ${GREEN}${label}${NC}      ${SEP}passed${NC}"
+    [ "$USE_SPINNER" = 1 ] && echo "  ${OK} ${GREEN}${label}${NC}      ${SEP}passed${NC}" >&2 || echo "  ${OK} ${GREEN}${label}${NC}      ${SEP}passed${NC}"
   else
-    echo "  ${FAIL} ${RED}${label}${NC}      ${SEP}failed${NC}"
+    [ "$USE_SPINNER" = 1 ] && echo "  ${FAIL} ${RED}${label}${NC}      ${SEP}failed${NC}" >&2 || echo "  ${FAIL} ${RED}${label}${NC}      ${SEP}failed${NC}"
   fi
   return "$exit_code"
 }
 
-echo ""
-echo "  ${ACCENT}·····························${NC}"
-echo "  ${TITLE}  pre-commit checks${NC}"
-echo "  ${ACCENT}·····························${NC}"
-echo ""
+# Header (to stderr when using spinner so it flushes with the checklist)
+if [ "$USE_SPINNER" = 1 ]; then
+  echo "" >&2
+  echo "  ${ACCENT}·····························${NC}" >&2
+  echo "  ${TITLE}  pre-commit checks${NC}" >&2
+  echo "  ${ACCENT}·····························${NC}" >&2
+  echo "" >&2
+else
+  echo ""
+  echo "  ${ACCENT}·····························${NC}"
+  echo "  ${TITLE}  pre-commit checks${NC}"
+  echo "  ${ACCENT}·····························${NC}"
+  echo ""
+fi
 
 # 1. Lint (with spinner)
 run_check "Lint" "bun run lint" /tmp/husky-lint.log
