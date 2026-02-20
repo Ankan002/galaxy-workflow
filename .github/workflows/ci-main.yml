@@ -1,0 +1,49 @@
+name: ci-main
+
+on:
+    pull_request:
+        branches: [main]
+
+jobs:
+    lint-and-test:
+        name: Lint & Test
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Setup Bun
+              uses: oven-sh/setup-bun@v2
+              with:
+                  bun-version: latest
+
+            - name: Install dependencies
+              run: |
+                  echo "::group::📦 Installing dependencies"
+                  bun install --frozen-lockfile
+                  echo "::endgroup::"
+
+            - name: Lint
+              run: |
+                  echo "🔍 Lint"
+                  bun run lint
+                  echo "::endgroup::"
+                  echo ""
+                  printf "\033[1;32m  ✓ Lint passed\033[0m\n"
+
+            - name: Test
+              run: |
+                  echo "🧪 Test"
+                  bun run test
+                  echo "::endgroup::"
+                  echo ""
+                  printf "\033[1;32m  ✓ All tests passed\033[0m\n"
+
+            - name: Summary
+              if: success()
+              run: |
+                  echo ""
+                  printf "\033[1;36m╭──────────────────────────────────╮\033[0m\n"
+                  printf "\033[1;36m│\033[0m  \033[1;32m✓ ci-main — All checks passed\033[0m  \033[1;36m│\033[0m\n"
+                  printf "\033[1;36m╰──────────────────────────────────╯\033[0m\n"
+                  echo ""
