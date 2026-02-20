@@ -3,6 +3,8 @@
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
+		"setup-dev": "bun run src/cmd/setup-dev.ts",
+		"dev:tunnel": "chmod +x ./dev.sh && ./dev.sh",
 		"dev": "next dev",
 		"build": "bun db:push && bun db:generate && next build",
 		"start": "next start",
@@ -39,6 +41,7 @@
 		"@t3-oss/env-nextjs": "^0.13.10",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
+		"inquirer": "^13.2.5",
 		"lucide-react": "^0.575.0",
 		"next": "16.1.6",
 		"radix-ui": "^1.4.3",
@@ -46,12 +49,14 @@
 		"react-dom": "19.2.3",
 		"sonner": "^2.0.7",
 		"tailwind-merge": "^3.5.0",
+		"winston": "^3.19.0",
 		"zod": "^4.3.6"
 	},
 	"devDependencies": {
 		"@tailwindcss/postcss": "^4",
 		"@testing-library/jest-dom": "^6.6.3",
 		"@testing-library/react": "^16.1.0",
+		"@types/inquirer": "^9.0.9",
 		"@types/node": "^20",
 		"@types/react": "^19",
 		"@types/react-dom": "^19",
