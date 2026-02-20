@@ -196,7 +196,7 @@ const Sidebar = React.forwardRef<
 					side={side}
 					variant="sidebar"
 					showClose={true}
-					className="w-[var(--sidebar-width-mobile)] p-0 gap-0"
+					className="w-(--sidebar-width-mobile) p-0 gap-0"
 				>
 					<SheetTitle className="sr-only">Sidebar</SheetTitle>
 					<SidebarInner
@@ -335,12 +335,12 @@ const SidebarMenuItem = React.forwardRef<
 SidebarMenuItem.displayName = "SidebarMenuItem"
 
 const sidebarMenuButtonVariants = cva(
-	"flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm font-medium outline-none ring-sidebar-ring transition-[color,box-shadow] focus-visible:ring-2 focus-visible:ring-inset disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-4 [&_svg]:shrink-0",
+	"flex w-full cursor-pointer items-center gap-2 rounded-lg px-2 py-1.5 text-left text-sm font-medium outline-none ring-sidebar-ring transition-[color,box-shadow] focus-visible:ring-2 focus-visible:ring-inset disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-4 [&_svg]:shrink-0",
 	{
 		variants: {
 			variant: {
 				default:
-					"text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground data-[active]:bg-sidebar-accent data-[active]:text-sidebar-accent-foreground data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground",
+					"text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground data-active:bg-sidebar-accent data-active:text-sidebar-accent-foreground data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground",
 				ghost: "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground",
 			},
 			size: {
@@ -385,7 +385,7 @@ const SidebarMenuButton = React.forwardRef<
 				data-active={isActive ? "" : undefined}
 				className={cn(
 					sidebarMenuButtonVariants({ variant, size }),
-					"group-data-[collapsible=icon]:!size-8 group-data-[collapsible=icon]:!p-2 group-data-[collapsible=icon]:justify-center",
+					"group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! group-data-[collapsible=icon]:justify-center",
 					className
 				)}
 				{...props}
@@ -418,7 +418,7 @@ const SidebarMenuAction = React.forwardRef<
 		<Comp
 			ref={ref}
 			className={cn(
-				"absolute right-1 top-1.5 flex size-6 items-center justify-center rounded-md text-sidebar-foreground/70 outline-none ring-sidebar-ring transition-[color,box-shadow] hover:bg-sidebar-accent hover:text-sidebar-foreground focus-visible:ring-2 data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-foreground",
+				"absolute right-1 top-1.5 flex size-6 cursor-pointer items-center justify-center rounded-lg text-sidebar-foreground/70 outline-none ring-sidebar-ring transition-[color,box-shadow] hover:bg-sidebar-accent hover:text-sidebar-foreground focus-visible:ring-2 data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-foreground",
 				showOnHover && "group-hover:opacity-100 opacity-0",
 				className
 			)}
@@ -462,7 +462,7 @@ const SidebarMenuSubButton = React.forwardRef<
 			ref={ref}
 			data-active={isActive ? "" : undefined}
 			className={cn(
-				"flex h-7 min-w-0 items-center gap-2 rounded-md px-2 text-sm text-sidebar-foreground/70 outline-none ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-foreground focus-visible:ring-2 data-[active]:bg-sidebar-accent data-[active]:text-sidebar-foreground",
+				"flex h-7 min-w-0 cursor-pointer items-center gap-2 rounded-lg px-2 text-sm text-sidebar-foreground/70 outline-none ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-foreground focus-visible:ring-2 data-active:bg-sidebar-accent data-active:text-sidebar-foreground",
 				className
 			)}
 			{...props}
@@ -482,7 +482,7 @@ const SidebarTrigger = React.forwardRef<
 			ref={ref}
 			variant="ghost"
 			size="icon"
-			className={cn("text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground", className)}
+			className={cn("cursor-pointer text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground", className)}
 			onClick={toggleSidebar}
 			{...props}
 		>
@@ -522,7 +522,7 @@ const SidebarRail = React.forwardRef<
 			aria-label="Toggle Sidebar"
 			title="Toggle Sidebar"
 			className={cn(
-				"absolute right-0 top-0 z-10 flex h-full w-3 translate-x-full items-center justify-center border-sidebar-border bg-sidebar text-sidebar-foreground/50 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground after:absolute after:inset-y-0 after:left-0 after:w-px after:bg-sidebar-border",
+				"absolute right-0 top-0 z-10 flex h-full w-3 cursor-pointer translate-x-full items-center justify-center border-sidebar-border bg-sidebar text-sidebar-foreground/50 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground after:absolute after:inset-y-0 after:left-0 after:w-px after:bg-sidebar-border",
 				"group-data-[collapsible=icon]/sidebar-wrapper:flex group-data-[side=right]/sidebar-wrapper:translate-x-full group-data-[side=right]/sidebar-wrapper:after:left-full group-data-[side=right]/sidebar-wrapper:after:right-0",
 				"hidden md:flex",
 				className
@@ -530,7 +530,7 @@ const SidebarRail = React.forwardRef<
 			onClick={toggleSidebar}
 			{...props}
 		>
-			<div className="flex h-8 w-3 items-center justify-center rounded-l-md bg-sidebar-accent" />
+			<div className="flex h-8 w-3 items-center justify-center rounded-l-lg bg-sidebar-accent" />
 		</button>
 	)
 })
