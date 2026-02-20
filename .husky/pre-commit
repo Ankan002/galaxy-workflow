@@ -1,2 +1,2 @@
-bun run lint
-bun run test
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/run-checks.sh"
