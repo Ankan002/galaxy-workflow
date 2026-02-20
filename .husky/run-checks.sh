@@ -45,17 +45,22 @@ fi
 echo "  ─────────────────────"
 echo ""
 
-if [ "$LINT_OK" = 0 ]; then
-  echo "  Lint failed:"
-  echo ""
+# Show lint output whenever present (warnings or errors), in a readable way
+if [ -s /tmp/husky-lint.log ]; then
+  if [ "$LINT_OK" = 0 ]; then
+    echo "  ${TITLE}Lint (errors)${NC}"
+  else
+    echo "  ${TITLE}Lint (warnings)${NC}"
+  fi
+  echo "  ─────────────────────"
   sed 's/^/    /' /tmp/husky-lint.log
   echo ""
 fi
 
 if [ "$TEST_OK" = 0 ]; then
-  echo "  Test failed:"
-  echo ""
-  sed 's/^/    /' /tmp/husky-test.log
+  echo "  ${TITLE}Test failed${NC}"
+  echo "  ─────────────────────"
+  sed 's/^/  /' /tmp/husky-test.log
   echo ""
 fi
 
