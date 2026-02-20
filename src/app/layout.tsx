@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { DM_Sans, DM_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
+import { AuthProvider } from "@/components/providers";
 
 const dmSans = DM_Sans({
 	variable: "--font-dm-sans",
@@ -26,13 +27,15 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang="en" className="dark">
-			<body
-				className={`${dmSans.variable} ${dmMono.variable} antialiased`}
-			>
-				{children}
-				<Toaster />
-			</body>
-		</html>
+		<AuthProvider>
+			<html lang="en" suppressHydrationWarning>
+				<body
+					className={`${dmSans.variable} ${dmMono.variable} antialiased`}
+				>
+					{children}
+					<Toaster />
+				</body>
+			</html>
+		</AuthProvider>
 	);
 }
