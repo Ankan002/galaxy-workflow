@@ -12,6 +12,9 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
 		<ClerkProvider
 			appearance={{
 				theme: shadcn,
+				captcha: {
+					theme: "dark",
+				},
 			}}
 		>
 			{children}
