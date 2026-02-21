@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { DM_Sans, DM_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
-import { AuthProvider } from "@/components/providers";
+import { AuthProvider, QueryProvider } from "@/components/providers";
 
 const dmSans = DM_Sans({
 	variable: "--font-dm-sans",
@@ -32,8 +32,10 @@ export default function RootLayout({
 				<body
 					className={`${dmSans.variable} ${dmMono.variable} antialiased`}
 				>
-					{children}
-					<Toaster />
+					<QueryProvider>
+						{children}
+						<Toaster />
+					</QueryProvider>
 				</body>
 			</html>
 		</AuthProvider>

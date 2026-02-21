@@ -15,11 +15,19 @@ export const serverEnv = createEnv({
 		HOST: z.string({
 			error: "HOST is required",
 		}),
+		CLERK_SECRET_KEY: z.string({
+			error: "CLERK_SECRET_KEY is required",
+		}),
+		CLERK_WEBHOOK_SIGNING_SECRET: z.string({
+			error: "CLERK_WEBHOOK_SIGNING_SECRET is required",
+		}),
 	},
 	runtimeEnv: {
 		DATABASE_URL: process.env.DATABASE_URL,
 		DIRECT_URL: process.env.DIRECT_URL,
 		ENV: process.env.ENV,
 		HOST: process.env.HOST,
+		CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
+		CLERK_WEBHOOK_SIGNING_SECRET: process.env.CLERK_WEBHOOK_SIGNING_SECRET,
 	},
 });
