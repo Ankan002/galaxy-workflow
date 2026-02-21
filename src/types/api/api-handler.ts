@@ -1,3 +1,4 @@
+import { NextRequest } from "next/server";
 import { z } from "zod";
 
 /** Inferred output type when T is a Zod schema; otherwise undefined */
@@ -19,7 +20,7 @@ export type ApiHandler<
 	querySchema?: TQuery;
 	requireAuth?: TRequireAuth;
 	execute: (ctx: {
-		req: Request;
+		req: NextRequest;
 		body: InferBodyOrUndefined<TBody>;
 		query: InferQueryOrUndefined<TQuery>;
 		user: TRequireAuth extends true

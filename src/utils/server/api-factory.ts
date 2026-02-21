@@ -4,7 +4,7 @@ import type {
 	InferQueryOrUndefined,
 } from "@/types/api/api-handler";
 import { auth } from "@clerk/nextjs/server";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import z from "zod";
 
 export function createApi<
@@ -12,7 +12,7 @@ export function createApi<
 	TQuery extends z.ZodTypeAny | undefined = undefined,
 	TRequireAuth extends boolean = false,
 >(config: ApiHandler<TBody, TQuery, TRequireAuth>) {
-	return async (req: Request) => {
+	return async (req: NextRequest) => {
 		try {
 			let parsedBody = undefined as InferBodyOrUndefined<TBody>;
 			let parsedQuery = undefined as InferQueryOrUndefined<TQuery>;
