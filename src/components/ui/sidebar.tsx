@@ -126,7 +126,7 @@ const SidebarProvider = React.forwardRef<
 			<SidebarContext.Provider value={value}>
 				<div
 					ref={ref}
-					className={cn("group/sidebar-wrapper flex min-h-svh w-full", className)}
+					className={cn("group/sidebar-wrapper flex h-svh min-h-svh w-full", className)}
 					data-collapsible={collapsible}
 					data-side={side}
 					style={
@@ -149,7 +149,7 @@ SidebarProvider.displayName = "SidebarProvider"
 
 /* ─── Sidebar (main container) ─── */
 const sidebarVariants = cva(
-	"relative flex h-full flex-col bg-sidebar text-sidebar-foreground border-sidebar-border transition-[width] ease-linear",
+	"relative flex h-full min-h-svh flex-col bg-sidebar text-sidebar-foreground border-sidebar-border transition-[width] ease-linear",
 	{
 		variants: {
 			side: {
@@ -196,7 +196,7 @@ const Sidebar = React.forwardRef<
 					side={side}
 					variant="sidebar"
 					showClose={true}
-					className="w-(--sidebar-width-mobile) p-0 gap-0"
+					className="w-[var(--sidebar-width-mobile)] p-0 gap-0"
 				>
 					<SheetTitle className="sr-only">Sidebar</SheetTitle>
 					<SidebarInner
@@ -514,7 +514,7 @@ const SidebarRail = React.forwardRef<
 	HTMLButtonElement,
 	React.ButtonHTMLAttributes<HTMLButtonElement>
 >(({ className, ...props }, ref) => {
-	const { toggleSidebar, state } = useSidebar()
+	const { toggleSidebar } = useSidebar()
 	return (
 		<button
 			ref={ref}

@@ -3,6 +3,7 @@ import { DM_Sans, DM_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 import { AuthProvider, QueryProvider } from "@/components/providers";
+import { SidebarProvider } from "@/components/ui";
 
 const dmSans = DM_Sans({
 	variable: "--font-dm-sans",
@@ -33,8 +34,10 @@ export default function RootLayout({
 					className={`${dmSans.variable} ${dmMono.variable} antialiased`}
 				>
 					<QueryProvider>
-						{children}
-						<Toaster />
+						<SidebarProvider>
+							{children}
+							<Toaster />
+						</SidebarProvider>
 					</QueryProvider>
 				</body>
 			</html>
