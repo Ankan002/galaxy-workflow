@@ -1,6 +1,5 @@
 "use client";
 
-import { Logo } from "@/components/brand";
 import {
 	Button,
 	Sidebar,
@@ -16,6 +15,7 @@ import { Plus } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { FaDiscord } from "react-icons/fa6";
+import { SidebarUser } from "../sidebar-user";
 
 const AppSidebar = () => {
 	const pathname = usePathname();
@@ -26,8 +26,8 @@ const AppSidebar = () => {
 			collapsible="none"
 			className="pl-2 pr-2 py-1 font-sans"
 		>
-			<SidebarHeader>
-				<Logo />
+			<SidebarHeader className="mt-1">
+				<SidebarUser />
 			</SidebarHeader>
 			<SidebarContent>
 				<Button className="mt-2 h-8 rounded-sm">
