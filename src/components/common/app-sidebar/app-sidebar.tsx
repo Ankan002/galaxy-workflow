@@ -11,10 +11,15 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from "@/components/ui";
-import { GalleryVerticalEnd, Plus } from "lucide-react";
+import { APP_NAV_ITEMS } from "@/config/client-constants";
+import { Plus } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { FaDiscord } from "react-icons/fa6";
 
 const AppSidebar = () => {
+	const pathname = usePathname();
+
 	return (
 		<Sidebar
 			side="left"
@@ -29,16 +34,21 @@ const AppSidebar = () => {
 					<Plus />
 					<span>Create New File</span>
 				</Button>
-				<SidebarMenu className="mt-3">
-					<SidebarMenuItem>
-						<SidebarMenuButton
-							className="h-10 px-3 text-base rounded-sm"
-							isActive
-						>
-							<GalleryVerticalEnd />
-							<span>My Files</span>
-						</SidebarMenuButton>
-					</SidebarMenuItem>
+				<SidebarMenu className="mt-3 gap-2">
+					{APP_NAV_ITEMS.map((item) => (
+						<SidebarMenuItem key={item.href}>
+							<Link href={item.href}>
+								<SidebarMenuButton
+									className="h-10 px-3 text-base rounded-sm"
+									isActive={pathname === item.href}
+									disabled={item.isDisabled}
+								>
+									<item.Icon />
+									<span>{item.label}</span>
+								</SidebarMenuButton>
+							</Link>
+						</SidebarMenuItem>
+					))}
 				</SidebarMenu>
 			</SidebarContent>
 			<SidebarFooter>
