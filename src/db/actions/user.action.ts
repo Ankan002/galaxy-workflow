@@ -1,3 +1,5 @@
+"use server";
+
 import { prisma } from "../client";
 
 interface UpsertUserArgs {
@@ -31,3 +33,30 @@ export const createUsers = async (args: CreateUsersArgs) => {
 };
 
 export const getAllUsers = async () => prisma.user.findMany();
+
+interface UpdateUserArgs {
+	clerkId: string;
+}
+
+export const updateUser = async (args: UpdateUserArgs) => {
+	return prisma.user.update({
+		where: {
+			clerk_id: args.clerkId,
+		},
+		data: {
+			clerk_id: args.clerkId,
+		},
+	});
+};
+
+interface DeleteUserArgs {
+	clerkId?: string;
+}
+
+export const deleteUser = async (args: DeleteUserArgs) => {
+	return prisma.user.delete({
+		where: {
+			clerk_id: args.clerkId,
+		},
+	});
+};
