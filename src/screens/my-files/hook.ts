@@ -65,7 +65,7 @@ export const useMyFiles = () => {
 		if (workflowFilesError) {
 			getWorkflowFilesErrorHandler(workflowFilesError);
 		}
-	}, [workflowFilesError]);
+	}, [workflowFilesError, getWorkflowFilesErrorHandler]);
 
 	useEffect(() => {
 		if (workflowFiles !== undefined && workflowFiles !== null) {

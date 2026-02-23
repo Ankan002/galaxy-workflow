@@ -19,7 +19,12 @@ import {
 import "@xyflow/react/dist/style.css";
 import { cn } from "@/lib/utils";
 import { BaseNode } from "./nodes";
+import { nodeTypes as registryNodeTypes } from "./nodes/registry";
 import { WorkflowEdge } from "./edges";
+import {
+	CanvasBottomIsland,
+	type InteractionMode,
+} from "./canvas-bottom-island";
 
 interface WorkflowCanvasProps
 	extends Omit<
@@ -39,6 +44,15 @@ interface WorkflowCanvasProps
 	showMiniMap?: boolean;
 	showBackground?: boolean;
 	backgroundVariant?: BackgroundVariant;
+	/** When set, the bottom island is shown and default controls are hidden */
+	bottomIsland?: {
+		interactionMode: InteractionMode;
+		onInteractionModeChange: (mode: InteractionMode) => void;
+		onUndo: () => void;
+		onRedo: () => void;
+		canUndo: boolean;
+		canRedo: boolean;
+	};
 	className?: string;
 }
 
@@ -54,12 +68,14 @@ export function WorkflowCanvas({
 	showMiniMap = true,
 	showBackground = true,
 	backgroundVariant = BackgroundVariant.Dots,
+	bottomIsland,
 	className,
 	...rest
 }: WorkflowCanvasProps) {
 	const nodeTypes: NodeTypes = useMemo(
 		() => ({
 			base: BaseNode,
+			...registryNodeTypes,
 			...extraNodeTypes,
 		}),
 		[extraNodeTypes],
@@ -72,6 +88,9 @@ export function WorkflowCanvas({
 		}),
 		[extraEdgeTypes],
 	);
+
+	const useBottomIsland = Boolean(bottomIsland);
+	const interactionMode = bottomIsland?.interactionMode ?? "select";
 
 	return (
 		<div className={cn("h-full w-full", className)}>
@@ -86,12 +105,29 @@ export function WorkflowCanvas({
 				defaultEdgeOptions={{ type: "workflow" }}
 				fitView
 				proOptions={{ hideAttribution: true }}
+				nodesDraggable={interactionMode === "select"}
+				panOnDrag={interactionMode === "pan"}
+				panOnScroll
+				zoomOnScroll={false}
+				zoomOnPinch
 				{...rest}
 			>
 				{showBackground && (
 					<Background variant={backgroundVariant} gap={20} size={1} />
 				)}
-				{showControls && <Controls showInteractive={false} />}
+				{!useBottomIsland && showControls && (
+					<Controls showInteractive={false} />
+				)}
+				{useBottomIsland && bottomIsland && (
+					<CanvasBottomIsland
+						interactionMode={bottomIsland.interactionMode}
+						onInteractionModeChange={bottomIsland.onInteractionModeChange}
+						onUndo={bottomIsland.onUndo}
+						onRedo={bottomIsland.onRedo}
+						canUndo={bottomIsland.canUndo}
+						canRedo={bottomIsland.canRedo}
+					/>
+				)}
 				{showMiniMap && (
 					<MiniMap
 						pannable

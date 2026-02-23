@@ -134,14 +134,6 @@ const CanvasDemoScreen = () => {
 		initialEdges: demoEdges,
 	});
 
-	const edgesWithDelete = canvas.edges.map((edge) => ({
-		...edge,
-		data: {
-			...edge.data,
-			onDelete: canvas.handleDeleteEdge,
-		},
-	}));
-
 	return (
 		<div className="flex h-screen w-full flex-col bg-background">
 			<header className="flex items-center justify-between border-b border-border px-5 py-3">
