@@ -10,7 +10,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ImageIcon } from "lucide-react";
 
-const ACCEPTED_IMAGE_EXTENSIONS = "jpg, jpeg, png, webp, gif";
 const DEFAULT_ACCEPT = "image/jpeg,image/png,image/webp,image/gif";
 
 export interface ImageUploadNodeConfig {
@@ -29,10 +28,7 @@ export const IMAGE_UPLOAD_DEFINITION: Omit<
 	description: "Upload via Transloadit. Accepted: jpg, jpeg, png, webp, gif. Output: image URL.",
 	provider: "TRANSLOADIT",
 	inputHandles: [],
-	outputHandles: [
-		{ key: "url", type: "string" },
-		{ key: "image", type: "image" },
-	],
+	outputHandles: [{ key: "image", type: "image" }],
 	defaultConfig: { accept: DEFAULT_ACCEPT, maxSizeMb: 10 },
 };
 
@@ -40,14 +36,9 @@ export function ImageUploadNode({ id, data, selected }: NodeProps) {
 	const updateConfig = useUpdateNodeConfig(id);
 	const config = (data?.config ?? IMAGE_UPLOAD_DEFINITION.defaultConfig) as ImageUploadNodeConfig;
 	const status = data?.status as "idle" | "running" | "completed" | "failed" | undefined;
-	const accept = config.accept ?? DEFAULT_ACCEPT;
 	const maxSizeMb = config.maxSizeMb ?? 10;
 	const previewUrl = config.previewUrl ?? "";
 
-	const setAccept = useCallback(
-		(v: string) => updateConfig({ accept: v || DEFAULT_ACCEPT }),
-		[updateConfig],
-	);
 	const setMaxSizeMb = useCallback(
 		(v: number) => updateConfig({ maxSizeMb: Math.max(0, v) }),
 		[updateConfig],
@@ -67,17 +58,6 @@ export function ImageUploadNode({ id, data, selected }: NodeProps) {
 			selected={selected}
 		>
 			<div className="space-y-2 nodrag nopan">
-				<div className="space-y-1">
-					<Label className="text-[10px] text-muted-foreground">
-						Accept ({ACCEPTED_IMAGE_EXTENSIONS})
-					</Label>
-					<Input
-						value={accept}
-						onChange={(e) => setAccept(e.target.value)}
-						placeholder={DEFAULT_ACCEPT}
-						className="h-7 text-xs"
-					/>
-				</div>
 				<div className="space-y-1">
 					<Label className="text-[10px] text-muted-foreground">Max size (MB)</Label>
 					<Input
@@ -113,7 +93,7 @@ export function ImageUploadNode({ id, data, selected }: NodeProps) {
 						className="h-7 text-xs"
 					/>
 				</div>
-				<p className="text-[10px] text-muted-foreground">Output: image URL</p>
+				<p className="text-[10px] text-muted-foreground">Output: image (URL)</p>
 			</div>
 		</BaseNode>
 	);

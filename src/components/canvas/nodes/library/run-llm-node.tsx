@@ -29,10 +29,7 @@ export const RUN_LLM_DEFINITION: Omit<NodeDefinition<RunLlmNodeConfig>, "Compone
 	label: "Run LLM",
 	description: "Run a large language model",
 	provider: "TRIGGER_DEV",
-	inputHandles: [
-		...STATIC_INPUT_HANDLES,
-		{ key: "image_0", type: "image", required: false },
-	],
+	inputHandles: [...STATIC_INPUT_HANDLES],
 	outputHandles: [{ key: "response", type: "string" }],
 	defaultConfig: { model: "gpt-4o", systemPrompt: "", temperature: 0.7, imageInputCount: 0 },
 };
@@ -45,15 +42,17 @@ function buildInputHandles(imageCount: number): InputHandleDef[] {
 	return [...STATIC_INPUT_HANDLES, ...imageHandles];
 }
 
+const clampImageCount = (n: number) => Math.max(0, Math.floor(Number(n)));
+
 export function RunLlmNode({ id, data, selected }: NodeProps) {
 	const { setNodes, setEdges } = useReactFlow();
 	const updateConfig = useUpdateNodeConfig(id);
 	const config = (data?.config ?? RUN_LLM_DEFINITION.defaultConfig) as RunLlmNodeConfig;
 	const status = data?.status as "idle" | "running" | "completed" | "failed" | undefined;
-	const imageCount = config.imageInputCount ?? 0;
+	const imageCount = clampImageCount(config.imageInputCount ?? 0);
 	const inputHandles = buildInputHandles(imageCount);
-	const temperature = config.temperature ?? 0.7;
-	const model = config.model ?? "gpt-4o";
+	const temperature = Math.min(2, Math.max(0, Number(config.temperature) ?? 0.7));
+	const model = String(config.model ?? "gpt-4o").trim() || "gpt-4o";
 
 	const addImageInput = useCallback(() => {
 		setNodes((nodes) =>
@@ -125,11 +124,13 @@ export function RunLlmNode({ id, data, selected }: NodeProps) {
 				</div>
 				<div className="space-y-1">
 					<Label className="text-[10px] text-muted-foreground">
-						Temperature: {temperature}
+						Temperature: {Number(temperature).toFixed(1)}
 					</Label>
 					<Slider
 						value={[temperature]}
-						onValueChange={([v]) => updateConfig({ temperature: v ?? 0.7 })}
+						onValueChange={([v]) =>
+							updateConfig({ temperature: Math.min(2, Math.max(0, v ?? 0.7)) })
+						}
 						min={0}
 						max={2}
 						step={0.1}

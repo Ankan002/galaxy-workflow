@@ -22,14 +22,8 @@ export const CROP_IMAGE_DEFINITION: Omit<NodeDefinition<CropImageNodeConfig>, "C
 	label: "Crop Image",
 	description: "Crop an image by percentage region (jpg, jpeg, png, webp, gif)",
 	provider: "TRANSLOADIT",
-	inputHandles: [
-		{ key: "image_url", type: "image", required: true },
-		{ key: "x_percent", type: "number", required: false },
-		{ key: "y_percent", type: "number", required: false },
-		{ key: "width_percent", type: "number", required: false },
-		{ key: "height_percent", type: "number", required: false },
-	],
-	outputHandles: [{ key: "output", type: "string" }],
+	inputHandles: [{ key: "image_url", type: "image", required: true }],
+	outputHandles: [{ key: "image", type: "image" }],
 	defaultConfig: {
 		x_percent: 0,
 		y_percent: 0,
@@ -165,7 +159,7 @@ export function CropImageNode({ id, data, selected }: NodeProps) {
 					</div>
 				</div>
 				<p className="text-[10px] text-muted-foreground opacity-80">
-					Output: Cropped image URL
+					Output: image (URL)
 				</p>
 			</div>
 		</BaseNode>
