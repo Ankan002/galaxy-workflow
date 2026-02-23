@@ -4,11 +4,13 @@ import { useUser } from "@clerk/nextjs";
 
 export const useSidebarUser = () => {
 	const { isLoaded, user } = useUser();
+	const { signOut } = useAuth();
 	const isMobile = useIsMobile();
 
 	return {
 		isLoaded,
 		user,
 		isMobile,
+		signOut,
 	};
 };

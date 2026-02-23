@@ -20,7 +20,7 @@ import { useSidebarUser } from "./hook";
 import { ChevronDown, CreditCard, LogOut, Settings } from "lucide-react";
 
 const SidebarUser = () => {
-	const { isLoaded, user } = useSidebarUser();
+	const { isLoaded, user, signOut } = useSidebarUser();
 
 	return (
 		<SidebarMenu>
@@ -116,7 +116,10 @@ const SidebarUser = () => {
 								<span className="text-xs">Settings</span>
 							</DropdownMenuItem>
 
-							<DropdownMenuItem className="cursor-pointer mt-1 text-destructive hover:bg-destructive/20 hover:text-destructive">
+							<DropdownMenuItem
+								className="cursor-pointer mt-1 text-destructive hover:bg-destructive/20 hover:text-destructive"
+								onClick={() => signOut()}
+							>
 								<LogOut className="size-4" />
 								<span className="text-xs">Sign out</span>
 							</DropdownMenuItem>
