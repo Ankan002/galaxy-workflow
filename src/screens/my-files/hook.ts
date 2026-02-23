@@ -7,12 +7,15 @@ import {
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import { useDebounce, useDebouncedCallback } from "use-debounce";
-import { DEBOUNCE_TIME } from "@/config/client-constants";
+import { useQueryClient } from "@tanstack/react-query";
+import { DEBOUNCE_TIME, API_ROUTES } from "@/config/client-constants";
 import { clientUtils } from "@/utils/client";
+import { workflow_file } from "@/db/prisma/client";
 
 export const useMyFiles = () => {
 	const { APIErrorHandler } = useAPIErrorHandler();
 	const { user, isLoaded } = useUser();
+	const queryClient = useQueryClient();
 
 	const [search, setSearch] = useState<string>("");
 
@@ -46,9 +49,11 @@ export const useMyFiles = () => {
 		}
 
 		try {
-			const response = await createWorkflowFile();
-			console.log(response);
-			// TODO: Handle the page redirection here!
+			const newFile = await createWorkflowFile();
+			queryClient.setQueryData<workflow_file[]>(
+				[API_ROUTES.WORKFLOW_FILE.GET.key, debouncedSearch],
+				(prev) => (prev ? [newFile, ...prev] : [newFile]),
+			);
 			toast.success("Workflow file created successfully!");
 		} catch (error) {
 			createWorkflowFileErrorHandler(error);
@@ -62,7 +67,7 @@ export const useMyFiles = () => {
 	}, [workflowFilesError]);
 
 	useEffect(() => {
-		if (workflowFiles) {
+		if (workflowFiles !== undefined && workflowFiles !== null) {
 			console.log({ workflowFiles });
 		}
 	}, [workflowFiles]);
