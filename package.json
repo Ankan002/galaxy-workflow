@@ -60,6 +60,7 @@
 		"react-icons": "^5.5.0",
 		"sonner": "^2.0.7",
 		"tailwind-merge": "^3.5.0",
+		"transloadit": "^4.7.4",
 		"unique-names-generator": "^4.7.1",
 		"use-debounce": "^10.1.0",
 		"winston": "^3.19.0",
