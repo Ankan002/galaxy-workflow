@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { WorkflowCanvas } from "./workflow-canvas";
 import { CanvasNodeSidebar } from "./canvas-node-sidebar";
 import { NODE_REGISTRY, NodeType } from "./nodes/registry";
+import type { InteractionMode } from "./canvas-bottom-island";
 
 const DRAG_TYPE = "application/reactflow";
 
@@ -21,6 +22,11 @@ interface CanvasWorkflowLayoutProps {
 	onEdgesChange: ReturnType<typeof import("@xyflow/react").useEdgesState>[2];
 	onConnect: (connection: import("@xyflow/react").Connection) => void;
 	setNodes: React.Dispatch<React.SetStateAction<Node[]>>;
+	undo: () => void;
+	redo: () => void;
+	canUndo: boolean;
+	canRedo: boolean;
+	pushHistoryBeforeChange: () => void;
 }
 
 function CanvasWorkflowLayoutInner({
@@ -30,9 +36,15 @@ function CanvasWorkflowLayoutInner({
 	onEdgesChange,
 	onConnect,
 	setNodes,
+	undo,
+	redo,
+	canUndo,
+	canRedo,
+	pushHistoryBeforeChange,
 }: CanvasWorkflowLayoutProps) {
 	const flowInstanceRef = useRef<ReactFlowInstance | null>(null);
 	const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+	const [interactionMode, setInteractionMode] = useState<InteractionMode>("select");
 
 	const onDrop = useCallback(
 		(e: React.DragEvent) => {
@@ -54,6 +66,7 @@ function CanvasWorkflowLayoutInner({
 				x: e.clientX,
 				y: e.clientY,
 			});
+			pushHistoryBeforeChange();
 			const newNode: Node = {
 				id: generateNodeId(),
 				type,
@@ -65,7 +78,7 @@ function CanvasWorkflowLayoutInner({
 			};
 			setNodes((nds) => [...nds, newNode]);
 		},
-		[setNodes],
+		[setNodes, pushHistoryBeforeChange],
 	);
 
 	const onInit = useCallback((instance: ReactFlowInstance) => {
@@ -104,6 +117,14 @@ function CanvasWorkflowLayoutInner({
 					onDrop={onDrop}
 					onDragOver={onDragOver}
 					onInit={onInit}
+					bottomIsland={{
+						interactionMode,
+						onInteractionModeChange: setInteractionMode,
+						onUndo: undo,
+						onRedo: redo,
+						canUndo,
+						canRedo,
+					}}
 				/>
 			</div>
 		</div>

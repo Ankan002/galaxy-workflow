@@ -7,7 +7,7 @@ interface Props {
 }
 
 const WorkflowPage: React.FC<Props> = async (props) => {
-	const { id } = await props.params;
+	await props.params;
 
 	return <WorkflowScreen />;
 };

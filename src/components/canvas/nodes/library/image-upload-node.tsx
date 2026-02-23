@@ -93,6 +93,7 @@ export function ImageUploadNode({ id, data, selected }: NodeProps) {
 					<Label className="text-[10px] text-muted-foreground">Image preview</Label>
 					<div className="rounded-md border border-border bg-muted/30 aspect-video min-h-[80px] flex items-center justify-center overflow-hidden">
 						{previewUrl ? (
+							// eslint-disable-next-line @next/next/no-img-element -- Transloadit URLs are dynamic; next/image requires config
 							<img
 								src={previewUrl}
 								alt="Upload preview"

@@ -10,6 +10,11 @@ const WorkflowScreen = () => {
 		onEdgesChange,
 		onConnect,
 		setNodes,
+		undo,
+		redo,
+		canUndo,
+		canRedo,
+		pushHistoryBeforeChange,
 	} = useWorkflowCanvas();
 
 	return (
@@ -21,6 +26,11 @@ const WorkflowScreen = () => {
 				onEdgesChange={onEdgesChange}
 				onConnect={onConnect}
 				setNodes={setNodes}
+				undo={undo}
+				redo={redo}
+				canUndo={canUndo}
+				canRedo={canRedo}
+				pushHistoryBeforeChange={pushHistoryBeforeChange}
 			/>
 		</div>
 	);
