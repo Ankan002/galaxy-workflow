@@ -9,7 +9,7 @@ import {
 	InputGroupInput,
 } from "@/components/ui";
 import { Loader2, Plus, Search, Volleyball } from "lucide-react";
-import { SkeletonCard } from "./components";
+import { SkeletonCard, WorkflowFileCard } from "./components";
 
 const MyFilesScreen = () => {
 	const {
@@ -92,6 +92,13 @@ const MyFilesScreen = () => {
 							</InputGroup>
 						</div>
 					</div>
+					{workflowFiles && workflowFiles.length > 0 && (
+						<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+							{workflowFiles.map((file) => (
+								<WorkflowFileCard key={file.id} file={file} />
+							))}
+						</div>
+					)}
 				</div>
 			)}
 		</DashboardProvider>
