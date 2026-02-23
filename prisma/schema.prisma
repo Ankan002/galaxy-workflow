@@ -13,6 +13,21 @@ enum workflow_type {
   system_example
 }
 
+enum workflow_node_type {
+  text
+  image_uplaod
+  video_upload
+  run_llm
+  crop_image
+  extract_video_frame
+}
+
+enum workflow_node_provider {
+  internal
+  trigger
+  transloadit
+}
+
 model user {
   id         String          @id @default(ulid())
   clerk_id   String          @unique
@@ -29,5 +44,39 @@ model workflow_file {
   created_at DateTime      @default(now())
   updated_at DateTime      @updatedAt
 
-  user user? @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user  user?           @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  nodes workflow_node[]
+  edges workflow_edge[]
+}
+
+model workflow_node {
+  id          String                 @id @default(ulid())
+  workflow_id String
+  type        workflow_node_type
+  provider    workflow_node_provider
+  position_x  Float
+  position_y  Float
+  config      Json
+  metadata    Json?                  @default("{}")
+  created_at  DateTime               @default(now())
+  updated_at  DateTime               @updatedAt
+
+  workflow     workflow_file   @relation(fields: [workflow_id], references: [id], onDelete: Cascade)
+  source_edges workflow_edge[] @relation("edge_source")
+  target_edges workflow_edge[] @relation("edge_target")
+}
+
+model workflow_edge {
+  id             String   @id @default(ulid())
+  workflow_id    String
+  source_node_id String
+  target_node_id String
+  source_handle  String
+  target_handle  String
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  workflow    workflow_file @relation(fields: [workflow_id], references: [id], onDelete: Cascade)
+  source_node workflow_node @relation("edge_source", fields: [source_node_id], references: [id], onDelete: Cascade)
+  target_node workflow_node @relation("edge_target", fields: [target_node_id], references: [id], onDelete: Cascade)
 }
