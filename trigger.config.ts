@@ -1,4 +1,5 @@
 import { defineConfig } from "@trigger.dev/sdk";
+import { ffmpeg } from "@trigger.dev/build/extensions/core";
 import "dotenv/config";
 
 export default defineConfig({
@@ -21,4 +22,8 @@ export default defineConfig({
 	},
 
 	maxDuration: 3600,
+
+	build: {
+		extensions: [ffmpeg()],
+	},
 });
