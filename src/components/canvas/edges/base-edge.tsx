@@ -12,7 +12,14 @@ import { Button } from "@/components/ui";
 
 export interface BaseEdgeData extends Record<string, unknown> {
 	label?: string;
-	variant?: "default" | "prompt" | "image";
+	variant?:
+		| "default"
+		| "prompt"
+		| "image"
+		| "video"
+		| "number"
+		| "json"
+		| "file";
 	animated?: boolean;
 	onDelete?: (id: string) => void;
 }
@@ -24,6 +31,10 @@ const variantStroke: Record<
 	default: "var(--muted-foreground)",
 	prompt: "var(--connection-prompt)",
 	image: "var(--connection-image)",
+	video: "var(--primary)",
+	number: "var(--chart-3)",
+	json: "var(--chart-4)",
+	file: "var(--chart-5)",
 };
 
 export function WorkflowEdge({

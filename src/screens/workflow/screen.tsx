@@ -1,16 +1,26 @@
 "use client";
 
-import { WorkflowCanvas } from "@/components/canvas";
+import { useWorkflowCanvas, CanvasWorkflowLayout } from "@/components/canvas";
 
 const WorkflowScreen = () => {
+	const {
+		nodes,
+		edges,
+		onNodesChange,
+		onEdgesChange,
+		onConnect,
+		setNodes,
+	} = useWorkflowCanvas();
+
 	return (
-		<div className="w-full min-h-screen flex flex-col">
-			<WorkflowCanvas
-				nodes={[]}
-				edges={[]}
-				onNodesChange={() => {}}
-				onEdgesChange={() => {}}
-				onConnect={() => {}}
+		<div className="h-screen w-full">
+			<CanvasWorkflowLayout
+				nodes={nodes}
+				edges={edges}
+				onNodesChange={onNodesChange}
+				onEdgesChange={onEdgesChange}
+				onConnect={onConnect}
+				setNodes={setNodes}
 			/>
 		</div>
 	);

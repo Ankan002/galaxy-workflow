@@ -10,7 +10,30 @@ import {
 	type OnConnect,
 	type OnNodesDelete,
 	type OnEdgesDelete,
+	type Connection,
 } from "@xyflow/react";
+import { NODE_REGISTRY } from "./nodes/registry";
+import type { BaseEdgeData } from "./edges";
+
+function getEdgeVariantFromConnection(
+	nodes: Node[],
+	connection: Connection,
+): BaseEdgeData["variant"] {
+	const sourceNode = nodes.find((n) => n.id === connection.source);
+	if (!sourceNode?.type || typeof sourceNode.type !== "string") return "default";
+	const def = NODE_REGISTRY[sourceNode.type as keyof typeof NODE_REGISTRY];
+	if (!def?.outputHandles) return "default";
+	const handle = def.outputHandles.find((h) => h.key === connection.sourceHandle);
+	if (!handle) return "default";
+	const t = handle.type;
+	if (t === "string") return "prompt";
+	if (t === "image") return "image";
+	if (t === "video") return "video";
+	if (t === "number") return "number";
+	if (t === "json") return "json";
+	if (t === "file") return "file";
+	return "default";
+}
 
 interface UseWorkflowCanvasOptions {
 	initialNodes?: Node[];
@@ -31,9 +54,15 @@ export function useWorkflowCanvas(options: UseWorkflowCanvasOptions = {}) {
 
 	const onConnect: OnConnect = useCallback(
 		(connection) => {
-			setEdges((eds) => addEdge({ ...connection, type: "workflow" }, eds));
+			const variant = getEdgeVariantFromConnection(nodes, connection);
+			setEdges((eds) =>
+				addEdge(
+					{ ...connection, type: "workflow", data: { variant } },
+					eds,
+				),
+			);
 		},
-		[setEdges],
+		[nodes, setEdges],
 	);
 
 	const handleDeleteEdge = useCallback(

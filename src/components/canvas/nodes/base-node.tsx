@@ -1,6 +1,6 @@
 "use client";
 
-import { type ReactNode } from "react";
+import React, { type ReactNode } from "react";
 import { Handle, Position, type NodeProps } from "@xyflow/react";
 import { cn } from "@/lib/utils";
 import { Card, Badge } from "@/components/ui";
@@ -10,6 +10,7 @@ import type {
 	InputHandleDef,
 	OutputHandleDef,
 } from "./registry/types";
+import type { HandleDataType } from "./registry/types";
 
 /** Legacy shape for nodes that use "base" type (e.g. canvas-demo) */
 export interface BaseNodeData extends Record<string, unknown> {
@@ -72,42 +73,117 @@ function legacyDataToBaseNodeProps(
 	};
 }
 
+const handleTypeBorderBg: Record<
+	HandleDataType,
+	{ border: string; bg: string; label: string }
+> = {
+	string:
+		{ border: "!border-connection-prompt", bg: "!bg-connection-prompt/30", label: "text-connection-prompt" },
+	number:
+		{ border: "!border-chart-3", bg: "!bg-chart-3/30", label: "text-chart-3" },
+	boolean:
+		{ border: "!border-chart-2", bg: "!bg-chart-2/30", label: "text-chart-2" },
+	json:
+		{ border: "!border-chart-4", bg: "!bg-chart-4/30", label: "text-chart-4" },
+	image:
+		{ border: "!border-connection-image", bg: "!bg-connection-image/30", label: "text-connection-image" },
+	video:
+		{ border: "!border-primary", bg: "!bg-primary/30", label: "text-primary" },
+	file:
+		{ border: "!border-chart-5", bg: "!bg-chart-5/30", label: "text-chart-5" },
+	any:
+		{ border: "!border-muted-foreground", bg: "!bg-muted-foreground/20", label: "text-muted-foreground" },
+};
+
+function getHandleStyle(type: HandleDataType) {
+	return handleTypeBorderBg[type] ?? handleTypeBorderBg.any;
+}
+
 function renderHandles(
 	inputHandles: InputHandleDef[],
 	outputHandles: OutputHandleDef[],
 ) {
 	const inputCount = inputHandles.length;
 	const outputCount = outputHandles.length;
+	const inputTop = (i: number) =>
+		inputCount > 1 ? { top: `${((i + 1) / (inputCount + 1)) * 100}%`, left: 0 } : undefined;
+	const outputTop = (i: number) =>
+		outputCount > 1 ? { top: `${((i + 1) / (outputCount + 1)) * 100}%`, right: 0 } : undefined;
+
 	return (
 		<>
-			{inputHandles.map((h, i) => (
-				<Handle
-					key={h.key}
-					type="target"
-					id={h.key}
-					position={Position.Left}
-					className="!w-2.5 !h-2.5 !border-2 !bg-background"
-					style={
-						inputCount > 1
-							? { top: `${((i + 1) / (inputCount + 1)) * 100}%`, left: 0 }
-							: undefined
-					}
-				/>
-			))}
-			{outputHandles.map((h, i) => (
-				<Handle
-					key={h.key}
-					type="source"
-					id={h.key}
-					position={Position.Right}
-					className="!w-2.5 !h-2.5 !border-2 !bg-background"
-					style={
-						outputCount > 1
-							? { top: `${((i + 1) / (outputCount + 1)) * 100}%`, right: 0 }
-							: undefined
-					}
-				/>
-			))}
+			{inputHandles.map((h, i) => {
+				const style = getHandleStyle(h.type);
+				return (
+					<React.Fragment key={h.key}>
+						<Handle
+							type="target"
+							id={h.key}
+							position={Position.Left}
+							className={cn(
+								"!w-2.5 !h-2.5 !border-2 !bg-background",
+								style.border,
+								style.bg,
+							)}
+							style={inputTop(i)}
+						/>
+						<span
+							className={cn(
+								"absolute z-10 text-[10px] font-medium opacity-90 max-w-[72px] truncate pointer-events-none whitespace-nowrap",
+								style.label,
+							)}
+							style={
+								inputCount > 1
+									? {
+											top: `${((i + 1) / (inputCount + 1)) * 100}%`,
+											right: "100%",
+											marginRight: 6,
+											transform: "translateY(-50%)",
+										}
+									: { top: "50%", right: "100%", marginRight: 6, transform: "translateY(-50%)" }
+							}
+						>
+							{h.key}
+						</span>
+					</React.Fragment>
+				);
+			})}
+			{outputHandles.map((h, i) => {
+				const style = getHandleStyle(h.type);
+				return (
+					<React.Fragment key={h.key}>
+						<Handle
+							type="source"
+							id={h.key}
+							position={Position.Right}
+							className={cn(
+								"!w-2.5 !h-2.5 !border-2 !bg-background",
+								style.border,
+								style.bg,
+							)}
+							style={outputTop(i)}
+						/>
+						<span
+							className={cn(
+								"absolute z-10 max-w-[72px] truncate text-right text-[10px] font-medium opacity-90 pointer-events-none whitespace-nowrap",
+								style.label,
+							)}
+							style={
+								outputCount > 1
+									? {
+											top: `${((i + 1) / (outputCount + 1)) * 100}%`,
+											left: "100%",
+											marginLeft: 6,
+											transform: "translateY(-50%)",
+										}
+									: { top: "50%", left: "100%", marginLeft: 6, transform: "translateY(-50%)" }
+							}
+						>
+							{h.key}
+						</span>
+					</React.Fragment>
+				);
+			})}
 		</>
 	);
 }
