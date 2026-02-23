@@ -1,4 +1,5 @@
 import { AppNavItem } from "@/types/common";
+import { APIRouteConfig } from "@/types/common/api-route-config";
 import { GalleryVerticalEnd, SquarePlay, Users } from "lucide-react";
 
 export const SIGN_IN_URL = "/auth/sign-in";
@@ -36,3 +37,18 @@ export const APP_NAV_ITEMS: AppNavItem[] = [
 		href: "/apps",
 	},
 ];
+
+export const API_ROUTES = {
+	WORKFLOW_FILE: {
+		CREATE: {
+			path: "/api/workflow-file",
+			method: "POST",
+			key: "create-workflow-file",
+		},
+		GET: {
+			path: "/api/workflow-file",
+			method: "GET",
+			key: "get-workflow-files",
+		},
+	},
+};

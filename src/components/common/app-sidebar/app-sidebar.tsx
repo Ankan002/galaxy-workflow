@@ -11,14 +11,15 @@ import {
 	SidebarMenuItem,
 } from "@/components/ui";
 import { APP_NAV_ITEMS } from "@/config/client-constants";
-import { Plus } from "lucide-react";
+import { Loader2, Plus } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { FaDiscord } from "react-icons/fa6";
 import { SidebarUser } from "../sidebar-user";
+import { useAppSidebar } from "./hook";
 
 const AppSidebar = () => {
-	const pathname = usePathname();
+	const { handleCreateWorkflowFile, isCreatingWorkflowFile, pathname } =
+		useAppSidebar();
 
 	return (
 		<Sidebar
@@ -30,8 +31,16 @@ const AppSidebar = () => {
 				<SidebarUser />
 			</SidebarHeader>
 			<SidebarContent>
-				<Button className="mt-2 h-8 rounded-sm">
-					<Plus />
+				<Button
+					className="mt-2 h-8 rounded-sm"
+					onClick={handleCreateWorkflowFile}
+					disabled={isCreatingWorkflowFile}
+				>
+					{isCreatingWorkflowFile ? (
+						<Loader2 className="animate-spin" />
+					) : (
+						<Plus />
+					)}
 					<span>Create New File</span>
 				</Button>
 				<SidebarMenu className="mt-3 gap-2">
