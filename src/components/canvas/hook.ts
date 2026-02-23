@@ -46,10 +46,24 @@ function snapshot(nodes: Node[], edges: Edge[]): { nodes: Node[]; edges: Edge[] 
 
 export type WorkflowChangePayload = { nodes: Node[]; edges: Edge[] };
 
-interface UseWorkflowCanvasOptions {
+/** Triggers for workflow actions – use these to persist, audit, or react to changes. */
+export interface WorkflowCanvasTriggers {
+	/** Fired when a node is created (e.g. dropped from the sidebar or added via addNode). */
+	onNodeCreated?: (node: Node) => void;
+	/** Fired when a node is removed (delete key or removeNode). Receives the node id and the removed node data (if available). */
+	onNodeDeleted?: (nodeId: string, node: Node | null) => void;
+	/** Fired when a new edge is created (user connects two handles). */
+	onEdgeCreated?: (connection: Connection) => void;
+	/** Fired when an edge is removed. */
+	onEdgeDeleted?: (edgeId: string) => void;
+	/** Fired when the user triggers a workflow run (e.g. Run button). Use with a Run action in your UI. */
+	onWorkflowRun?: (payload: WorkflowChangePayload) => void;
+}
+
+interface UseWorkflowCanvasOptions extends WorkflowCanvasTriggers {
 	initialNodes?: Node[];
 	initialEdges?: Edge[];
-	/** Called whenever the workflow graph changes (nodes or edges). Debounced or called after meaningful actions. */
+	/** Called whenever the workflow graph changes (nodes or edges). */
 	onWorkflowChange?: (payload: WorkflowChangePayload) => void;
 	onNodesDelete?: OnNodesDelete;
 	onEdgesDelete?: OnEdgesDelete;
@@ -70,6 +84,13 @@ export function useWorkflowCanvas(options: UseWorkflowCanvasOptions = {}) {
 	const isUndoRedoRef = useRef(false);
 	const latestRef = useRef({ nodes, edges });
 	const onWorkflowChangeRef = useRef(options.onWorkflowChange);
+	const triggersRef = useRef({
+		onNodeCreated: options.onNodeCreated,
+		onNodeDeleted: options.onNodeDeleted,
+		onEdgeCreated: options.onEdgeCreated,
+		onEdgeDeleted: options.onEdgeDeleted,
+		onWorkflowRun: options.onWorkflowRun,
+	});
 
 	const [historyLength, setHistoryLength] = useState(0);
 	const [futureLength, setFutureLength] = useState(0);
@@ -80,7 +101,14 @@ export function useWorkflowCanvas(options: UseWorkflowCanvasOptions = {}) {
 
 	useEffect(() => {
 		onWorkflowChangeRef.current = options.onWorkflowChange;
-	}, [options.onWorkflowChange]);
+		triggersRef.current = {
+			onNodeCreated: options.onNodeCreated,
+			onNodeDeleted: options.onNodeDeleted,
+			onEdgeCreated: options.onEdgeCreated,
+			onEdgeDeleted: options.onEdgeDeleted,
+			onWorkflowRun: options.onWorkflowRun,
+		};
+	}, [options.onWorkflowChange, options.onNodeCreated, options.onNodeDeleted, options.onEdgeCreated, options.onEdgeDeleted, options.onWorkflowRun]);
 
 	useEffect(() => {
 		const fn = onWorkflowChangeRef.current;
@@ -134,14 +162,24 @@ export function useWorkflowCanvas(options: UseWorkflowCanvasOptions = {}) {
 					eds,
 				),
 			);
+			triggersRef.current.onEdgeCreated?.(connection);
 		},
 		[nodes, setEdges, pushHistoryBeforeChange],
 	);
 
 	const wrappedOnNodesChange = useCallback(
 		(changes: NodeChange[]) => {
-			const hasRemove = changes.some((c) => c.type === "remove");
-			if (hasRemove) pushHistoryBeforeChange();
+			const removeChanges = changes.filter((c) => c.type === "remove");
+			if (removeChanges.length > 0) {
+				pushHistoryBeforeChange();
+				const { nodes: currentNodes } = latestRef.current;
+				for (const c of removeChanges) {
+					if (c.type === "remove") {
+						const node = currentNodes.find((n) => n.id === c.id) ?? null;
+						triggersRef.current.onNodeDeleted?.(c.id, node);
+					}
+				}
+			}
 			onNodesChange(changes);
 		},
 		[onNodesChange, pushHistoryBeforeChange],
@@ -149,8 +187,15 @@ export function useWorkflowCanvas(options: UseWorkflowCanvasOptions = {}) {
 
 	const wrappedOnEdgesChange = useCallback(
 		(changes: EdgeChange[]) => {
-			const hasRemove = changes.some((c) => c.type === "remove");
-			if (hasRemove) pushHistoryBeforeChange();
+			const removeChanges = changes.filter((c) => c.type === "remove");
+			if (removeChanges.length > 0) {
+				pushHistoryBeforeChange();
+				for (const c of removeChanges) {
+					if (c.type === "remove") {
+						triggersRef.current.onEdgeDeleted?.(c.id);
+					}
+				}
+			}
 			onEdgesChange(changes);
 		},
 		[onEdgesChange, pushHistoryBeforeChange],
@@ -160,6 +205,7 @@ export function useWorkflowCanvas(options: UseWorkflowCanvasOptions = {}) {
 		(edgeId: string) => {
 			pushHistoryBeforeChange();
 			setEdges((eds) => eds.filter((e) => e.id !== edgeId));
+			triggersRef.current.onEdgeDeleted?.(edgeId);
 		},
 		[setEdges, pushHistoryBeforeChange],
 	);
@@ -167,20 +213,30 @@ export function useWorkflowCanvas(options: UseWorkflowCanvasOptions = {}) {
 	const addNode = useCallback(
 		(node: Node) => {
 			setNodes((nds) => [...nds, node]);
+			triggersRef.current.onNodeCreated?.(node);
 		},
 		[setNodes],
 	);
 
 	const removeNode = useCallback(
 		(nodeId: string) => {
+			const node = latestRef.current.nodes.find((n) => n.id === nodeId) ?? null;
 			pushHistoryBeforeChange();
 			setNodes((nds) => nds.filter((n) => n.id !== nodeId));
 			setEdges((eds) =>
 				eds.filter((e) => e.source !== nodeId && e.target !== nodeId),
 			);
+			triggersRef.current.onNodeDeleted?.(nodeId, node);
 		},
 		[setNodes, setEdges, pushHistoryBeforeChange],
 	);
+
+	/** Call this when the user triggers a workflow run (e.g. Run button). Fires onWorkflowRun and returns current nodes/edges. */
+	const triggerWorkflowRun = useCallback(() => {
+		const payload = { nodes: latestRef.current.nodes, edges: latestRef.current.edges };
+		triggersRef.current.onWorkflowRun?.(payload);
+		return payload;
+	}, []);
 
 	return {
 		nodes,
@@ -198,5 +254,8 @@ export function useWorkflowCanvas(options: UseWorkflowCanvasOptions = {}) {
 		canUndo,
 		canRedo,
 		pushHistoryBeforeChange,
+		triggerWorkflowRun,
+		/** Pass to layout so it can fire onNodeCreated when a node is dropped from the sidebar. */
+		onNodeCreated: options.onNodeCreated,
 	};
 }

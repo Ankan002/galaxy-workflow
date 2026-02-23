@@ -27,6 +27,8 @@ interface CanvasWorkflowLayoutProps {
 	canUndo: boolean;
 	canRedo: boolean;
 	pushHistoryBeforeChange: () => void;
+	/** Fired when a node is created by dropping from the sidebar. Optional. */
+	onNodeCreated?: (node: Node) => void;
 }
 
 function CanvasWorkflowLayoutInner({
@@ -41,6 +43,7 @@ function CanvasWorkflowLayoutInner({
 	canUndo,
 	canRedo,
 	pushHistoryBeforeChange,
+	onNodeCreated,
 }: CanvasWorkflowLayoutProps) {
 	const flowInstanceRef = useRef<ReactFlowInstance | null>(null);
 	const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -77,8 +80,9 @@ function CanvasWorkflowLayoutInner({
 				},
 			};
 			setNodes((nds) => [...nds, newNode]);
+			onNodeCreated?.(newNode);
 		},
-		[setNodes, pushHistoryBeforeChange],
+		[setNodes, pushHistoryBeforeChange, onNodeCreated],
 	);
 
 	const onInit = useCallback((instance: ReactFlowInstance) => {

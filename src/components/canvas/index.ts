@@ -1,5 +1,9 @@
 export { WorkflowCanvas } from "./workflow-canvas";
-export { useWorkflowCanvas, type WorkflowChangePayload } from "./hook";
+export {
+	useWorkflowCanvas,
+	type WorkflowChangePayload,
+	type WorkflowCanvasTriggers,
+} from "./hook";
 export { CanvasWorkflowLayout } from "./canvas-workflow-layout";
 export { CanvasNodeSidebar } from "./canvas-node-sidebar";
 export {

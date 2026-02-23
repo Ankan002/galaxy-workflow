@@ -15,6 +15,7 @@ const WorkflowScreen = () => {
 		canUndo,
 		canRedo,
 		pushHistoryBeforeChange,
+		onNodeCreated,
 	} = useWorkflowCanvas();
 
 	return (
@@ -31,6 +32,7 @@ const WorkflowScreen = () => {
 				canUndo={canUndo}
 				canRedo={canRedo}
 				pushHistoryBeforeChange={pushHistoryBeforeChange}
+				onNodeCreated={onNodeCreated}
 			/>
 		</div>
 	);
