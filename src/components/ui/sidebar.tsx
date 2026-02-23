@@ -3,6 +3,7 @@
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
+import { motion } from "framer-motion"
 import { PanelLeftIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -348,13 +349,53 @@ const sidebarMenuButtonVariants = cva(
 				sm: "h-7 gap-1.5 px-1.5 text-xs",
 				lg: "h-9 gap-2 px-3",
 			},
+			ripple: {
+				true: "relative overflow-hidden",
+				false: "",
+			},
 		},
 		defaultVariants: {
 			variant: "default",
 			size: "default",
+			ripple: false,
 		},
 	}
 )
+
+const RIPPLE_SIZE = 200
+const RIPPLE_DURATION = 0.6
+const RIPPLE_EASE = [0.65, 0, 0.45, 1] as const
+
+function useRipple(ripple: boolean | undefined) {
+	const [ripples, setRipples] = React.useState<{ id: number; x: number; y: number }[]>([])
+	const elRef = React.useRef<HTMLElement | null>(null)
+
+	const handleClick = React.useCallback(
+		(e: React.MouseEvent<HTMLElement>) => {
+			if (!ripple || !elRef.current) return
+			const rect = elRef.current.getBoundingClientRect()
+			setRipples((prev) => [
+				...prev,
+				{
+					id: Date.now(),
+					x: e.clientX - rect.left,
+					y: e.clientY - rect.top,
+				},
+			])
+		},
+		[ripple]
+	)
+
+	const removeRipple = React.useCallback((id: number) => {
+		setRipples((prev) => prev.filter((r) => r.id !== id))
+	}, [])
+
+	const setRef = React.useCallback((node: HTMLElement | null) => {
+		elRef.current = node
+	}, [])
+
+	return { ripples, handleClick, removeRipple, setRef }
+}
 
 const SidebarMenuButton = React.forwardRef<
 	HTMLButtonElement,
@@ -370,26 +411,69 @@ const SidebarMenuButton = React.forwardRef<
 			className,
 			variant,
 			size,
+			ripple,
 			asChild,
 			isActive,
 			tooltip,
-							...props
+			onClick,
+			children,
+			...props
 		},
 		ref
 	) => {
 		const { state } = useSidebar()
-		const Comp = asChild ? Slot : "button"
+		const { ripples, handleClick, removeRipple, setRef } = useRipple(ripple ?? false)
+
+		const mergeRef = React.useCallback(
+			(node: HTMLButtonElement | null) => {
+				setRef(node)
+				if (typeof ref === "function") ref(node)
+				else if (ref) (ref as React.MutableRefObject<HTMLButtonElement | null>).current = node
+			},
+			[ref, setRef]
+		)
+
+		const Comp = asChild && !ripple ? Slot : "button"
 		const button = (
 			<Comp
-				ref={ref}
+				ref={ripple ? mergeRef : ref}
 				data-active={isActive ? "" : undefined}
 				className={cn(
-					sidebarMenuButtonVariants({ variant, size }),
+					sidebarMenuButtonVariants({ variant, size, ripple }),
 					"group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! group-data-[collapsible=icon]:justify-center",
 					className
 				)}
+				onClick={ripple ? (e) => { handleClick(e); onClick?.(e) } : onClick}
 				{...props}
-			/>
+			>
+				{children}
+				{ripple && (
+					<span
+						className="pointer-events-none absolute inset-0 z-10 overflow-hidden rounded-lg"
+						style={{ width: "100%", height: "100%" }}
+					>
+						{ripples.map((r) => (
+							<motion.span
+								key={r.id}
+								className="absolute rounded-full bg-current [-webkit-tap-highlight-color:transparent]"
+								style={{
+									left: r.x - RIPPLE_SIZE / 2,
+									top: r.y - RIPPLE_SIZE / 2,
+									width: RIPPLE_SIZE,
+									height: RIPPLE_SIZE,
+								}}
+								initial={{ scale: 0, opacity: 0.35 }}
+								animate={{ scale: 1, opacity: 0 }}
+								transition={{
+									duration: RIPPLE_DURATION,
+									ease: RIPPLE_EASE,
+								}}
+								onAnimationComplete={() => removeRipple(r.id)}
+							/>
+						))}
+					</span>
+				)}
+			</Comp>
 		)
 		if (state === "collapsed" && tooltip) {
 			return (
