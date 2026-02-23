@@ -1,9 +1,5 @@
-import { DashboardProvider } from "@/components/providers";
+import { MyFilesScreen } from "@/screens/my-files";
 
 export default function Home() {
-	return (
-		<DashboardProvider>
-			<></>
-		</DashboardProvider>
-	);
+	return <MyFilesScreen />;
 }
