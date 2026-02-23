@@ -79,4 +79,9 @@ model workflow_edge {
   workflow    workflow_file @relation(fields: [workflow_id], references: [id], onDelete: Cascade)
   source_node workflow_node @relation("edge_source", fields: [source_node_id], references: [id], onDelete: Cascade)
   target_node workflow_node @relation("edge_target", fields: [target_node_id], references: [id], onDelete: Cascade)
+
+  @@unique([workflow_id, source_node_id, target_node_id, source_handle, target_handle])
+  @@index([workflow_id])
+  @@index([source_node_id])
+  @@index([target_node_id])
 }

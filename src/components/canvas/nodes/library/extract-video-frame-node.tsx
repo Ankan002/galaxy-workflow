@@ -1,0 +1,84 @@
+"use client";
+
+import { useCallback } from "react";
+import type { NodeProps } from "@xyflow/react";
+import { NodeType } from "../registry/types";
+import { BaseNode } from "../base-node";
+import type { NodeDefinition } from "../registry/types";
+import { useUpdateNodeConfig } from "../use-update-node-config";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+
+export interface ExtractVideoFrameNodeConfig {
+	/** Timestamp: seconds (e.g. 10) or percentage (e.g. "50%"). Default 0. */
+	timestamp?: number | string;
+}
+
+export const EXTRACT_VIDEO_FRAME_DEFINITION: Omit<
+	NodeDefinition<ExtractVideoFrameNodeConfig>,
+	"Component"
+> = {
+	type: NodeType.EXTRACT_VIDEO_FRAME,
+	label: "Extract Frame from Video",
+	description:
+		"Extract a single frame from video via FFmpeg (Trigger.dev). Input: video_url (mp4, mov, webm, m4v). Output: frame image URL (jpg/png).",
+	provider: "TRIGGER_DEV",
+	inputHandles: [
+		{ key: "video_url", type: "video", required: true },
+		{ key: "timestamp", type: "any", required: false },
+	],
+	outputHandles: [{ key: "output", type: "string" }],
+	defaultConfig: { timestamp: 0 },
+};
+
+export function ExtractVideoFrameNode({ id, data, selected }: NodeProps) {
+	const updateConfig = useUpdateNodeConfig(id);
+	const config =
+		(data?.config ?? EXTRACT_VIDEO_FRAME_DEFINITION.defaultConfig) as ExtractVideoFrameNodeConfig;
+	const status = data?.status as "idle" | "running" | "completed" | "failed" | undefined;
+	const timestamp = config.timestamp ?? 0;
+
+	const setTimestamp = useCallback(
+		(v: number | string) => updateConfig({ timestamp: v }),
+		[updateConfig],
+	);
+
+	const displayValue =
+		typeof timestamp === "string" ? timestamp : String(timestamp);
+
+	return (
+		<BaseNode
+			label={EXTRACT_VIDEO_FRAME_DEFINITION.label}
+			description={EXTRACT_VIDEO_FRAME_DEFINITION.description}
+			status={status}
+			inputHandles={EXTRACT_VIDEO_FRAME_DEFINITION.inputHandles}
+			outputHandles={EXTRACT_VIDEO_FRAME_DEFINITION.outputHandles}
+			selected={selected}
+		>
+			<div className="space-y-2 nodrag nopan">
+				<div className="space-y-1">
+					<Label className="text-[10px] text-muted-foreground">
+						Timestamp (seconds or %, e.g. 10 or 50%)
+					</Label>
+					<Input
+						value={displayValue}
+						onChange={(e) => {
+							const raw = e.target.value.trim();
+							if (raw.endsWith("%")) {
+								setTimestamp(raw);
+							} else {
+								const n = Number(raw);
+								setTimestamp(Number.isFinite(n) ? n : raw || 0);
+							}
+						}}
+						placeholder="0"
+						className="h-7 text-xs"
+					/>
+				</div>
+				<p className="text-[10px] text-muted-foreground">
+					Output: extracted frame image URL (jpg or png, via Transloadit)
+				</p>
+			</div>
+		</BaseNode>
+	);
+}

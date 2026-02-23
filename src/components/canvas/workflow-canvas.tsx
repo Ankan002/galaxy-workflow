@@ -19,6 +19,7 @@ import {
 import "@xyflow/react/dist/style.css";
 import { cn } from "@/lib/utils";
 import { BaseNode } from "./nodes";
+import { nodeTypes as registryNodeTypes } from "./nodes/registry";
 import { WorkflowEdge } from "./edges";
 
 interface WorkflowCanvasProps
@@ -60,6 +61,7 @@ export function WorkflowCanvas({
 	const nodeTypes: NodeTypes = useMemo(
 		() => ({
 			base: BaseNode,
+			...registryNodeTypes,
 			...extraNodeTypes,
 		}),
 		[extraNodeTypes],
