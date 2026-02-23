@@ -21,6 +21,12 @@ export const serverEnv = createEnv({
 		CLERK_WEBHOOK_SIGNING_SECRET: z.string({
 			error: "CLERK_WEBHOOK_SIGNING_SECRET is required",
 		}),
+		TRIGGER_SECRET_KEY: z.string({
+			error: "TRIGGER_SECRET_KEY is required",
+		}),
+		TRIGGER_PROJECT_REF: z.string({
+			error: "TRIGGER_PROJECT_REF is required",
+		}),
 	},
 	runtimeEnv: {
 		DATABASE_URL: process.env.DATABASE_URL,
@@ -29,5 +35,7 @@ export const serverEnv = createEnv({
 		HOST: process.env.HOST,
 		CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
 		CLERK_WEBHOOK_SIGNING_SECRET: process.env.CLERK_WEBHOOK_SIGNING_SECRET,
+		TRIGGER_SECRET_KEY: process.env.TRIGGER_SECRET_KEY,
+		TRIGGER_PROJECT_REF: process.env.TRIGGER_PROJECT_REF,
 	},
 });
