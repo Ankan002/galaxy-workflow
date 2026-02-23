@@ -95,7 +95,11 @@ const MyFilesScreen = () => {
 					{workflowFiles && workflowFiles.length > 0 && (
 						<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
 							{workflowFiles.map((file) => (
-								<WorkflowFileCard key={file.id} file={file} />
+								<WorkflowFileCard
+									key={file.id}
+									file={file}
+									href={`/workflow/${file.id}`}
+								/>
 							))}
 						</div>
 					)}
