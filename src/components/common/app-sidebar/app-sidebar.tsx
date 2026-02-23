@@ -51,6 +51,7 @@ const AppSidebar = () => {
 									className="h-10 px-3 text-base rounded-sm"
 									isActive={pathname === item.href}
 									disabled={item.isDisabled}
+									ripple
 								>
 									<item.Icon />
 									<span>{item.label}</span>
