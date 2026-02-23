@@ -322,3 +322,92 @@
 	--sidebar-border: hsl(240 3.7% 15.9%);
 	--sidebar-ring: hsl(217.2 91.2% 59.8%);
 }
+
+/* ════════════════════════════════════════
+   React Flow – ShadCN theme overrides
+   ════════════════════════════════════════ */
+
+.react-flow {
+	--xy-background-color: var(--background);
+	--xy-node-color: var(--foreground);
+	--xy-node-border: var(--border);
+	--xy-node-background-color: var(--card);
+	--xy-node-boxshadow-hover: 0 4px 12px rgba(0, 0, 0, 0.25);
+	--xy-node-boxshadow-selected: 0 0 0 2px var(--ring);
+
+	--xy-handle-background-color: var(--muted-foreground);
+	--xy-handle-border-color: var(--card);
+
+	--xy-edge-stroke: var(--muted-foreground);
+	--xy-edge-stroke-selected: var(--primary);
+	--xy-edge-stroke-width: 2;
+
+	--xy-connectionline-stroke: var(--primary);
+	--xy-connectionline-stroke-width: 2;
+
+	--xy-minimap-background-color: var(--card);
+	--xy-minimap-mask-background-color: rgba(14, 14, 19, 0.7);
+	--xy-minimap-node-background-color: var(--muted);
+	--xy-minimap-node-stroke-color: var(--border);
+
+	--xy-controls-button-background-color: var(--card);
+	--xy-controls-button-background-color-hover: var(--accent);
+	--xy-controls-button-color: var(--foreground);
+	--xy-controls-button-color-hover: var(--foreground);
+	--xy-controls-button-border-color: var(--border);
+
+	--xy-attribution-background-color: transparent;
+}
+
+.react-flow__controls {
+	border-radius: var(--radius);
+	border: 1px solid var(--border);
+	overflow: hidden;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.react-flow__controls button {
+	width: 28px;
+	height: 28px;
+}
+
+.react-flow__controls button svg {
+	max-width: 14px;
+	max-height: 14px;
+	fill: var(--foreground);
+}
+
+.react-flow__minimap {
+	border-radius: var(--radius);
+	border: 1px solid var(--border);
+	overflow: hidden;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.react-flow__handle {
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	border: 2px solid var(--card);
+	background: var(--muted-foreground);
+	transition: background 150ms ease, transform 150ms ease;
+}
+
+.react-flow__handle:hover {
+	background: var(--primary);
+	transform: scale(1.3);
+}
+
+.react-flow__handle-connecting {
+	background: var(--destructive);
+}
+
+.react-flow__handle-valid {
+	background: var(--primary);
+}
+
+.react-flow__background pattern line,
+.react-flow__background pattern circle {
+	stroke: var(--border);
+	fill: var(--border);
+}

@@ -43,11 +43,18 @@ export const getWorkflowFiles = async (args: GetWorkflowFileArgs) => {
 	return prisma.workflow_file.findMany({
 		where: {
 			type: args.type,
-			user_id:
-				args.type === "user_created" ? args.clerkUserId : undefined,
+			user:
+				args.type === "user_created"
+					? {
+							clerk_id: args.clerkUserId,
+						}
+					: undefined,
 			name: {
 				contains: args.search,
 			},
+		},
+		orderBy: {
+			created_at: "desc",
 		},
 	});
 };

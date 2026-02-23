@@ -10,6 +10,7 @@ import z from "zod";
 import { sendJsonApiResponse } from "./api";
 import { ApiError } from "@/types/errors/api-error";
 import { logger } from "./logger";
+import {} from "@clerk/nextjs/server";
 
 export function createApi<
 	TBody extends z.ZodTypeAny | undefined = undefined,
@@ -25,7 +26,11 @@ export function createApi<
 				: undefined;
 
 			if (config.requireAuth) {
-				const { userId } = await auth();
+				const { userId, isAuthenticated } = await auth();
+
+				if (!isAuthenticated) {
+					throw new ApiError("Unauthorized", 401);
+				}
 
 				if (!userId) {
 					return NextResponse.json(

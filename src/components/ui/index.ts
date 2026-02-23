@@ -36,6 +36,14 @@ export {
 	DropdownMenuRadioGroup,
 } from "./dropdown-menu"
 export { Input, inputVariants } from "./input"
+export {
+	InputGroup,
+	InputGroupAddon,
+	InputGroupButton,
+	InputGroupInput,
+	InputGroupText,
+	InputGroupTextarea,
+} from "./input-group"
 export { Label, labelVariants } from "./label"
 export { Popover, PopoverTrigger, PopoverContent, PopoverAnchor } from "./popover"
 export { Progress, progressVariants } from "./progress"

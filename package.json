@@ -43,6 +43,7 @@
 		"@radix-ui/react-tooltip": "^1.2.8",
 		"@t3-oss/env-nextjs": "^0.13.10",
 		"@tanstack/react-query": "^5.90.21",
+		"@xyflow/react": "^12.10.1",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
 		"framer-motion": "^12.34.3",
@@ -56,8 +57,11 @@
 		"react-icons": "^5.5.0",
 		"sonner": "^2.0.7",
 		"tailwind-merge": "^3.5.0",
+		"unique-names-generator": "^4.7.1",
+		"use-debounce": "^10.1.0",
 		"winston": "^3.19.0",
-		"zod": "^4.3.6"
+		"zod": "^4.3.6",
+		"zustand": "^5.0.11"
 	},
 	"devDependencies": {
 		"@tailwindcss/postcss": "^4",

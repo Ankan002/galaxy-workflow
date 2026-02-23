@@ -36,3 +36,20 @@ export const APP_NAV_ITEMS: AppNavItem[] = [
 		href: "/apps",
 	},
 ];
+
+export const API_ROUTES = {
+	WORKFLOW_FILE: {
+		CREATE: {
+			path: "/api/workflow-file",
+			method: "POST",
+			key: "create-workflow-file",
+		},
+		GET: {
+			path: "/api/workflow-file",
+			method: "GET",
+			key: "get-workflow-files",
+		},
+	},
+};
+
+export const DEBOUNCE_TIME = 500;
