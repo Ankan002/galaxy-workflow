@@ -13,14 +13,19 @@ set -e
 C_RESET="\\033[0m"
 C_DEV="\\033[1;36m"      # bold cyan for [dev]
 C_TUNNEL="\\033[1;35m"   # bold magenta for [tunnel]
+C_STUDIO="\\033[1;32m"   # bold green for [studio]
 C_SCRIPT="\\033[90m"     # dim gray for [dev.sh]
 
 LOG_PREFIX_DEV="\${C_DEV}[dev]\${C_RESET}"
 LOG_PREFIX_TUNNEL="\${C_TUNNEL}[tunnel]\${C_RESET}"
+LOG_PREFIX_STUDIO="\${C_STUDIO}[studio]\${C_RESET}"
 
 # Same as package.json "tunnel" script (ngrok)
 TUNNEL_URL="${tunnelUrl}"
 TUNNEL_CMD="ngrok http --url=\${TUNNEL_URL} 3000"
+
+# Same as package.json "db:studio" script (bunx uses project's prisma)
+STUDIO_CMD="bunx prisma studio"
 
 cleanup() {
   [ -n "\${CLEANUP_DONE:-}" ] && return
@@ -29,12 +34,13 @@ cleanup() {
   echo -e "\${C_SCRIPT}[dev.sh]\${C_RESET} Shutting down..."
   [ -n "\${DEV_PID:-}" ] && { pkill -P $DEV_PID 2>/dev/null; kill $DEV_PID 2>/dev/null; } || true
   [ -n "\${TUNNEL_PID:-}" ] && { pkill -P $TUNNEL_PID 2>/dev/null; kill $TUNNEL_PID 2>/dev/null; } || true
+  [ -n "\${STUDIO_PID:-}" ] && { pkill -P $STUDIO_PID 2>/dev/null; kill $STUDIO_PID 2>/dev/null; } || true
   exit 0
 }
 
 trap cleanup SIGINT SIGTERM EXIT
 
-echo -e "\${C_SCRIPT}[dev.sh]\${C_RESET} Starting dev server and tunnel in parallel..."
+echo -e "\${C_SCRIPT}[dev.sh]\${C_RESET} Starting dev server, tunnel, and Prisma Studio in parallel..."
 echo -e "\${C_SCRIPT}[dev.sh]\${C_RESET} Tunnel URL: https://\${TUNNEL_URL}"
 echo ""
 
@@ -44,8 +50,11 @@ DEV_PID=$!
 ( $TUNNEL_CMD 2>&1 | while IFS= read -r line; do echo -e "$LOG_PREFIX_TUNNEL $line"; done ) &
 TUNNEL_PID=$!
 
-echo -e "\${C_SCRIPT}[dev.sh]\${C_RESET} dev server PID: $DEV_PID | tunnel PID: $TUNNEL_PID"
-echo -e "\${C_SCRIPT}[dev.sh]\${C_RESET} Press Ctrl+C to stop both"
+( $STUDIO_CMD 2>&1 | while IFS= read -r line; do echo -e "$LOG_PREFIX_STUDIO $line"; done ) &
+STUDIO_PID=$!
+
+echo -e "\${C_SCRIPT}[dev.sh]\${C_RESET} dev PID: $DEV_PID | tunnel PID: $TUNNEL_PID | studio PID: $STUDIO_PID"
+echo -e "\${C_SCRIPT}[dev.sh]\${C_RESET} Press Ctrl+C to stop all"
 echo ""
 
 wait

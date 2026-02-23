@@ -1,3 +1,6 @@
+import { AppNavItem } from "@/types/common";
+import { GalleryVerticalEnd, SquarePlay, Users } from "lucide-react";
+
 export const SIGN_IN_URL = "/auth/sign-in";
 export const SIGN_UP_URL = "/auth/sign-up";
 export const DASHBOARD_URL = "/";
@@ -14,3 +17,22 @@ export const OAUTH_ERROR_MAP: Record<string, string> = {
 
 	server_error: "The provider encountered an error. Try again later.",
 };
+
+export const APP_NAV_ITEMS: AppNavItem[] = [
+	{
+		Icon: GalleryVerticalEnd,
+		label: "My Files",
+		href: "/",
+	},
+	{
+		Icon: Users,
+		label: "Shared with me",
+		href: "/shared-with-me",
+		isDisabled: true,
+	},
+	{
+		Icon: SquarePlay,
+		label: "Apps",
+		href: "/apps",
+	},
+];
