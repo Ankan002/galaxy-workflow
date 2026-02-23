@@ -1,18 +1,41 @@
 import { useUser } from "@clerk/nextjs";
 import { useAPIErrorHandler } from "@/hooks/use-error-handler";
-import { useCreateWorkflowFile } from "@/services/client-api/workflow-file";
+import {
+	useCreateWorkflowFile,
+	useGetWorkflowFiles,
+} from "@/services/client-api/workflow-file";
 import { toast } from "sonner";
+import { useEffect, useState } from "react";
+import { useDebounce, useDebouncedCallback } from "use-debounce";
+import { DEBOUNCE_TIME } from "@/config/client-constants";
+import { clientUtils } from "@/utils/client";
 
 export const useMyFiles = () => {
 	const { APIErrorHandler } = useAPIErrorHandler();
 	const { user, isLoaded } = useUser();
 
+	const [search, setSearch] = useState<string>("");
+
+	const [debouncedSearch] = useDebounce(search, DEBOUNCE_TIME);
+	const onDebouncedSearchChange = useDebouncedCallback(
+		() => {},
+		DEBOUNCE_TIME,
+	);
+
 	const {
 		mutateAsync: createWorkflowFile,
 		isPending: isCreatingWorkflowFile,
 	} = useCreateWorkflowFile();
+	const {
+		data: workflowFiles,
+		isLoading: isLoadingWorkflowFiles,
+		error: workflowFilesError,
+	} = useGetWorkflowFiles({
+		query: debouncedSearch,
+	});
 
 	const createWorkflowFileErrorHandler = APIErrorHandler();
+	const getWorkflowFilesErrorHandler = APIErrorHandler();
 
 	const handleCreateWorkflowFile = async () => {
 		if (isCreatingWorkflowFile) {
@@ -32,10 +55,29 @@ export const useMyFiles = () => {
 		}
 	};
 
+	useEffect(() => {
+		if (workflowFilesError) {
+			getWorkflowFilesErrorHandler(workflowFilesError);
+		}
+	}, [workflowFilesError]);
+
+	useEffect(() => {
+		if (workflowFiles) {
+			console.log({ workflowFiles });
+		}
+	}, [workflowFiles]);
+
 	return {
 		user,
 		isLoaded,
 		handleCreateWorkflowFile,
 		isCreatingWorkflowFile,
+		isLoadingWorkflowFiles,
+		workflowFiles,
+		search,
+		onSeachChange: clientUtils.uiEventsHandler.onTextInputChange(
+			setSearch,
+			onDebouncedSearchChange,
+		),
 	};
 };

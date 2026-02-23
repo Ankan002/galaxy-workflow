@@ -1,5 +1,4 @@
 import { AppNavItem } from "@/types/common";
-import { APIRouteConfig } from "@/types/common/api-route-config";
 import { GalleryVerticalEnd, SquarePlay, Users } from "lucide-react";
 
 export const SIGN_IN_URL = "/auth/sign-in";
@@ -52,3 +51,5 @@ export const API_ROUTES = {
 		},
 	},
 };
+
+export const DEBOUNCE_TIME = 500;

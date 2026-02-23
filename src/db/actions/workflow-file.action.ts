@@ -49,5 +49,8 @@ export const getWorkflowFiles = async (args: GetWorkflowFileArgs) => {
 				contains: args.search,
 			},
 		},
+		orderBy: {
+			created_at: "desc",
+		},
 	});
 };

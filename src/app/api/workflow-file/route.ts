@@ -1,4 +1,7 @@
-import { createWorkflowFile } from "@/db/actions/workflow-file.action";
+import {
+	createWorkflowFile,
+	getWorkflowFiles,
+} from "@/db/actions/workflow-file.action";
 import { workflow_file } from "@/db/prisma/client";
 import { createApi, sendJsonApiResponse } from "@/utils/server";
 import z from "zod";
@@ -35,6 +38,39 @@ export const POST = createApi<CreateWorkflowFileBody, undefined, true>({
 			success: true,
 			data: {
 				workflow_file: workflowFile,
+			},
+		});
+	},
+});
+
+const getWorkflowFilesQuerySchema = z.object({
+	query: z.string().trim().optional(),
+});
+
+type GetWorkflowFilesQuery = typeof getWorkflowFilesQuerySchema;
+
+interface GetWorkflowFilesResponseData {
+	workflow_files: workflow_file[];
+}
+
+export const GET = createApi<undefined, GetWorkflowFilesQuery, true>({
+	requireAuth: true,
+	querySchema: getWorkflowFilesQuerySchema,
+	execute: async ({ query, user }) => {
+		const { query: search } = query;
+		const { id } = user;
+
+		const workflowFiles = await getWorkflowFiles({
+			type: "user_created",
+			clerkUserId: id,
+			search,
+		});
+
+		return sendJsonApiResponse<GetWorkflowFilesResponseData>({
+			code: 200,
+			success: true,
+			data: {
+				workflow_files: workflowFiles,
 			},
 		});
 	},
