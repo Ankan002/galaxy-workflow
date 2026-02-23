@@ -18,7 +18,7 @@ const MyFilesScreen = () => {
 		handleCreateWorkflowFile,
 		isCreatingWorkflowFile,
 		isLoadingWorkflowFiles,
-		onSeachChange,
+		onSearchChange,
 		search,
 		workflowFiles,
 	} = useMyFiles();
@@ -83,7 +83,7 @@ const MyFilesScreen = () => {
 								<InputGroupInput
 									placeholder="Search"
 									value={search}
-									onChange={onSeachChange}
+									onChange={onSearchChange}
 									className="placeholder:text-xs text-xs"
 								/>
 								<InputGroupAddon align="inline-start">

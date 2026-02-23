@@ -5,19 +5,20 @@ import {
 	useGetWorkflowFiles,
 } from "@/services/client-api/workflow-file";
 import { toast } from "sonner";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDebounce, useDebouncedCallback } from "use-debounce";
 import { useQueryClient } from "@tanstack/react-query";
 import { DEBOUNCE_TIME, API_ROUTES } from "@/config/client-constants";
 import { clientUtils } from "@/utils/client";
 import { workflow_file } from "@/db/prisma/client";
+import { useFileSearchStore } from "@/store/file-search.store";
 
 export const useMyFiles = () => {
 	const { APIErrorHandler } = useAPIErrorHandler();
 	const { user, isLoaded } = useUser();
 	const queryClient = useQueryClient();
 
-	const [search, setSearch] = useState<string>("");
+	const { search, setSearch } = useFileSearchStore();
 
 	const [debouncedSearch] = useDebounce(search, DEBOUNCE_TIME);
 	const onDebouncedSearchChange = useDebouncedCallback(
@@ -80,7 +81,7 @@ export const useMyFiles = () => {
 		isLoadingWorkflowFiles,
 		workflowFiles,
 		search,
-		onSeachChange: clientUtils.uiEventsHandler.onTextInputChange(
+		onSearchChange: clientUtils.uiEventsHandler.onTextInputChange(
 			setSearch,
 			onDebouncedSearchChange,
 		),
