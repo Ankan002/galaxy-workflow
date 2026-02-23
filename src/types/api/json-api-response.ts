@@ -8,6 +8,5 @@ export type JsonApiResponse<D = void> =
 	| {
 			success: false;
 			code: number;
-			message: string;
 			error?: string;
 	  };

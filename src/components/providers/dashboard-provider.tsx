@@ -24,7 +24,7 @@ export const DashboardProvider: React.FC<Props> = ({
 					<div className="w-full flex justify-between items-center my-8 px-8 min-h-10">
 						<div className="flex items-center">
 							{isHeadingLoading ? (
-								<Skeleton className="h-5 w-24 bg-primary" />
+								<Skeleton className="h-5 w-24" />
 							) : (
 								<p className="text-foreground text-sm ml-1">
 									{heading}
