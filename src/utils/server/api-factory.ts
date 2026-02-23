@@ -1,3 +1,4 @@
+import { Prisma } from "@/db/prisma/client";
 import { ApiHandler } from "@/types/api";
 import type {
 	InferBodyOrUndefined,
@@ -6,6 +7,9 @@ import type {
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import z from "zod";
+import { sendJsonApiResponse } from "./api";
+import { ApiError } from "@/types/errors/api-error";
+import { logger } from "./logger";
 
 export function createApi<
 	TBody extends z.ZodTypeAny | undefined = undefined,
@@ -62,23 +66,61 @@ export function createApi<
 				user,
 			});
 		} catch (error: unknown) {
-			// TODO: Write the error handlers correctly
-			/* --------------------------- Zod Validation --------------------------- */
+			logger.error(`API Error: ${error}`);
+			if (error instanceof Prisma.PrismaClientKnownRequestError) {
+				if (
+					(error as Prisma.PrismaClientKnownRequestError).code ===
+						"P2002" ||
+					(error as Prisma.PrismaClientKnownRequestError).code ===
+						"P2014"
+				) {
+					return sendJsonApiResponse({
+						success: false,
+						error: "Some unique item collision occurred!!",
+						code: 400,
+					});
+				}
+
+				if (
+					(error as Prisma.PrismaClientKnownRequestError).code ===
+					"P2023"
+				) {
+					return sendJsonApiResponse({
+						success: false,
+						error: "Either no data found or some inconsistent column data type found.",
+						code: 400,
+					});
+				}
+
+				if (
+					(error as Prisma.PrismaClientKnownRequestError).code ===
+					"P2025"
+				) {
+					return sendJsonApiResponse({
+						success: false,
+						error: "Data not found!!",
+						code: 404,
+					});
+				}
+			}
 
 			if (error instanceof z.ZodError) {
-				return NextResponse.json(
-					{
-						success: false,
-						message: "Validation failed",
-						errors: error.flatten(),
-					},
-					{ status: 400 },
-				);
+				return sendJsonApiResponse({
+					success: false,
+					error: error.issues[0].message,
+					code: 400,
+				});
+			}
+
+			if (error instanceof ApiError) {
+				return sendJsonApiResponse({
+					success: false,
+					error: error.message,
+					code: error.code,
+				});
 			}
 
 			/* --------------------------- Unexpected Error ------------------------- */
-
-			console.error("API Error:", error);
 
 			const message =
 				error instanceof Error

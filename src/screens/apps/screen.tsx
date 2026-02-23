@@ -14,7 +14,7 @@ const AppsScreen = () => {
 			heading={user ? `${user.fullName}'s Workspace` : "Workspace"}
 		>
 			<div className="flex-1 flex flex-col items-center justify-center font-sans">
-				<SquarePlay size={40} />
+				<SquarePlay size={40} strokeWidth={0.75} />
 				<p className="mt-4 text-lg">No design apps</p>
 				<Badge
 					className="mt-6 border border-foreground/80 p-2 rounded-sm cursor-pointer"
