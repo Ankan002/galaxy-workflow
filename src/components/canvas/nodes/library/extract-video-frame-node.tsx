@@ -1,11 +1,12 @@
 "use client";
 
 import { useCallback } from "react";
-import type { NodeProps } from "@xyflow/react";
+import { useReactFlow, type NodeProps } from "@xyflow/react";
 import { NodeType } from "../registry/types";
 import { BaseNode } from "../base-node";
 import type { NodeDefinition } from "../registry/types";
 import { useUpdateNodeConfig } from "../use-update-node-config";
+import { useWorkflowNodePersistence } from "@/components/canvas/workflow-node-persistence-context";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
@@ -23,16 +24,15 @@ export const EXTRACT_VIDEO_FRAME_DEFINITION: Omit<
 	description:
 		"Extract a single frame from video via FFmpeg (Trigger.dev). Input: video_url (mp4, mov, webm, m4v). Output: frame image URL (jpg/png).",
 	provider: "TRIGGER_DEV",
-	inputHandles: [
-		{ key: "video_url", type: "video", required: true },
-		{ key: "timestamp", type: "any", required: false },
-	],
+	inputHandles: [{ key: "video_url", type: "video", required: true }],
 	outputHandles: [{ key: "output", type: "string" }],
 	defaultConfig: { timestamp: 0 },
 };
 
 export function ExtractVideoFrameNode({ id, data, selected }: NodeProps) {
+	const { getNode } = useReactFlow();
 	const updateConfig = useUpdateNodeConfig(id);
+	const { onNodeDetailsBlur } = useWorkflowNodePersistence();
 	const config =
 		(data?.config ?? EXTRACT_VIDEO_FRAME_DEFINITION.defaultConfig) as ExtractVideoFrameNodeConfig;
 	const status = data?.status as "idle" | "running" | "completed" | "failed" | undefined;
@@ -41,6 +41,20 @@ export function ExtractVideoFrameNode({ id, data, selected }: NodeProps) {
 	const setTimestamp = useCallback(
 		(v: number | string) => updateConfig({ timestamp: v }),
 		[updateConfig],
+	);
+
+	const handleBlur = useCallback(
+		(e: React.FocusEvent) => {
+			if (e.relatedTarget != null && e.currentTarget.contains(e.relatedTarget as HTMLElement)) return;
+			const node = getNode(id);
+			if (!node) return;
+			onNodeDetailsBlur(id, {
+				config: (node.data?.config as Record<string, unknown>) ?? {},
+				positionX: node.position.x,
+				positionY: node.position.y,
+			});
+		},
+		[id, getNode, onNodeDetailsBlur],
 	);
 
 	const displayValue =
@@ -55,7 +69,7 @@ export function ExtractVideoFrameNode({ id, data, selected }: NodeProps) {
 			outputHandles={EXTRACT_VIDEO_FRAME_DEFINITION.outputHandles}
 			selected={selected}
 		>
-			<div className="space-y-2 nodrag nopan">
+			<div className="space-y-2 nodrag nopan" onBlur={handleBlur}>
 				<div className="space-y-1">
 					<Label className="text-[10px] text-muted-foreground">
 						Timestamp (seconds or %, e.g. 10 or 50%)

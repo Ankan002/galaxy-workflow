@@ -1,11 +1,12 @@
 "use client";
 
 import { useCallback } from "react";
-import type { NodeProps } from "@xyflow/react";
+import { useReactFlow, type NodeProps } from "@xyflow/react";
 import { NodeType } from "../registry/types";
 import { BaseNode } from "../base-node";
 import type { NodeDefinition } from "../registry/types";
 import { useUpdateNodeConfig } from "../use-update-node-config";
+import { useWorkflowNodePersistence } from "@/components/canvas/workflow-node-persistence-context";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { VideoIcon } from "lucide-react";
@@ -29,15 +30,14 @@ export const VIDEO_UPLOAD_DEFINITION: Omit<
 	description: "Upload via Transloadit. Accepted: mp4, mov, webm, m4v. Output: video URL.",
 	provider: "TRANSLOADIT",
 	inputHandles: [],
-	outputHandles: [
-		{ key: "url", type: "string" },
-		{ key: "video", type: "video" },
-	],
+	outputHandles: [{ key: "url", type: "string" }],
 	defaultConfig: { accept: DEFAULT_ACCEPT, maxSizeMb: 500 },
 };
 
 export function VideoUploadNode({ id, data, selected }: NodeProps) {
+	const { getNode } = useReactFlow();
 	const updateConfig = useUpdateNodeConfig(id);
+	const { onNodeDetailsBlur } = useWorkflowNodePersistence();
 	const config = (data?.config ?? VIDEO_UPLOAD_DEFINITION.defaultConfig) as VideoUploadNodeConfig;
 	const status = data?.status as "idle" | "running" | "completed" | "failed" | undefined;
 	const accept = config.accept ?? DEFAULT_ACCEPT;
@@ -57,6 +57,20 @@ export function VideoUploadNode({ id, data, selected }: NodeProps) {
 		[updateConfig],
 	);
 
+	const handleBlur = useCallback(
+		(e: React.FocusEvent) => {
+			if (e.relatedTarget != null && e.currentTarget.contains(e.relatedTarget as HTMLElement)) return;
+			const node = getNode(id);
+			if (!node) return;
+			onNodeDetailsBlur(id, {
+				config: (node.data?.config as Record<string, unknown>) ?? {},
+				positionX: node.position.x,
+				positionY: node.position.y,
+			});
+		},
+		[id, getNode, onNodeDetailsBlur],
+	);
+
 	return (
 		<BaseNode
 			label={VIDEO_UPLOAD_DEFINITION.label}
@@ -66,7 +80,7 @@ export function VideoUploadNode({ id, data, selected }: NodeProps) {
 			outputHandles={VIDEO_UPLOAD_DEFINITION.outputHandles}
 			selected={selected}
 		>
-			<div className="space-y-2 nodrag nopan">
+			<div className="space-y-2 nodrag nopan" onBlur={handleBlur}>
 				<div className="space-y-1">
 					<Label className="text-[10px] text-muted-foreground">
 						Accept ({ACCEPTED_VIDEO_EXTENSIONS})

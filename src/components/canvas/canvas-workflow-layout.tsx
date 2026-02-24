@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { WorkflowCanvas } from "./workflow-canvas";
 import { CanvasNodeSidebar } from "./canvas-node-sidebar";
 import { CanvasRightSidebar } from "./canvas-right-sidebar";
+import { WorkflowNodePersistenceProvider } from "./workflow-node-persistence-context";
 import { NODE_REGISTRY, NodeType } from "./nodes/registry";
 import type { InteractionMode } from "./canvas-bottom-island";
 
@@ -54,6 +55,15 @@ interface CanvasWorkflowLayoutProps {
 	onNodeCreated?: (node: Node) => void;
 	/** When true, disables node/edge editing, connecting, and dropping new nodes. */
 	isEditorDisabled?: boolean;
+	/** Called when a node’s config/position should be persisted (e.g. on blur). */
+	onNodeDetailsBlur?: (
+		nodeId: string,
+		payload: {
+			config: Record<string, unknown>;
+			positionX: number;
+			positionY: number;
+		},
+	) => void | Promise<void>;
 }
 
 function CanvasWorkflowLayoutInner({
@@ -72,6 +82,7 @@ function CanvasWorkflowLayoutInner({
 	pushHistoryBeforeChange,
 	onNodeCreated,
 	isEditorDisabled = false,
+	onNodeDetailsBlur,
 }: CanvasWorkflowLayoutProps) {
 	const flowInstanceRef = useRef<ReactFlowInstance | null>(null);
 	const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -139,6 +150,7 @@ function CanvasWorkflowLayoutInner({
 	}, []);
 
 	return (
+		<WorkflowNodePersistenceProvider onNodeDetailsBlur={onNodeDetailsBlur ?? (() => {})}>
 		<div className="flex h-full w-full">
 			<CanvasNodeSidebar
 				workflowSidebar={workflowSidebar}
@@ -190,6 +202,7 @@ function CanvasWorkflowLayoutInner({
 				disabled={isEditorDisabled}
 			/>
 		</div>
+		</WorkflowNodePersistenceProvider>
 	);
 }
 
