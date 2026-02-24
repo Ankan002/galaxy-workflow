@@ -2,6 +2,7 @@
 
 import { useCallback } from "react";
 import { useReactFlow, type NodeProps } from "@xyflow/react";
+import { Film } from "lucide-react";
 import { NodeType } from "../registry/types";
 import { BaseNode } from "../base-node";
 import type { NodeDefinition } from "../registry/types";
@@ -22,9 +23,12 @@ export const EXTRACT_VIDEO_FRAME_DEFINITION: Omit<
 	type: NodeType.EXTRACT_VIDEO_FRAME,
 	label: "Extract Frame from Video",
 	description:
-		"Extract a single frame from video via FFmpeg (Trigger.dev). Input: video_url (mp4, mov, webm, m4v). Output: frame image URL (jpg/png).",
+		"Extract a single frame from video via FFmpeg (Trigger.dev). Input: video_url (mp4, mov, webm, m4v), optional timestamp (seconds or e.g. 50%). Output: frame image URL (jpg/png, via Transloadit).",
 	provider: "TRIGGER_DEV",
-	inputHandles: [{ key: "video_url", type: "video", required: true }],
+	inputHandles: [
+		{ key: "video_url", type: "video", required: true },
+		{ key: "timestamp", type: "string", required: false },
+	],
 	outputHandles: [{ key: "output", type: "string" }],
 	defaultConfig: { timestamp: 0 },
 };
@@ -68,6 +72,7 @@ export function ExtractVideoFrameNode({ id, data, selected }: NodeProps) {
 			inputHandles={EXTRACT_VIDEO_FRAME_DEFINITION.inputHandles}
 			outputHandles={EXTRACT_VIDEO_FRAME_DEFINITION.outputHandles}
 			selected={selected}
+			icon={<Film className="size-4" />}
 		>
 			<div className="space-y-2 nodrag nopan" onBlur={handleBlur}>
 				<div className="space-y-1">
