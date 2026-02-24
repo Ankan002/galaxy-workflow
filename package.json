@@ -5,10 +5,10 @@
 	"scripts": {
 		"dev:trigger": "trigger dev",
 		"deploy:trigger": "trigger deploy",
-		"setup-dev": "bun run src/cmd/setup-dev.ts",
+		"setup-dev": "tsx src/cmd/setup-dev.ts",
 		"dev:tunnel": "chmod +x ./dev.sh && ./dev.sh",
 		"dev": "next dev",
-		"build": "bun db:push && bun db:generate && bun db:sync && next build",
+		"build": "npm run db:push && npm run db:generate && npm run db:sync && next build",
 		"start": "next start",
 		"lint": "eslint",
 		"test": "vitest run",
@@ -19,7 +19,7 @@
 		"db:push": "prisma db push --accept-data-loss",
 		"db:push-dev": "prisma db push",
 		"db:studio": "prisma studio",
-		"db:sync": "bun run src/cmd/sync-users.ts"
+		"db:sync": "tsx src/cmd/sync-users.ts"
 	},
 	"dependencies": {
 		"@clerk/nextjs": "^6.38.0",
