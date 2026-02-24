@@ -4,7 +4,9 @@ import {
 } from "@/db/actions/workflow-node.action";
 import type { workflow_node } from "@/db/prisma/client";
 import { assertWorkflowOwnership } from "@/utils/server/workflow-validators";
-import { createApi, sendJsonApiResponse } from "@/utils/server";
+import { serverUtilsRegistry } from "@/utils/server";
+
+const { createApi, sendJsonApiResponse } = serverUtilsRegistry;
 import z from "zod";
 
 const workflowNodeTypeSchema = z.union([

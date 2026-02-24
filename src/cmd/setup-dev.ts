@@ -1,7 +1,9 @@
 import inquirer from "inquirer";
 import { writeFile } from "node:fs/promises";
 import path from "node:path";
-import { logger } from "../utils/server/logger";
+import { serverUtilsRegistry } from "../utils/server";
+
+const { logger } = serverUtilsRegistry;
 
 const getDevScript = (tunnelUrl: string) => {
 	return `
