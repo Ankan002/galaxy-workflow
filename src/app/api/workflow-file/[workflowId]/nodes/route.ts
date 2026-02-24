@@ -9,7 +9,7 @@ import z from "zod";
 
 const workflowNodeTypeSchema = z.union([
 	z.literal("text"),
-	z.literal("image_uplaod"),
+	z.literal("image_upload"),
 	z.literal("video_upload"),
 	z.literal("run_llm"),
 	z.literal("crop_image"),

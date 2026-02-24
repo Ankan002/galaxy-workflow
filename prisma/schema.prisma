@@ -15,7 +15,7 @@ enum workflow_type {
 
 enum workflow_node_type {
   text
-  image_uplaod
+  image_upload
   video_upload
   run_llm
   crop_image
