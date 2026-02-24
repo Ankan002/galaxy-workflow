@@ -3,7 +3,6 @@ import { ffmpeg } from "@trigger.dev/build/extensions/core";
 import "dotenv/config";
 
 export default defineConfig({
-	// Your project ref from the Trigger.dev dashboard (e.g. proj_abc123)
 	project: process.env["TRIGGER_PROJECT_REF"]!,
 
 	runtime: "bun",
