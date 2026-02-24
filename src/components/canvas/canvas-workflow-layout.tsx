@@ -1,11 +1,12 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { ReactFlowProvider, type Node, type ReactFlowInstance } from "@xyflow/react";
 import { PanelLeft, PanelLeftClose } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { WorkflowCanvas } from "./workflow-canvas";
 import { CanvasNodeSidebar } from "./canvas-node-sidebar";
+import { CanvasRightSidebar } from "./canvas-right-sidebar";
 import { NODE_REGISTRY, NodeType } from "./nodes/registry";
 import type { InteractionMode } from "./canvas-bottom-island";
 
@@ -70,7 +71,20 @@ function CanvasWorkflowLayoutInner({
 }: CanvasWorkflowLayoutProps) {
 	const flowInstanceRef = useRef<ReactFlowInstance | null>(null);
 	const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+	const [rightSidebarCollapsed, setRightSidebarCollapsed] = useState(false);
 	const [interactionMode, setInteractionMode] = useState<InteractionMode>("select");
+
+	const hasSelectedNode = useMemo(
+		() => nodes.some((n) => n.selected),
+		[nodes],
+	);
+
+	const handleRunSelectedNode = useCallback(() => {
+		// TODO: wire to run selected node action
+	}, []);
+	const handleTriggerFlow = useCallback(() => {
+		// TODO: wire to trigger whole flow action
+	}, []);
 
 	const onDrop = useCallback(
 		(e: React.DragEvent) => {
@@ -129,7 +143,7 @@ function CanvasWorkflowLayoutInner({
 				<Button
 					variant="outline"
 					size="icon"
-					className="absolute left-0 top-4 z-20 size-9 shrink-0 -translate-x-1/2 rounded-full border-border bg-background shadow-md hover:bg-accent"
+					className="absolute bottom-4 left-0 z-20 size-9 shrink-0 -translate-x-1/2 rounded-full border-border bg-background shadow-md hover:bg-accent"
 					onClick={() => setSidebarCollapsed((c) => !c)}
 					title={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
 				>
@@ -159,6 +173,14 @@ function CanvasWorkflowLayoutInner({
 					}}
 				/>
 			</div>
+			<CanvasRightSidebar
+				collapsed={rightSidebarCollapsed}
+				onToggleCollapsed={() => setRightSidebarCollapsed((c) => !c)}
+				hasSelectedNode={hasSelectedNode}
+				onRunSelectedNode={handleRunSelectedNode}
+				onTriggerFlow={handleTriggerFlow}
+				disabled={isEditorDisabled}
+			/>
 		</div>
 	);
 }
