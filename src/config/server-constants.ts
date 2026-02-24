@@ -12,8 +12,8 @@ export const DASHBOARD_URL = "/";
 
 export const VALID_NODE_CONNECTIONS = [
 	`${workflow_node_type.text}-${workflow_node_type.run_llm}`,
-	`${workflow_node_type.image_uplaod}-${workflow_node_type.run_llm}`,
-	`${workflow_node_type.image_uplaod}-${workflow_node_type.crop_image}`,
+	`${workflow_node_type.image_upload}-${workflow_node_type.run_llm}`,
+	`${workflow_node_type.image_upload}-${workflow_node_type.crop_image}`,
 	`${workflow_node_type.crop_image}-${workflow_node_type.run_llm}`,
 	`${workflow_node_type.crop_image}-${workflow_node_type.crop_image}`,
 	`${workflow_node_type.video_upload}-${workflow_node_type.extract_video_frame}`,

@@ -52,10 +52,12 @@ export interface WorkflowCanvasTriggers {
 	onNodeCreated?: (node: Node) => void;
 	/** Fired when a node is removed (delete key or removeNode). Receives the node id and the removed node data (if available). */
 	onNodeDeleted?: (nodeId: string, node: Node | null) => void;
-	/** Fired when a new edge is created (user connects two handles). */
-	onEdgeCreated?: (connection: Connection) => void;
+	/** Fired when a new edge is created (user connects two handles). Receives the connection and the new edge (with client id). */
+	onEdgeCreated?: (connection: Connection, edge: Edge) => void;
 	/** Fired when an edge is removed. */
 	onEdgeDeleted?: (edgeId: string) => void;
+	/** Fired when an edge is updated (e.g. reconnected – source/target/handles change). */
+	onEdgeUpdated?: (edge: Edge) => void;
 	/** Fired when the user triggers a workflow run (e.g. Run button). Use with a Run action in your UI. */
 	onWorkflowRun?: (payload: WorkflowChangePayload) => void;
 }
@@ -89,6 +91,7 @@ export function useWorkflowCanvas(options: UseWorkflowCanvasOptions = {}) {
 		onNodeDeleted: options.onNodeDeleted,
 		onEdgeCreated: options.onEdgeCreated,
 		onEdgeDeleted: options.onEdgeDeleted,
+		onEdgeUpdated: options.onEdgeUpdated,
 		onWorkflowRun: options.onWorkflowRun,
 	});
 
@@ -106,9 +109,10 @@ export function useWorkflowCanvas(options: UseWorkflowCanvasOptions = {}) {
 			onNodeDeleted: options.onNodeDeleted,
 			onEdgeCreated: options.onEdgeCreated,
 			onEdgeDeleted: options.onEdgeDeleted,
+			onEdgeUpdated: options.onEdgeUpdated,
 			onWorkflowRun: options.onWorkflowRun,
 		};
-	}, [options.onWorkflowChange, options.onNodeCreated, options.onNodeDeleted, options.onEdgeCreated, options.onEdgeDeleted, options.onWorkflowRun]);
+	}, [options.onWorkflowChange, options.onNodeCreated, options.onNodeDeleted, options.onEdgeCreated, options.onEdgeDeleted, options.onEdgeUpdated, options.onWorkflowRun]);
 
 	useEffect(() => {
 		const fn = onWorkflowChangeRef.current;
@@ -156,13 +160,19 @@ export function useWorkflowCanvas(options: UseWorkflowCanvasOptions = {}) {
 		(connection) => {
 			pushHistoryBeforeChange();
 			const variant = getEdgeVariantFromConnection(nodes, connection);
-			setEdges((eds) =>
-				addEdge(
-					{ ...connection, type: "workflow", data: { variant } },
-					eds,
-				),
+			const newEdges = addEdge(
+				{ ...connection, type: "workflow", data: { variant } },
+				latestRef.current.edges,
 			);
-			triggersRef.current.onEdgeCreated?.(connection);
+			setEdges(newEdges);
+			const newEdge = newEdges.find(
+				(e) =>
+					e.source === connection.source &&
+					e.target === connection.target &&
+					e.sourceHandle === connection.sourceHandle &&
+					e.targetHandle === connection.targetHandle,
+			);
+			if (newEdge) triggersRef.current.onEdgeCreated?.(connection, newEdge);
 		},
 		[nodes, setEdges, pushHistoryBeforeChange],
 	);
@@ -194,6 +204,16 @@ export function useWorkflowCanvas(options: UseWorkflowCanvasOptions = {}) {
 					if (c.type === "remove") {
 						triggersRef.current.onEdgeDeleted?.(c.id);
 					}
+				}
+			}
+			const replaceChanges = changes.filter(
+				(c): c is EdgeChange & { type: "replace"; item: Edge } =>
+					c.type === "replace" && "item" in c && c.item != null,
+			);
+			if (replaceChanges.length > 0) {
+				pushHistoryBeforeChange();
+				for (const c of replaceChanges) {
+					triggersRef.current.onEdgeUpdated?.(c.item);
 				}
 			}
 			onEdgesChange(changes);

@@ -1,38 +1,33 @@
 "use client";
 
-import { useWorkflowCanvas, CanvasWorkflowLayout } from "@/components/canvas";
+import { CanvasWorkflowLayout } from "@/components/canvas";
+import { useWorkflowFile } from "./hook";
 
-const WorkflowScreen = () => {
-	const {
-		nodes,
-		edges,
-		onNodesChange,
-		onEdgesChange,
-		onConnect,
-		setNodes,
-		undo,
-		redo,
-		canUndo,
-		canRedo,
-		pushHistoryBeforeChange,
-		onNodeCreated,
-	} = useWorkflowCanvas();
+interface WorkflowScreenProps {
+	workflowId: string;
+}
+
+const WorkflowScreen = ({ workflowId }: WorkflowScreenProps) => {
+	const workflow = useWorkflowFile({ workflowId });
 
 	return (
 		<div className="h-screen w-full">
 			<CanvasWorkflowLayout
-				nodes={nodes}
-				edges={edges}
-				onNodesChange={onNodesChange}
-				onEdgesChange={onEdgesChange}
-				onConnect={onConnect}
-				setNodes={setNodes}
-				undo={undo}
-				redo={redo}
-				canUndo={canUndo}
-				canRedo={canRedo}
-				pushHistoryBeforeChange={pushHistoryBeforeChange}
-				onNodeCreated={onNodeCreated}
+				workflowId={workflowId}
+				workflowSidebar={workflow.workflowSidebar}
+				nodes={workflow.nodes}
+				edges={workflow.edges}
+				onNodesChange={workflow.onNodesChange}
+				onEdgesChange={workflow.onEdgesChange}
+				onConnect={workflow.onConnect}
+				setNodes={workflow.setNodes}
+				undo={workflow.undo}
+				redo={workflow.redo}
+				canUndo={workflow.canUndo}
+				canRedo={workflow.canRedo}
+				pushHistoryBeforeChange={workflow.pushHistoryBeforeChange}
+				onNodeCreated={workflow.onNodeCreated}
+				isEditorDisabled={workflow.isEditorDisabled}
 			/>
 		</div>
 	);
