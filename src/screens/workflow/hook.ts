@@ -12,13 +12,19 @@ import {
 import {
 	useCreateWorkflowNode,
 	useDeleteWorkflowNode,
+	useGetWorkflowNodes,
 } from "@/services/client-api/workflow-nodes";
 import {
 	useCreateWorkflowEdge,
 	useDeleteWorkflowEdge,
+	useGetWorkflowEdges,
 } from "@/services/client-api/workflow-edges";
 import { useWorkflowCanvas } from "@/components/canvas";
 import type { WorkflowCanvasTriggers } from "@/components/canvas";
+import {
+	mapWorkflowEdgesToFlow,
+	mapWorkflowNodesToFlow,
+} from "@/utils/client/workflow-canvas-mappers";
 
 interface UseWorkflowFileArgs {
 	workflowId: string;
@@ -41,10 +47,23 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 	const deleteNodeErrorHandler = APIErrorHandler();
 	const createEdgeErrorHandler = APIErrorHandler();
 	const deleteEdgeErrorHandler = APIErrorHandler();
+	const getWorkflowNodesErrorHandler = APIErrorHandler();
+	const getWorkflowEdgesErrorHandler = APIErrorHandler();
 
 	const { data: workflowFile, error: workflowFileError } = useGetWorkflowFile(
 		{ workflowId },
 	);
+	const {
+		data: workflowNodes,
+		error: workflowNodesError,
+		isLoading: isLoadingWorkflowNodes,
+	} = useGetWorkflowNodes({ workflowId });
+	const {
+		data: workflowEdges,
+		error: workflowEdgesError,
+		isLoading: isLoadingWorkflowEdges,
+	} = useGetWorkflowEdges({ workflowId });
+
 	const { mutateAsync: createWorkflowFile, isPending: isCreatingNewFile } =
 		useCreateWorkflowFile();
 	const { mutateAsync: updateWorkflowFile, isPending: isRenaming } =
@@ -198,6 +217,8 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 		onEdgeUpdated,
 	};
 
+	const hydratedForWorkflowIdRef = useRef<string | null>(null);
+
 	const {
 		nodes,
 		edges,
@@ -215,11 +236,39 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 	} = useWorkflowCanvas(workflowCanvasEvents);
 
 	useEffect(() => {
+		if (
+			workflowNodes === undefined ||
+			workflowEdges === undefined ||
+			hydratedForWorkflowIdRef.current === workflowId
+		) {
+			return;
+		}
+		setNodes(mapWorkflowNodesToFlow(workflowNodes));
+		setEdges(mapWorkflowEdgesToFlow(workflowEdges));
+		hydratedForWorkflowIdRef.current = workflowId;
+	}, [workflowId, workflowNodes, workflowEdges, setNodes, setEdges]);
+
+	useEffect(() => {
 		canvasStateRef.current = { setNodes, setEdges };
 		return () => {
 			canvasStateRef.current = null;
 		};
 	}, [setNodes, setEdges]);
+
+	useEffect(() => {
+		if (workflowNodesError) {
+			getWorkflowNodesErrorHandler(workflowNodesError);
+		}
+	}, [workflowNodesError]);
+
+	useEffect(() => {
+		if (workflowEdgesError) {
+			getWorkflowEdgesErrorHandler(workflowEdgesError);
+		}
+	}, [workflowEdgesError]);
+
+	const isEditorDisabled =
+		isLoadingWorkflowNodes || isLoadingWorkflowEdges;
 
 	return {
 		workflowSidebar: {
@@ -247,5 +296,6 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 		canRedo,
 		pushHistoryBeforeChange,
 		onNodeCreated: onNodeCreatedPassThrough,
+		isEditorDisabled,
 	};
 };

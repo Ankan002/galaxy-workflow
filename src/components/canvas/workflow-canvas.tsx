@@ -53,6 +53,8 @@ interface WorkflowCanvasProps
 		canUndo: boolean;
 		canRedo: boolean;
 	};
+	/** When true, nodes/edges cannot be dragged, connected, or selected. */
+	readOnly?: boolean;
 	className?: string;
 }
 
@@ -69,6 +71,7 @@ export function WorkflowCanvas({
 	showBackground = true,
 	backgroundVariant = BackgroundVariant.Dots,
 	bottomIsland,
+	readOnly = false,
 	className,
 	...rest
 }: WorkflowCanvasProps) {
@@ -105,7 +108,9 @@ export function WorkflowCanvas({
 				defaultEdgeOptions={{ type: "workflow" }}
 				fitView
 				proOptions={{ hideAttribution: true }}
-				nodesDraggable={interactionMode === "select"}
+				nodesDraggable={!readOnly && interactionMode === "select"}
+				nodesConnectable={!readOnly}
+				elementsSelectable={!readOnly}
 				panOnDrag={interactionMode === "pan"}
 				panOnScroll
 				zoomOnScroll={false}

@@ -27,6 +27,7 @@ const WorkflowScreen = ({ workflowId }: WorkflowScreenProps) => {
 				canRedo={workflow.canRedo}
 				pushHistoryBeforeChange={workflow.pushHistoryBeforeChange}
 				onNodeCreated={workflow.onNodeCreated}
+				isEditorDisabled={workflow.isEditorDisabled}
 			/>
 		</div>
 	);

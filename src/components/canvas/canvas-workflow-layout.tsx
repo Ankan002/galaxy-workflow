@@ -47,6 +47,8 @@ interface CanvasWorkflowLayoutProps {
 	pushHistoryBeforeChange: () => void;
 	/** Fired when a node is created by dropping from the sidebar. Optional. */
 	onNodeCreated?: (node: Node) => void;
+	/** When true, disables node/edge editing, connecting, and dropping new nodes. */
+	isEditorDisabled?: boolean;
 }
 
 function CanvasWorkflowLayoutInner({
@@ -64,6 +66,7 @@ function CanvasWorkflowLayoutInner({
 	canRedo,
 	pushHistoryBeforeChange,
 	onNodeCreated,
+	isEditorDisabled = false,
 }: CanvasWorkflowLayoutProps) {
 	const flowInstanceRef = useRef<ReactFlowInstance | null>(null);
 	const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -72,6 +75,7 @@ function CanvasWorkflowLayoutInner({
 	const onDrop = useCallback(
 		(e: React.DragEvent) => {
 			e.preventDefault();
+			if (isEditorDisabled) return;
 			const raw = e.dataTransfer.getData(DRAG_TYPE);
 			if (!raw) return;
 			let payload: { type: NodeType };
@@ -102,7 +106,7 @@ function CanvasWorkflowLayoutInner({
 			setNodes((nds) => [...nds, newNode]);
 			onNodeCreated?.(newNode);
 		},
-		[setNodes, pushHistoryBeforeChange, onNodeCreated],
+		[setNodes, pushHistoryBeforeChange, onNodeCreated, isEditorDisabled],
 	);
 
 	const onInit = useCallback((instance: ReactFlowInstance) => {
@@ -144,6 +148,7 @@ function CanvasWorkflowLayoutInner({
 					onDrop={onDrop}
 					onDragOver={onDragOver}
 					onInit={onInit}
+					readOnly={isEditorDisabled}
 					bottomIsland={{
 						interactionMode,
 						onInteractionModeChange: setInteractionMode,
