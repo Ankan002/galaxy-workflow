@@ -19,11 +19,6 @@ export interface CropImagePayload {
 }
 
 export interface CropImageOutput {
-	/** Cropped image as base64 data URL (e.g. data:image/png;base64,...). */
-	data_url: string;
-	/** MIME type of the cropped image (e.g. image/png). */
-	mime_type: string;
-	/** Public URL of the cropped image after upload to Transloadit. */
 	uploaded_url: string;
 }
 
@@ -231,11 +226,6 @@ export const cropImage = task({
 			const cropFilter = `crop=${wPx}:${hPx}:${xPx}:${yPx}`;
 			await runFfmpegCrop(inputPath, outputPath, cropFilter);
 
-			const outBuffer = await fs.readFile(outputPath);
-			const base64 = outBuffer.toString("base64");
-			const mime_type = "image/png";
-			const data_url = `data:${mime_type};base64,${base64}`;
-
 			const authKey = process.env["TRANSLOADIT_PUBLIC_KEY"];
 			const authSecret = process.env["TRANSLOADIT_SECRET_KEY"];
 			const templateId = process.env["TRANSLOADIT_IMAGE_TEMPLATE_ID"];
@@ -292,7 +282,7 @@ export const cropImage = task({
 				);
 			}
 
-			return { data_url, mime_type, uploaded_url };
+			return { uploaded_url };
 		} finally {
 			await fs.unlink(inputPath).catch(() => {});
 			await fs.unlink(outputPath).catch(() => {});
