@@ -1,4 +1,6 @@
-import { createApi, sendJsonApiResponse } from "@/utils/server";
+import { serverUtilsRegistry } from "@/utils/server";
+
+const { createApi, sendJsonApiResponse } = serverUtilsRegistry;
 
 export const GET = createApi({
 	execute: async () => {

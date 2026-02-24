@@ -1,6 +1,8 @@
 import { updateWorkflowFileName } from "@/db/actions/workflow-file.action";
 import { assertWorkflowOwnership } from "@/utils/server/workflow-validators";
-import { createApi, sendJsonApiResponse } from "@/utils/server";
+import { serverUtilsRegistry } from "@/utils/server";
+
+const { createApi, sendJsonApiResponse } = serverUtilsRegistry;
 import z from "zod";
 
 interface GetWorkflowFileResponseData {

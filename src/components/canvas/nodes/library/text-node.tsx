@@ -1,11 +1,12 @@
 "use client";
 
 import { useCallback } from "react";
-import type { NodeProps } from "@xyflow/react";
+import { useReactFlow, type NodeProps } from "@xyflow/react";
 import { NodeType } from "../registry/types";
 import { BaseNode } from "../base-node";
 import type { NodeDefinition } from "../registry/types";
 import { useUpdateNodeConfig } from "../use-update-node-config";
+import { useWorkflowNodePersistence } from "@/components/canvas/workflow-node-persistence-context";
 import { Textarea } from "@/components/ui/textarea";
 
 export interface TextNodeConfig {
@@ -23,7 +24,9 @@ export const TEXT_DEFINITION: Omit<NodeDefinition<TextNodeConfig>, "Component"> 
 };
 
 export function TextNode({ id, data, selected }: NodeProps) {
+	const { getNode } = useReactFlow();
 	const updateConfig = useUpdateNodeConfig(id);
+	const { onNodeDetailsBlur } = useWorkflowNodePersistence();
 	const config = (data?.config ?? TEXT_DEFINITION.defaultConfig) as TextNodeConfig;
 	const status = data?.status as "idle" | "running" | "completed" | "failed" | undefined;
 	const text = config.text ?? "";
@@ -32,6 +35,16 @@ export function TextNode({ id, data, selected }: NodeProps) {
 		(value: string) => updateConfig({ text: value }),
 		[updateConfig],
 	);
+
+	const handleBlur = useCallback(() => {
+		const node = getNode(id);
+		if (!node) return;
+		onNodeDetailsBlur(id, {
+			config: (node.data?.config as Record<string, unknown>) ?? {},
+			positionX: node.position.x,
+			positionY: node.position.y,
+		});
+	}, [id, getNode, onNodeDetailsBlur]);
 
 	return (
 		<BaseNode
@@ -46,6 +59,7 @@ export function TextNode({ id, data, selected }: NodeProps) {
 				<Textarea
 					value={text}
 					onChange={(e) => setText(e.target.value)}
+					onBlur={handleBlur}
 					placeholder="Enter text…"
 					className="min-h-[60px] resize-y text-xs"
 					rows={2}

@@ -1,5 +1,5 @@
 import type { Connection, Edge, Node } from "@xyflow/react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { DASHBOARD_URL } from "@/config/client-constants";
@@ -13,6 +13,7 @@ import {
 	useCreateWorkflowNode,
 	useDeleteWorkflowNode,
 	useGetWorkflowNodes,
+	useUpdateWorkflowNodeMutation,
 } from "@/services/client-api/workflow-nodes";
 import {
 	useCreateWorkflowEdge,
@@ -47,6 +48,7 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 	const deleteNodeErrorHandler = APIErrorHandler();
 	const createEdgeErrorHandler = APIErrorHandler();
 	const deleteEdgeErrorHandler = APIErrorHandler();
+	const updateNodeErrorHandler = APIErrorHandler();
 	const getWorkflowNodesErrorHandler = APIErrorHandler();
 	const getWorkflowEdgesErrorHandler = APIErrorHandler();
 
@@ -76,6 +78,8 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 		useCreateWorkflowEdge(workflowId);
 	const { mutateAsync: deleteWorkflowEdge } =
 		useDeleteWorkflowEdge(workflowId);
+	const { mutateAsync: updateWorkflowNode } =
+		useUpdateWorkflowNodeMutation(workflowId);
 
 	useEffect(() => {
 		if (workflowFileError) {
@@ -270,6 +274,30 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 	const isEditorDisabled =
 		isLoadingWorkflowNodes || isLoadingWorkflowEdges;
 
+	const onNodeDetailsBlur = useCallback(
+		async (
+			nodeId: string,
+			payload: {
+				config: Record<string, unknown>;
+				positionX: number;
+				positionY: number;
+			},
+		) => {
+			try {
+				await updateWorkflowNode({
+					workflowId,
+					nodeId,
+					config: payload.config,
+					positionX: payload.positionX,
+					positionY: payload.positionY,
+				});
+			} catch (error) {
+				updateNodeErrorHandler(error);
+			}
+		},
+		[workflowId, updateWorkflowNode, updateNodeErrorHandler],
+	);
+
 	return {
 		workflowSidebar: {
 			workflowFile,
@@ -297,5 +325,6 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 		pushHistoryBeforeChange,
 		onNodeCreated: onNodeCreatedPassThrough,
 		isEditorDisabled,
+		onNodeDetailsBlur,
 	};
 };

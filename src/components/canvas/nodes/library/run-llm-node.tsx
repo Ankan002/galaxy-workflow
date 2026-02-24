@@ -7,6 +7,7 @@ import { NodeType } from "../registry/types";
 import { BaseNode } from "../base-node";
 import type { NodeDefinition, InputHandleDef } from "../registry/types";
 import { useUpdateNodeConfig } from "../use-update-node-config";
+import { useWorkflowNodePersistence } from "@/components/canvas/workflow-node-persistence-context";
 import { Button } from "@/components/ui";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -45,8 +46,9 @@ function buildInputHandles(imageCount: number): InputHandleDef[] {
 const clampImageCount = (n: number) => Math.max(0, Math.floor(Number(n)));
 
 export function RunLlmNode({ id, data, selected }: NodeProps) {
-	const { setNodes, setEdges } = useReactFlow();
+	const { setNodes, setEdges, getNode } = useReactFlow();
 	const updateConfig = useUpdateNodeConfig(id);
+	const { onNodeDetailsBlur } = useWorkflowNodePersistence();
 	const config = (data?.config ?? RUN_LLM_DEFINITION.defaultConfig) as RunLlmNodeConfig;
 	const status = data?.status as "idle" | "running" | "completed" | "failed" | undefined;
 	const imageCount = clampImageCount(config.imageInputCount ?? 0);
@@ -103,6 +105,20 @@ export function RunLlmNode({ id, data, selected }: NodeProps) {
 		);
 	}, [id, imageCount, setNodes, setEdges]);
 
+	const handleBlur = useCallback(
+		(e: React.FocusEvent) => {
+			if (e.relatedTarget != null && e.currentTarget.contains(e.relatedTarget as HTMLElement)) return;
+			const node = getNode(id);
+			if (!node) return;
+			onNodeDetailsBlur(id, {
+				config: (node.data?.config as Record<string, unknown>) ?? {},
+				positionX: node.position.x,
+				positionY: node.position.y,
+			});
+		},
+		[id, getNode, onNodeDetailsBlur],
+	);
+
 	return (
 		<BaseNode
 			label={RUN_LLM_DEFINITION.label}
@@ -112,7 +128,10 @@ export function RunLlmNode({ id, data, selected }: NodeProps) {
 			outputHandles={RUN_LLM_DEFINITION.outputHandles}
 			selected={selected}
 		>
-			<div className="space-y-2 nodrag nopan">
+			<div
+				className="space-y-2 nodrag nopan"
+				onBlur={handleBlur}
+			>
 				<div className="space-y-1">
 					<Label className="text-[10px] text-muted-foreground">Model</Label>
 					<Input

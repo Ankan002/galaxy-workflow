@@ -28,6 +28,7 @@ const WorkflowScreen = ({ workflowId }: WorkflowScreenProps) => {
 				pushHistoryBeforeChange={workflow.pushHistoryBeforeChange}
 				onNodeCreated={workflow.onNodeCreated}
 				isEditorDisabled={workflow.isEditorDisabled}
+				onNodeDetailsBlur={workflow.onNodeDetailsBlur}
 			/>
 		</div>
 	);

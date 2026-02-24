@@ -3,7 +3,9 @@ import {
 	getWorkflowFiles,
 } from "@/db/actions/workflow-file.action";
 import { workflow_file } from "@/db/prisma/client";
-import { createApi, sendJsonApiResponse } from "@/utils/server";
+import { serverUtilsRegistry } from "@/utils/server";
+
+const { createApi, sendJsonApiResponse } = serverUtilsRegistry;
 import z from "zod";
 
 const createWorkflowFileBodySchema = z.object({

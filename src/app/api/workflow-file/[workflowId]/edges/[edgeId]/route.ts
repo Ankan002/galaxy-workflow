@@ -4,7 +4,9 @@ import {
 } from "@/db/actions/workflow-edge.action";
 import type { workflow_edge } from "@/db/prisma/client";
 import { assertWorkflowOwnership } from "@/utils/server/workflow-validators";
-import { createApi, sendJsonApiResponse } from "@/utils/server";
+import { serverUtilsRegistry } from "@/utils/server";
+
+const { createApi, sendJsonApiResponse } = serverUtilsRegistry;
 
 interface GetEdgeResponseData {
 	workflow_edge: workflow_edge | null;

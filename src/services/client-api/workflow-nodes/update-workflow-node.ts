@@ -1,7 +1,7 @@
 import { API_ROUTES } from "@/config/client-constants";
 import { workflow_node } from "@/db/prisma/browser";
 import { JsonApiResponse } from "@/types/api";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 
 interface UpdateWorkflowNodeResponseData {
 	workflow_node: workflow_node | null;
@@ -61,19 +61,18 @@ export const updateWorkflowNode = async (
 };
 
 export const useUpdateWorkflowNode = (workflowId: string, nodeId: string) => {
-	const queryClient = useQueryClient();
-
 	return useMutation({
 		mutationFn: (args: Omit<UpdateWorkflowNodeArgs, "workflowId" | "nodeId">) =>
 			updateWorkflowNode({ ...args, workflowId, nodeId }),
 		mutationKey: [API_ROUTES.WORKFLOW_NODE.UPDATE.key, workflowId, nodeId],
-		onSuccess: () => {
-			queryClient.invalidateQueries({
-				queryKey: [API_ROUTES.WORKFLOW_NODES.LIST.key, workflowId],
-			});
-			queryClient.invalidateQueries({
-				queryKey: [API_ROUTES.WORKFLOW_NODE.GET.key, workflowId, nodeId],
-			});
-		},
+	});
+};
+
+/** Mutation to update any node by id (e.g. on blur from node components). UI state is source of truth; we only sync to server. */
+export const useUpdateWorkflowNodeMutation = (workflowId: string) => {
+	return useMutation({
+		mutationFn: (args: UpdateWorkflowNodeArgs) =>
+			updateWorkflowNode({ ...args, workflowId, nodeId: args.nodeId }),
+		mutationKey: [API_ROUTES.WORKFLOW_NODE.UPDATE.key, workflowId],
 	});
 };

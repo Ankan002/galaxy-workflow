@@ -1,6 +1,8 @@
 import { serverEnv } from "@/config/server-env";
 import { deleteUser, upsertUser } from "@/db/actions/user.action";
-import { createApi, sendJsonApiResponse } from "@/utils/server";
+import { serverUtilsRegistry } from "@/utils/server";
+
+const { createApi, sendJsonApiResponse } = serverUtilsRegistry;
 import { UserDeletedJSON } from "@clerk/backend";
 import { UserJSON } from "@clerk/nextjs/server";
 import { verifyWebhook } from "@clerk/nextjs/webhooks";

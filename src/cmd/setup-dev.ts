@@ -1,7 +1,9 @@
 import inquirer from "inquirer";
 import { writeFile } from "node:fs/promises";
 import path from "node:path";
-import { logger } from "../utils/server/logger";
+import { serverUtilsRegistry } from "../utils/server";
+
+const { logger } = serverUtilsRegistry;
 
 const getDevScript = (tunnelUrl: string) => {
 	return `
@@ -14,11 +16,13 @@ C_RESET="\\033[0m"
 C_DEV="\\033[1;36m"      # bold cyan for [dev]
 C_TUNNEL="\\033[1;35m"   # bold magenta for [tunnel]
 C_STUDIO="\\033[1;32m"   # bold green for [studio]
+C_TRIGGER="\\033[1;33m"  # bold yellow for [trigger]
 C_SCRIPT="\\033[90m"     # dim gray for [dev.sh]
 
 LOG_PREFIX_DEV="\${C_DEV}[dev]\${C_RESET}"
 LOG_PREFIX_TUNNEL="\${C_TUNNEL}[tunnel]\${C_RESET}"
 LOG_PREFIX_STUDIO="\${C_STUDIO}[studio]\${C_RESET}"
+LOG_PREFIX_TRIGGER="\${C_TRIGGER}[trigger]\${C_RESET}"
 
 # Same as package.json "tunnel" script (ngrok)
 TUNNEL_URL="${tunnelUrl}"
@@ -26,6 +30,8 @@ TUNNEL_CMD="ngrok http --url=\${TUNNEL_URL} 3000"
 
 # Same as package.json "db:studio" script (bunx uses project's prisma)
 STUDIO_CMD="bunx prisma studio"
+
+TRIGGER_CMD="bun run dev:trigger"
 
 cleanup() {
   [ -n "\${CLEANUP_DONE:-}" ] && return
@@ -35,12 +41,13 @@ cleanup() {
   [ -n "\${DEV_PID:-}" ] && { pkill -P $DEV_PID 2>/dev/null; kill $DEV_PID 2>/dev/null; } || true
   [ -n "\${TUNNEL_PID:-}" ] && { pkill -P $TUNNEL_PID 2>/dev/null; kill $TUNNEL_PID 2>/dev/null; } || true
   [ -n "\${STUDIO_PID:-}" ] && { pkill -P $STUDIO_PID 2>/dev/null; kill $STUDIO_PID 2>/dev/null; } || true
+  [ -n "\${TRIGGER_PID:-}" ] && { pkill -P $TRIGGER_PID 2>/dev/null; kill $TRIGGER_PID 2>/dev/null; } || true
   exit 0
 }
 
 trap cleanup SIGINT SIGTERM EXIT
 
-echo -e "\${C_SCRIPT}[dev.sh]\${C_RESET} Starting dev server, tunnel, and Prisma Studio in parallel..."
+echo -e "\${C_SCRIPT}[dev.sh]\${C_RESET} Starting dev server, tunnel, Trigger.dev, and Prisma Studio in parallel..."
 echo -e "\${C_SCRIPT}[dev.sh]\${C_RESET} Tunnel URL: https://\${TUNNEL_URL}"
 echo ""
 
@@ -50,10 +57,13 @@ DEV_PID=$!
 ( $TUNNEL_CMD 2>&1 | while IFS= read -r line; do echo -e "$LOG_PREFIX_TUNNEL $line"; done ) &
 TUNNEL_PID=$!
 
+( $TRIGGER_CMD 2>&1 | while IFS= read -r line; do echo -e "$LOG_PREFIX_TRIGGER $line"; done ) &
+TRIGGER_PID=$!
+
 ( $STUDIO_CMD 2>&1 | while IFS= read -r line; do echo -e "$LOG_PREFIX_STUDIO $line"; done ) &
 STUDIO_PID=$!
 
-echo -e "\${C_SCRIPT}[dev.sh]\${C_RESET} dev PID: $DEV_PID | tunnel PID: $TUNNEL_PID | studio PID: $STUDIO_PID"
+echo -e "\${C_SCRIPT}[dev.sh]\${C_RESET} dev PID: $DEV_PID | tunnel PID: $TUNNEL_PID | trigger PID: $TRIGGER_PID | studio PID: $STUDIO_PID"
 echo -e "\${C_SCRIPT}[dev.sh]\${C_RESET} Press Ctrl+C to stop all"
 echo ""
 

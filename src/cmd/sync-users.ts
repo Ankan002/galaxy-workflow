@@ -1,7 +1,8 @@
 import { createUsers, getAllUsers } from "@/db/actions/user.action";
-import { logger, serverUtilsRegistry } from "@/utils/server";
+import { serverUtilsRegistry } from "@/utils/server";
 
-const clerkUserIds = await serverUtilsRegistry.clerk.getUsersIds();
+const { logger, clerk } = serverUtilsRegistry;
+const clerkUserIds = await clerk.getUsersIds();
 const dbUserIdsSet = new Set(
 	(await getAllUsers()).map((user) => user.clerk_id),
 );
