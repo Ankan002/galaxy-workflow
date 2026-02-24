@@ -11,4 +11,12 @@ export class GoogleGemini {
 			model: "gemini-2.5-flash",
 		});
 	}
+
+	getModel(model?: string) {
+		return model
+			? this.client.getGenerativeModel({
+					model,
+				})
+			: this.model;
+	}
 }
