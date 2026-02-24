@@ -1,7 +1,11 @@
 "use client";
 
 import { useCallback, useMemo, useRef, useState } from "react";
-import { ReactFlowProvider, type Node, type ReactFlowInstance } from "@xyflow/react";
+import {
+	ReactFlowProvider,
+	type Node,
+	type ReactFlowInstance,
+} from "@xyflow/react";
 import { PanelLeft, PanelLeftClose } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { WorkflowCanvas } from "./workflow-canvas";
@@ -72,7 +76,8 @@ function CanvasWorkflowLayoutInner({
 	const flowInstanceRef = useRef<ReactFlowInstance | null>(null);
 	const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 	const [rightSidebarCollapsed, setRightSidebarCollapsed] = useState(false);
-	const [interactionMode, setInteractionMode] = useState<InteractionMode>("select");
+	const [interactionMode, setInteractionMode] =
+		useState<InteractionMode>("select");
 
 	const hasSelectedNode = useMemo(
 		() => nodes.some((n) => n.selected),
@@ -101,7 +106,8 @@ function CanvasWorkflowLayoutInner({
 			const type = payload.type;
 			const definition = NODE_REGISTRY[type];
 			if (!definition) return;
-			const screenToFlowPosition = flowInstanceRef.current?.screenToFlowPosition;
+			const screenToFlowPosition =
+				flowInstanceRef.current?.screenToFlowPosition;
 			if (!screenToFlowPosition) return;
 			const position = screenToFlowPosition({
 				x: e.clientX,
@@ -145,7 +151,9 @@ function CanvasWorkflowLayoutInner({
 					size="icon"
 					className="absolute bottom-4 left-0 z-20 size-9 shrink-0 -translate-x-1/2 rounded-full border-border bg-background shadow-md hover:bg-accent"
 					onClick={() => setSidebarCollapsed((c) => !c)}
-					title={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+					title={
+						sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"
+					}
 				>
 					{sidebarCollapsed ? (
 						<PanelLeft className="size-4" />

@@ -149,7 +149,9 @@ export function CanvasNodeSidebar({
 							type="button"
 							className={cn(
 								"flex min-w-0 shrink-0 items-center gap-2 rounded-lg outline-none ring-sidebar-ring transition-colors hover:bg-sidebar-accent focus-visible:ring-2",
-								collapsed ? "justify-center px-2 py-1" : "w-full px-2 py-1.5",
+								collapsed
+									? "justify-center px-2 py-1"
+									: "w-full px-2 py-1.5",
 							)}
 							aria-label="Workflow menu"
 						>
@@ -164,7 +166,11 @@ export function CanvasNodeSidebar({
 							)}
 						</button>
 					</DropdownMenuTrigger>
-					<DropdownMenuContent align="start" side="right" className="min-w-48">
+					<DropdownMenuContent
+						align="start"
+						side="bottom"
+						className="min-w-60"
+					>
 						<DropdownMenuItem
 							onClick={onBackToDashboard}
 							className="flex items-center gap-2"
