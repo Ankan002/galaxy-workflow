@@ -133,6 +133,22 @@ export function WorkflowCanvas({
 						pannable
 						zoomable
 						maskStrokeColor="none"
+						nodeColor={(node: Node) => {
+							const t = node.type as string | undefined;
+							const colors: Record<string, string> = {
+								TEXT: "#a78bfa",
+								IMAGE_UPLOAD: "#34d399",
+								VIDEO_UPLOAD: "#f472b6",
+								RUN_LLM: "#fbbf24",
+								CROP_IMAGE: "#60a5fa",
+								EXTRACT_VIDEO_FRAME: "#c084fc",
+								EXTRACT_VIDEO: "#fb923c",
+							};
+							return colors[t ?? ""] ?? "#94a3b8";
+						}}
+						nodeStrokeColor="#1e293b"
+						nodeBorderRadius={6}
+						maskColor="rgba(15, 23, 42, 0.75)"
 					/>
 				)}
 			</ReactFlow>
