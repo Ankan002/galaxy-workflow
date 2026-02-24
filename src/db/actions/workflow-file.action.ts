@@ -58,3 +58,10 @@ export const getWorkflowFiles = async (args: GetWorkflowFileArgs) => {
 		},
 	});
 };
+
+export const getWorkflowFileById = async (id: string) => {
+	return prisma.workflow_file.findUnique({
+		where: { id },
+		include: { user: true },
+	});
+};

@@ -17,8 +17,12 @@ export function createApi<
 	TQuery extends z.ZodTypeAny | undefined = undefined,
 	TRequireAuth extends boolean = false,
 >(config: ApiHandler<TBody, TQuery, TRequireAuth>) {
-	return async (req: NextRequest) => {
+	return async (
+		req: NextRequest,
+		context?: { params?: Promise<Record<string, string | undefined>> },
+	) => {
 		try {
+			const params = context?.params ? await context.params : undefined;
 			let parsedBody = undefined as InferBodyOrUndefined<TBody>;
 			let parsedQuery = undefined as InferQueryOrUndefined<TQuery>;
 			let user = undefined as TRequireAuth extends true
@@ -69,6 +73,7 @@ export function createApi<
 				body: parsedBody,
 				query: parsedQuery,
 				user,
+				params,
 			});
 		} catch (error: unknown) {
 			logger.error(`API Error: ${error}`);
