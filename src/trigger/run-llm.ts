@@ -2,13 +2,9 @@ import { task, logger, retry } from "@trigger.dev/sdk";
 import { GoogleGenerativeAI, type Part } from "@google/generative-ai";
 
 export interface RunLLMPayload {
-	/** User prompt (required). */
 	prompt: string;
-	/** Optional image URLs to include as context. Fetched and sent as inline data. */
 	image_urls?: string[];
-	/** Optional system instruction. */
 	systemPrompt?: string;
-	/** Optional model name (e.g. gemini-2.5-flash). Defaults to gemini-2.5-flash. */
 	model?: string;
 }
 
@@ -101,5 +97,12 @@ export const runLLM = task({
 		const text = textPart?.text?.trim() ?? "";
 
 		return { text };
+	},
+	onComplete: async (params) => {
+		if (params.result.ok) {
+			const { text } = params.result.data;
+
+			console.log(text);
+		}
 	},
 });
