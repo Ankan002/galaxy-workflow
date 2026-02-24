@@ -33,6 +33,9 @@ export const serverEnv = createEnv({
 		TRANSLOADIT_SECRET_KEY: z.string({
 			error: "TRANSLOADIT_SECRET_KEY is required",
 		}),
+		GEMINI_API_KEY: z.string({
+			error: "GEMINI_API_KEY is required",
+		}),
 	},
 	runtimeEnv: {
 		DATABASE_URL: process.env.DATABASE_URL,
@@ -45,5 +48,6 @@ export const serverEnv = createEnv({
 		TRIGGER_PROJECT_REF: process.env.TRIGGER_PROJECT_REF,
 		TRANSLOADIT_PUBLIC_KEY: process.env.TRANSLOADIT_PUBLIC_KEY,
 		TRANSLOADIT_SECRET_KEY: process.env.TRANSLOADIT_SECRET_KEY,
+		GEMINI_API_KEY: process.env.GEMINI_API_KEY,
 	},
 });

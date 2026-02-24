@@ -3,6 +3,7 @@ import { TUS } from "./tus";
 import { logger } from "./logger";
 import { sendJsonApiResponse } from "./api";
 import { createApi } from "./api-factory";
+import { GoogleGemini } from "./google-gemini";
 
 export const serverUtilsRegistry = Object.freeze({
 	logger,
@@ -10,4 +11,5 @@ export const serverUtilsRegistry = Object.freeze({
 	createApi,
 	clerk: new Clerk(),
 	tus: new TUS(),
+	googleGemini: new GoogleGemini(),
 });
