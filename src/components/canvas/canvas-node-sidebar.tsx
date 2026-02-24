@@ -1,9 +1,43 @@
 "use client";
 
 import { useMemo, useState, useCallback } from "react";
-import { Type, ImagePlus, Video, Sparkles, Crop, Film } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import {
+	Type,
+	ImagePlus,
+	Video,
+	Sparkles,
+	Crop,
+	Film,
+	ChevronDown,
+	LayoutDashboard,
+	FilePlus,
+	Pencil,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
+import { DASHBOARD_URL } from "@/config/client-constants";
+import {
+	useCreateWorkflowFile,
+	useGetWorkflowFile,
+	useUpdateWorkflowFile,
+} from "@/services/client-api/workflow-file";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+	DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -45,13 +79,47 @@ function formatHandleSummary(
 }
 
 interface CanvasNodeSidebarProps {
+	workflowId: string;
 	collapsed: boolean;
 }
 
-export function CanvasNodeSidebar({ collapsed }: CanvasNodeSidebarProps) {
+export function CanvasNodeSidebar({
+	workflowId,
+	collapsed,
+}: CanvasNodeSidebarProps) {
+	const router = useRouter();
 	const [search, setSearch] = useState("");
 	const [hoveredType, setHoveredType] = useState<NodeType | null>(null);
 	const [fromInputToOutput, setFromInputToOutput] = useState(false);
+	const [renameOpen, setRenameOpen] = useState(false);
+	const [renameValue, setRenameValue] = useState("");
+
+	const { data: workflowFile } = useGetWorkflowFile({ workflowId });
+	const createFileMutation = useCreateWorkflowFile();
+	const updateFileMutation = useUpdateWorkflowFile(workflowId);
+
+	const handleOpenRename = useCallback(() => {
+		setRenameValue(workflowFile?.name ?? "");
+		setRenameOpen(true);
+	}, [workflowFile?.name]);
+
+	const handleNewFile = useCallback(() => {
+		createFileMutation.mutate(undefined, {
+			onSuccess: (file) => {
+				router.push(`/workflow/${file.id}`);
+			},
+		});
+	}, [createFileMutation, router]);
+
+	const handleRenameSubmit = useCallback(() => {
+		const name = renameValue.trim();
+		if (!name) return;
+		updateFileMutation.mutate(name, {
+			onSuccess: () => {
+				setRenameOpen(false);
+			},
+		});
+	}, [renameValue, updateFileMutation]);
 
 	const filteredAndOrdered = useMemo(() => {
 		const lower = search.trim().toLowerCase();
@@ -91,21 +159,64 @@ export function CanvasNodeSidebar({ collapsed }: CanvasNodeSidebarProps) {
 				collapsed ? "w-18" : "w-64 min-w-64",
 			)}
 		>
-			{/* Header: logo (no toggle here – trigger is outside) */}
+			{/* Header: logo dropdown (Back to dashboard, New file, Rename) */}
 			<div
 				className={cn(
 					"flex flex-col gap-3 py-4",
 					collapsed ? "px-2" : "px-3",
 				)}
 			>
-				<div className="flex min-w-0 shrink-0 items-center gap-2">
-					<Logo className="size-8 shrink-0" />
-					{!collapsed && (
-						<span className="truncate text-sm font-semibold text-sidebar-foreground">
-							Nodes
-						</span>
-					)}
-				</div>
+				<DropdownMenu>
+					<DropdownMenuTrigger asChild>
+						<button
+							type="button"
+							className={cn(
+								"flex min-w-0 shrink-0 items-center gap-2 rounded-lg outline-none ring-sidebar-ring transition-colors hover:bg-sidebar-accent focus-visible:ring-2",
+								collapsed ? "justify-center px-2 py-1" : "w-full px-2 py-1.5",
+							)}
+							aria-label="Workflow menu"
+						>
+							<Logo className="size-8 shrink-0" />
+							{!collapsed && (
+								<>
+									<span className="truncate text-left text-sm font-semibold text-sidebar-foreground">
+										{workflowFile?.name ?? "…"}
+									</span>
+									<ChevronDown className="ml-auto size-4 shrink-0 text-sidebar-foreground/70" />
+								</>
+							)}
+						</button>
+					</DropdownMenuTrigger>
+					<DropdownMenuContent align="start" side="right" className="min-w-48">
+						<DropdownMenuItem asChild>
+							<Link href={DASHBOARD_URL} className="flex items-center gap-2">
+								<LayoutDashboard className="size-4" />
+								Back to dashboard
+							</Link>
+						</DropdownMenuItem>
+						<DropdownMenuItem
+							onClick={handleNewFile}
+							disabled={createFileMutation.isPending}
+							className="flex items-center gap-2"
+						>
+							<FilePlus className="size-4" />
+							New file
+						</DropdownMenuItem>
+						<DropdownMenuItem
+							onClick={handleOpenRename}
+							className="flex items-center gap-2"
+						>
+							<Pencil className="size-4" />
+							Rename file
+						</DropdownMenuItem>
+					</DropdownMenuContent>
+				</DropdownMenu>
+
+				{!collapsed && (
+					<span className="px-1 text-xs font-medium uppercase tracking-widest text-sidebar-foreground/70">
+						Nodes
+					</span>
+				)}
 
 				{!collapsed && (
 					<>
@@ -234,6 +345,45 @@ export function CanvasNodeSidebar({ collapsed }: CanvasNodeSidebarProps) {
 					</div>
 				</ScrollArea>
 			</div>
+
+			<Dialog open={renameOpen} onOpenChange={setRenameOpen}>
+				<DialogContent className="sm:max-w-md">
+					<DialogHeader>
+						<DialogTitle>Rename file</DialogTitle>
+					</DialogHeader>
+					<div className="grid gap-2 py-2">
+						<Label htmlFor="rename-input">Name</Label>
+						<Input
+							id="rename-input"
+							value={renameValue}
+							onChange={(e) => setRenameValue(e.target.value)}
+							placeholder="Workflow name"
+							onKeyDown={(e) => {
+								if (e.key === "Enter") handleRenameSubmit();
+							}}
+						/>
+					</div>
+					<DialogFooter>
+						<Button
+							variant="outline"
+							onClick={() => setRenameOpen(false)}
+							disabled={updateFileMutation.isPending}
+						>
+							Cancel
+						</Button>
+						<Button
+							onClick={handleRenameSubmit}
+							disabled={
+								!renameValue.trim() ||
+								renameValue.trim() === workflowFile?.name ||
+								updateFileMutation.isPending
+							}
+						>
+							Save
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
 		</aside>
 	);
 }

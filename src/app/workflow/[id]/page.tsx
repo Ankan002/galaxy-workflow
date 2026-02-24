@@ -7,9 +7,9 @@ interface Props {
 }
 
 const WorkflowPage: React.FC<Props> = async (props) => {
-	await props.params;
+	const { id } = await props.params;
 
-	return <WorkflowScreen />;
+	return <WorkflowScreen workflowId={id} />;
 };
 
 export default WorkflowPage;

@@ -65,3 +65,10 @@ export const getWorkflowFileById = async (id: string) => {
 		include: { user: true },
 	});
 };
+
+export const updateWorkflowFileName = async (id: string, name: string) => {
+	return prisma.workflow_file.update({
+		where: { id },
+		data: { name },
+	});
+};

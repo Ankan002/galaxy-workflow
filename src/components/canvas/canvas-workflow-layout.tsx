@@ -16,6 +16,7 @@ function generateNodeId(): string {
 }
 
 interface CanvasWorkflowLayoutProps {
+	workflowId: string;
 	nodes: Node[];
 	edges: ReturnType<typeof import("@xyflow/react").useEdgesState>[0];
 	onNodesChange: ReturnType<typeof import("@xyflow/react").useNodesState>[2];
@@ -32,6 +33,7 @@ interface CanvasWorkflowLayoutProps {
 }
 
 function CanvasWorkflowLayoutInner({
+	workflowId,
 	nodes,
 	edges,
 	onNodesChange,
@@ -96,7 +98,10 @@ function CanvasWorkflowLayoutInner({
 
 	return (
 		<div className="flex h-full w-full">
-			<CanvasNodeSidebar collapsed={sidebarCollapsed} />
+			<CanvasNodeSidebar
+				workflowId={workflowId}
+				collapsed={sidebarCollapsed}
+			/>
 			{/* Canvas column: trigger lives here so it stays on top of React Flow and is clearly outside the sidebar */}
 			<div className="relative h-full flex-1">
 				<Button

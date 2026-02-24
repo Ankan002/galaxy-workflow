@@ -2,7 +2,11 @@
 
 import { useWorkflowCanvas, CanvasWorkflowLayout } from "@/components/canvas";
 
-const WorkflowScreen = () => {
+interface WorkflowScreenProps {
+	workflowId: string;
+}
+
+const WorkflowScreen = ({ workflowId }: WorkflowScreenProps) => {
 	const {
 		nodes,
 		edges,
@@ -21,6 +25,7 @@ const WorkflowScreen = () => {
 	return (
 		<div className="h-screen w-full">
 			<CanvasWorkflowLayout
+				workflowId={workflowId}
 				nodes={nodes}
 				edges={edges}
 				onNodesChange={onNodesChange}
