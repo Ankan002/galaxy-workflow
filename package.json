@@ -8,7 +8,7 @@
 		"setup-dev": "tsx src/cmd/setup-dev.ts",
 		"dev:tunnel": "chmod +x ./dev.sh && ./dev.sh",
 		"dev": "next dev",
-		"build": "npm run db:push && npm run db:generate && npm run db:sync && next build",
+		"build": "bun run db:push && bun run db:generate && bun run deploy:trigger && bun run db:sync && next build",
 		"start": "next start",
 		"lint": "eslint",
 		"test": "vitest run",
