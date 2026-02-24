@@ -1,8 +1,6 @@
 "use client";
 
 import { useMemo, useState, useCallback } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import {
 	Type,
 	ImagePlus,
@@ -16,12 +14,7 @@ import {
 	Pencil,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { DASHBOARD_URL } from "@/config/client-constants";
-import {
-	useCreateWorkflowFile,
-	useGetWorkflowFile,
-	useUpdateWorkflowFile,
-} from "@/services/client-api/workflow-file";
+import type { WorkflowSidebarProps } from "./canvas-workflow-layout";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -79,47 +72,31 @@ function formatHandleSummary(
 }
 
 interface CanvasNodeSidebarProps {
-	workflowId: string;
+	workflowSidebar: WorkflowSidebarProps;
 	collapsed: boolean;
 }
 
 export function CanvasNodeSidebar({
-	workflowId,
+	workflowSidebar,
 	collapsed,
 }: CanvasNodeSidebarProps) {
-	const router = useRouter();
 	const [search, setSearch] = useState("");
 	const [hoveredType, setHoveredType] = useState<NodeType | null>(null);
 	const [fromInputToOutput, setFromInputToOutput] = useState(false);
-	const [renameOpen, setRenameOpen] = useState(false);
-	const [renameValue, setRenameValue] = useState("");
 
-	const { data: workflowFile } = useGetWorkflowFile({ workflowId });
-	const createFileMutation = useCreateWorkflowFile();
-	const updateFileMutation = useUpdateWorkflowFile(workflowId);
-
-	const handleOpenRename = useCallback(() => {
-		setRenameValue(workflowFile?.name ?? "");
-		setRenameOpen(true);
-	}, [workflowFile?.name]);
-
-	const handleNewFile = useCallback(() => {
-		createFileMutation.mutate(undefined, {
-			onSuccess: (file) => {
-				router.push(`/workflow/${file.id}`);
-			},
-		});
-	}, [createFileMutation, router]);
-
-	const handleRenameSubmit = useCallback(() => {
-		const name = renameValue.trim();
-		if (!name) return;
-		updateFileMutation.mutate(name, {
-			onSuccess: () => {
-				setRenameOpen(false);
-			},
-		});
-	}, [renameValue, updateFileMutation]);
+	const {
+		workflowFile,
+		onBackToDashboard,
+		onNewFile,
+		onOpenRename,
+		onRenameSubmit,
+		renameDialogOpen,
+		setRenameDialogOpen,
+		renameValue,
+		setRenameValue,
+		isCreatingNewFile,
+		isRenaming,
+	} = workflowSidebar;
 
 	const filteredAndOrdered = useMemo(() => {
 		const lower = search.trim().toLowerCase();
@@ -188,22 +165,23 @@ export function CanvasNodeSidebar({
 						</button>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent align="start" side="right" className="min-w-48">
-						<DropdownMenuItem asChild>
-							<Link href={DASHBOARD_URL} className="flex items-center gap-2">
-								<LayoutDashboard className="size-4" />
-								Back to dashboard
-							</Link>
+						<DropdownMenuItem
+							onClick={onBackToDashboard}
+							className="flex items-center gap-2"
+						>
+							<LayoutDashboard className="size-4" />
+							Back to dashboard
 						</DropdownMenuItem>
 						<DropdownMenuItem
-							onClick={handleNewFile}
-							disabled={createFileMutation.isPending}
+							onClick={onNewFile}
+							disabled={isCreatingNewFile}
 							className="flex items-center gap-2"
 						>
 							<FilePlus className="size-4" />
 							New file
 						</DropdownMenuItem>
 						<DropdownMenuItem
-							onClick={handleOpenRename}
+							onClick={onOpenRename}
 							className="flex items-center gap-2"
 						>
 							<Pencil className="size-4" />
@@ -346,7 +324,7 @@ export function CanvasNodeSidebar({
 				</ScrollArea>
 			</div>
 
-			<Dialog open={renameOpen} onOpenChange={setRenameOpen}>
+			<Dialog open={renameDialogOpen} onOpenChange={setRenameDialogOpen}>
 				<DialogContent className="sm:max-w-md">
 					<DialogHeader>
 						<DialogTitle>Rename file</DialogTitle>
@@ -359,24 +337,24 @@ export function CanvasNodeSidebar({
 							onChange={(e) => setRenameValue(e.target.value)}
 							placeholder="Workflow name"
 							onKeyDown={(e) => {
-								if (e.key === "Enter") handleRenameSubmit();
+								if (e.key === "Enter") onRenameSubmit();
 							}}
 						/>
 					</div>
 					<DialogFooter>
 						<Button
 							variant="outline"
-							onClick={() => setRenameOpen(false)}
-							disabled={updateFileMutation.isPending}
+							onClick={() => setRenameDialogOpen(false)}
+							disabled={isRenaming}
 						>
 							Cancel
 						</Button>
 						<Button
-							onClick={handleRenameSubmit}
+							onClick={onRenameSubmit}
 							disabled={
 								!renameValue.trim() ||
 								renameValue.trim() === workflowFile?.name ||
-								updateFileMutation.isPending
+								isRenaming
 							}
 						>
 							Save

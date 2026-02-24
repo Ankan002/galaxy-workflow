@@ -15,8 +15,25 @@ function generateNodeId(): string {
 	return `node-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 }
 
+import type { workflow_file } from "@/db/prisma/browser";
+
+export interface WorkflowSidebarProps {
+	workflowFile: workflow_file | undefined;
+	onBackToDashboard: () => void;
+	onNewFile: () => void;
+	onOpenRename: () => void;
+	onRenameSubmit: () => void;
+	renameDialogOpen: boolean;
+	setRenameDialogOpen: (open: boolean) => void;
+	renameValue: string;
+	setRenameValue: (value: string) => void;
+	isCreatingNewFile: boolean;
+	isRenaming: boolean;
+}
+
 interface CanvasWorkflowLayoutProps {
 	workflowId: string;
+	workflowSidebar: WorkflowSidebarProps;
 	nodes: Node[];
 	edges: ReturnType<typeof import("@xyflow/react").useEdgesState>[0];
 	onNodesChange: ReturnType<typeof import("@xyflow/react").useNodesState>[2];
@@ -34,6 +51,7 @@ interface CanvasWorkflowLayoutProps {
 
 function CanvasWorkflowLayoutInner({
 	workflowId,
+	workflowSidebar,
 	nodes,
 	edges,
 	onNodesChange,
@@ -99,7 +117,7 @@ function CanvasWorkflowLayoutInner({
 	return (
 		<div className="flex h-full w-full">
 			<CanvasNodeSidebar
-				workflowId={workflowId}
+				workflowSidebar={workflowSidebar}
 				collapsed={sidebarCollapsed}
 			/>
 			{/* Canvas column: trigger lives here so it stays on top of React Flow and is clearly outside the sidebar */}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useWorkflowCanvas, CanvasWorkflowLayout } from "@/components/canvas";
+import { useWorkflowFile } from "./hook";
 
 interface WorkflowScreenProps {
 	workflowId: string;
@@ -22,10 +23,13 @@ const WorkflowScreen = ({ workflowId }: WorkflowScreenProps) => {
 		onNodeCreated,
 	} = useWorkflowCanvas();
 
+	const workflowFile = useWorkflowFile({ workflowId });
+
 	return (
 		<div className="h-screen w-full">
 			<CanvasWorkflowLayout
 				workflowId={workflowId}
+				workflowSidebar={workflowFile}
 				nodes={nodes}
 				edges={edges}
 				onNodesChange={onNodesChange}
