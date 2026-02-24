@@ -37,17 +37,90 @@ export const APP_NAV_ITEMS: AppNavItem[] = [
 	},
 ];
 
+const workflowFileBase = "/api/workflow-file";
+
 export const API_ROUTES = {
 	WORKFLOW_FILE: {
 		CREATE: {
-			path: "/api/workflow-file",
-			method: "POST",
+			path: workflowFileBase,
+			method: "POST" as const,
 			key: "create-workflow-file",
 		},
 		GET: {
-			path: "/api/workflow-file",
-			method: "GET",
+			path: workflowFileBase,
+			method: "GET" as const,
 			key: "get-workflow-files",
+		},
+	},
+	WORKFLOW_NODES: {
+		LIST: {
+			path: `${workflowFileBase}/:workflowId/nodes`,
+			dynamicPath: (workflowId: string) =>
+				`${workflowFileBase}/${workflowId}/nodes`,
+			method: "GET" as const,
+			key: "get-workflow-nodes",
+		},
+		CREATE: {
+			path: `${workflowFileBase}/:workflowId/nodes`,
+			dynamicPath: (workflowId: string) =>
+				`${workflowFileBase}/${workflowId}/nodes`,
+			method: "POST" as const,
+			key: "create-workflow-node",
+		},
+	},
+	WORKFLOW_NODE: {
+		GET: {
+			path: `${workflowFileBase}/:workflowId/nodes/:nodeId`,
+			dynamicPath: (workflowId: string, nodeId: string) =>
+				`${workflowFileBase}/${workflowId}/nodes/${nodeId}`,
+			method: "GET" as const,
+			key: "get-workflow-node",
+		},
+		UPDATE: {
+			path: `${workflowFileBase}/:workflowId/nodes/:nodeId`,
+			dynamicPath: (workflowId: string, nodeId: string) =>
+				`${workflowFileBase}/${workflowId}/nodes/${nodeId}`,
+			method: "PATCH" as const,
+			key: "update-workflow-node",
+		},
+		DELETE: {
+			path: `${workflowFileBase}/:workflowId/nodes/:nodeId`,
+			dynamicPath: (workflowId: string, nodeId: string) =>
+				`${workflowFileBase}/${workflowId}/nodes/${nodeId}`,
+			method: "DELETE" as const,
+			key: "delete-workflow-node",
+		},
+	},
+	WORKFLOW_EDGES: {
+		LIST: {
+			path: `${workflowFileBase}/:workflowId/edges`,
+			dynamicPath: (workflowId: string) =>
+				`${workflowFileBase}/${workflowId}/edges`,
+			method: "GET" as const,
+			key: "get-workflow-edges",
+		},
+		CREATE: {
+			path: `${workflowFileBase}/:workflowId/edges`,
+			dynamicPath: (workflowId: string) =>
+				`${workflowFileBase}/${workflowId}/edges`,
+			method: "POST" as const,
+			key: "create-workflow-edge",
+		},
+	},
+	WORKFLOW_EDGE: {
+		GET: {
+			path: `${workflowFileBase}/:workflowId/edges/:edgeId`,
+			dynamicPath: (workflowId: string, edgeId: string) =>
+				`${workflowFileBase}/${workflowId}/edges/${edgeId}`,
+			method: "GET" as const,
+			key: "get-workflow-edge",
+		},
+		DELETE: {
+			path: `${workflowFileBase}/:workflowId/edges/:edgeId`,
+			dynamicPath: (workflowId: string, edgeId: string) =>
+				`${workflowFileBase}/${workflowId}/edges/${edgeId}`,
+			method: "DELETE" as const,
+			key: "delete-workflow-edge",
 		},
 	},
 };
