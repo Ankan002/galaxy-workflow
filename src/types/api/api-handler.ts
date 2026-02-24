@@ -28,5 +28,7 @@ export type ApiHandler<
 					id: string;
 				}
 			: undefined;
+		/** Route params from Next.js dynamic segments (e.g. [workflowId], [nodeId]) */
+		params?: Record<string, string | undefined>;
 	}) => Promise<Response>;
 };
