@@ -81,6 +81,8 @@ const getWorkflowExecution = async (
 interface HookArgs {
 	workflowId: string;
 	executionId: string | null;
+	/** Poll interval in ms when execution may still be running (e.g. 2500). */
+	refetchInterval?: number;
 }
 
 export const useGetWorkflowExecution = (args: HookArgs) => {
@@ -98,5 +100,6 @@ export const useGetWorkflowExecution = (args: HookArgs) => {
 			!!args.workflowId &&
 			!!args.executionId,
 		placeholderData: keepPreviousData,
+		refetchInterval: args.refetchInterval,
 	});
 };

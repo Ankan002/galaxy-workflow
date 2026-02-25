@@ -1,15 +1,25 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
-import { CheckCircle2, Circle, XCircle, Loader2 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { useMemo, useState } from "react";
+import { Loader2 } from "lucide-react";
+import {
+	Accordion,
+	AccordionContent,
+	AccordionItem,
+	AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import {
 	useGetWorkflowExecutions,
 	useGetWorkflowExecution,
-	type WorkflowExecutionListItem,
 	type NodeExecutionWithNode,
 	type WorkflowExecutionWithNodes,
 } from "@/services/client-api/workflow-executions";
+import {
+	ExecutionStatusBadge,
+	ExecutionStatusIcon,
+} from "./execution-status";
 
 const NODE_TYPE_LABEL: Record<string, string> = {
 	run_llm: "LLM Node",
@@ -65,9 +75,7 @@ export interface ExecutionHistoryProps {
 }
 
 export function ExecutionHistory({ workflowId }: ExecutionHistoryProps) {
-	const [selectedExecutionId, setSelectedExecutionId] = useState<
-		string | null
-	>(null);
+	const [expandedId, setExpandedId] = useState<string | null>(null);
 
 	const { data: executions, isLoading: isLoadingList } =
 		useGetWorkflowExecutions({
@@ -76,10 +84,12 @@ export function ExecutionHistory({ workflowId }: ExecutionHistoryProps) {
 			limit: 50,
 		});
 
-	const { data: selectedExecution, isLoading: isLoadingDetail } =
+	const { data: expandedExecution, isLoading: isLoadingDetail } =
 		useGetWorkflowExecution({
 			workflowId,
-			executionId: selectedExecutionId,
+			executionId: expandedId,
+			// Poll while an execution is expanded so we update when webhook completes
+			refetchInterval: expandedId ? 2000 : undefined,
 		});
 
 	const runList = useMemo(
@@ -87,9 +97,9 @@ export function ExecutionHistory({ workflowId }: ExecutionHistoryProps) {
 		[executions],
 	);
 
-	const handleSelectRun = useCallback((id: string) => {
-		setSelectedExecutionId((prev) => (prev === id ? null : id));
-	}, []);
+	const accordionValue = expandedId ?? "";
+	const onAccordionChange = (value: string) =>
+		setExpandedId(value || null);
 
 	if (!workflowId) return null;
 
@@ -98,79 +108,67 @@ export function ExecutionHistory({ workflowId }: ExecutionHistoryProps) {
 			<h3 className="shrink-0 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
 				Execution history
 			</h3>
-			{/* Run list */}
-			<div className="shrink-0 space-y-1">
-				{isLoadingList ? (
-					<div className="flex items-center gap-2 py-2 text-muted-foreground">
-						<Loader2 className="size-3.5 animate-spin" />
-						<span className="text-xs">Loading runs…</span>
-					</div>
-				) : runList.length === 0 ? (
-					<p className="text-xs text-muted-foreground">
-						No single-node runs yet. Run a node to see history.
-					</p>
-				) : (
-					<ul className="space-y-0.5">
-						{runList.map((run, index) => (
-							<RunListItem
-								key={run.id}
-								run={run}
-								runNumber={runList.length - index}
-								isSelected={selectedExecutionId === run.id}
-								onSelect={() => handleSelectRun(run.id)}
-							/>
-						))}
-					</ul>
-				)}
-			</div>
-			{/* Selected run detail: nodes with output/error */}
-			<div className="min-h-0 flex-1 overflow-auto rounded-md border border-sidebar-border bg-muted/30">
-				{!selectedExecutionId ? (
-					<div className="flex h-full items-center justify-center p-4 text-center text-xs text-muted-foreground">
-						Select a run to see node output and errors
-					</div>
-				) : isLoadingDetail ? (
-					<div className="flex h-full items-center justify-center gap-2 p-4 text-muted-foreground">
-						<Loader2 className="size-4 animate-spin" />
-						<span className="text-xs">Loading run…</span>
-					</div>
-				) : selectedExecution ? (
-					<RunDetail execution={selectedExecution} />
-				) : null}
-			</div>
+			{isLoadingList ? (
+				<div className="flex items-center gap-2 py-2 text-muted-foreground">
+					<Loader2 className="size-3.5 animate-spin" />
+					<span className="text-xs">Loading runs…</span>
+				</div>
+			) : runList.length === 0 ? (
+				<p className="text-xs text-muted-foreground">
+					No single-node runs yet. Run a node to see history.
+				</p>
+			) : (
+				<Accordion
+					type="single"
+					value={accordionValue}
+					onValueChange={onAccordionChange}
+					className="min-h-0 flex-1"
+					collapsible
+				>
+					{runList.map((run, index) => (
+						<AccordionItem
+							key={run.id}
+							value={run.id}
+							className="border-sidebar-border"
+						>
+							<AccordionTrigger className="py-2 hover:no-underline [&[data-state=open]>svg]:rotate-180">
+								<div className="flex flex-col gap-0.5 text-left">
+									<div className="flex items-center gap-2">
+										<span className="text-xs font-medium text-foreground">
+											Run #{runList.length - index}
+										</span>
+										<ExecutionStatusBadge
+											status={run.status}
+											showIcon={true}
+											className="shrink-0"
+										/>
+									</div>
+									<span className="block truncate text-xs text-muted-foreground">
+										{formatRunDate(run.created_at)} (Single
+										Node)
+									</span>
+								</div>
+							</AccordionTrigger>
+							<AccordionContent className="pb-2 pt-0">
+								{expandedId === run.id &&
+									(isLoadingDetail ? (
+										<div className="flex items-center gap-2 py-3 text-muted-foreground">
+											<Loader2 className="size-4 animate-spin" />
+											<span className="text-xs">
+												Loading run…
+											</span>
+										</div>
+									) : expandedExecution ? (
+										<RunDetail
+											execution={expandedExecution}
+										/>
+									) : null)}
+							</AccordionContent>
+						</AccordionItem>
+					))}
+				</Accordion>
+			)}
 		</div>
-	);
-}
-
-function RunListItem({
-	run,
-	runNumber,
-	isSelected,
-	onSelect,
-}: {
-	run: WorkflowExecutionListItem;
-	runNumber: number;
-	isSelected: boolean;
-	onSelect: () => void;
-}) {
-	return (
-		<li>
-			<button
-				type="button"
-				onClick={onSelect}
-				className={cn(
-					"w-full rounded-md px-2 py-1.5 text-left text-xs transition-colors hover:bg-sidebar-accent",
-					isSelected && "bg-sidebar-accent font-medium",
-				)}
-			>
-				<span className="text-foreground">
-					Run #{runNumber}
-				</span>
-				<span className="block truncate text-muted-foreground">
-					{formatRunDate(run.created_at)} (Single Node)
-				</span>
-			</button>
-		</li>
 	);
 }
 
@@ -180,20 +178,26 @@ function RunDetail({
 	execution: WorkflowExecutionWithNodes;
 }) {
 	return (
-		<div className="p-3">
-			<div className="mb-2 text-xs font-medium text-muted-foreground">
-				Run – {formatRunDate(execution.created_at)} (
-				{execution.execution_type === "one_node"
-					? "Single Node"
-					: "Full"}
-				)
-			</div>
-			<ul className="space-y-3">
+		<Card variant="outline" padding="sm" className="overflow-hidden">
+			<CardHeader className="space-y-0 pb-2">
+				<div className="flex flex-wrap items-center justify-between gap-2">
+					<span className="text-xs font-medium text-muted-foreground">
+						Result
+					</span>
+					<ExecutionStatusBadge
+						status={execution.status}
+						showIcon={true}
+						className="shrink-0"
+					/>
+				</div>
+			</CardHeader>
+			<Separator variant="muted" className="mb-2" />
+			<CardContent className="space-y-2 p-0">
 				{execution.node_executions.map((ne) => (
 					<NodeExecutionItem key={ne.id} nodeExecution={ne} />
 				))}
-			</ul>
-		</div>
+			</CardContent>
+		</Card>
 	);
 }
 
@@ -205,9 +209,6 @@ function NodeExecutionItem({
 	const label =
 		NODE_TYPE_LABEL[nodeExecution.node.type] ?? nodeExecution.node.type;
 	const status = nodeExecution.status as string;
-	const isSuccess = status === "completed";
-	const isFailed = status === "failed";
-	const isPending = status === "pending" || status === "running";
 
 	const duration =
 		status === "completed" || status === "failed"
@@ -221,43 +222,33 @@ function NodeExecutionItem({
 	const errorStr = errorPreview(nodeExecution.error);
 
 	return (
-		<li className="flex flex-col gap-0.5">
-			{/* Node name + status + duration */}
-			<div className="flex items-center gap-2">
-				<span className="flex shrink-0 items-center gap-1.5">
-					{isSuccess && (
-						<CheckCircle2 className="size-4 text-green-600 dark:text-green-500" />
-					)}
-					{isFailed && (
-						<XCircle className="size-4 text-destructive" />
-					)}
-					{isPending && (
-						<Circle className="size-4 text-muted-foreground" />
-					)}
-					<span className="text-xs font-medium">
-						{label} ({nodeExecution.node_id.slice(0, 8)}…)
-					</span>
+		<div className="rounded-md border border-border/60 bg-muted/30 p-2">
+			<div className="flex min-w-0 items-center gap-2">
+				<ExecutionStatusIcon status={status} />
+				<span className="min-w-0 truncate text-xs font-medium text-foreground">
+					{label}
 				</span>
 				{duration != null && (
-					<span className="ml-auto shrink-0 text-xs text-muted-foreground">
+					<span className="ml-auto shrink-0 text-xs text-muted-foreground tabular-nums">
 						{duration}
 					</span>
 				)}
 			</div>
-			{/* Output / Error – indented */}
 			{(outputStr || errorStr) && (
-				<div className="border-l-2 border-sidebar-border pl-3 text-xs text-muted-foreground">
+				<div className="mt-2 overflow-x-auto rounded bg-background/80 px-2 py-1.5 text-xs">
 					{errorStr ? (
-						<p className="text-destructive">
-							Error: {errorStr}
+						<p className="text-destructive wrap-break-word">
+							{errorStr}
 						</p>
 					) : (
-						<p className="break-all">
-							Output: {outputStr.length > 120 ? `${outputStr.slice(0, 120)}…` : outputStr}
+						<p className="wrap-break-word text-muted-foreground">
+							{outputStr.length > 200
+								? `${outputStr.slice(0, 200)}…`
+								: outputStr}
 						</p>
 					)}
 				</div>
 			)}
-		</li>
+		</div>
 	);
 }
