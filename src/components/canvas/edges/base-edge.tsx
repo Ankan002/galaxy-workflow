@@ -66,20 +66,52 @@ export function WorkflowEdge({
 	});
 
 	const stroke = selected ? "var(--primary)" : variantStroke[variant];
+	const strokeWidth = selected ? 2.5 : 2;
 
 	return (
 		<>
-			<XYBaseEdge
-				id={id}
-				path={edgePath}
-				markerEnd={markerEnd}
-				style={{
-					stroke,
-					strokeWidth: selected ? 2.5 : 2,
-					transition: "stroke 150ms ease, stroke-width 150ms ease",
-				}}
-				className={cn(animated && "animated")}
-			/>
+			<g>
+				<XYBaseEdge
+					id={id}
+					path={edgePath}
+					markerEnd={markerEnd}
+					style={{
+						stroke,
+						strokeWidth,
+						transition: "stroke 150ms ease, stroke-width 150ms ease",
+					}}
+					className={cn(animated && "animated")}
+				/>
+				{/* Sparkle glow: soft halo behind the bright dash */}
+				<path
+					d={edgePath}
+					fill="none"
+					stroke={stroke}
+					strokeWidth={6}
+					strokeLinecap="round"
+					strokeDasharray="26 74"
+					pathLength={100}
+					opacity={0.4}
+					style={{
+						pointerEvents: "none",
+						animation: "edge-sparkle 1.8s linear infinite",
+					}}
+				/>
+				{/* Sparkle: bright dash travels source → target, same color as edge */}
+				<path
+					d={edgePath}
+					fill="none"
+					stroke={stroke}
+					strokeWidth={Math.max(3.5, strokeWidth + 1.5)}
+					strokeLinecap="round"
+					strokeDasharray="26 74"
+					pathLength={100}
+					style={{
+						pointerEvents: "none",
+						animation: "edge-sparkle 1.8s linear infinite",
+					}}
+				/>
+			</g>
 
 			{(label || (selected && onDelete)) && (
 				<EdgeLabelRenderer>
