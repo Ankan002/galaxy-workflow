@@ -156,7 +156,22 @@ export function RunLlmNode({ id, data, selected }: NodeProps) {
 					<Label className="text-[10px] text-muted-foreground">Model</Label>
 					<Select
 						value={model}
-						onValueChange={(v) => updateConfig({ model: v })}
+						onValueChange={(v) => {
+							updateConfig({ model: v });
+							const node = getNode(id);
+							if (node) {
+								onNodeDetailsBlur(id, {
+									config: {
+										...(typeof node.data?.config === "object" && node.data?.config != null
+											? (node.data.config as Record<string, unknown>)
+											: {}),
+										model: v,
+									},
+									positionX: node.position.x,
+									positionY: node.position.y,
+								});
+							}
+						}}
 					>
 						<SelectTrigger className="h-7 text-xs">
 							<SelectValue placeholder="Select model" />
