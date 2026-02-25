@@ -85,6 +85,39 @@ export const API_ROUTES = {
 			key: "import-workflow",
 		},
 	},
+	WORKFLOW_TEMPLATE: {
+		LIST: {
+			path: "/api/workflow-template",
+			method: "GET" as const,
+			key: "get-workflow-templates",
+		},
+		GET_ONE: {
+			path: "/api/workflow-template/:templateId",
+			dynamicPath: (templateId: string) =>
+				`/api/workflow-template/${templateId}`,
+			method: "GET" as const,
+			key: "get-workflow-template",
+		},
+		CREATE: {
+			path: "/api/workflow-template",
+			method: "POST" as const,
+			key: "create-workflow-template",
+		},
+		UPDATE: {
+			path: "/api/workflow-template/:templateId",
+			dynamicPath: (templateId: string) =>
+				`/api/workflow-template/${templateId}`,
+			method: "PATCH" as const,
+			key: "update-workflow-template",
+		},
+		DELETE: {
+			path: "/api/workflow-template/:templateId",
+			dynamicPath: (templateId: string) =>
+				`/api/workflow-template/${templateId}`,
+			method: "DELETE" as const,
+			key: "delete-workflow-template",
+		},
+	},
 	WORKFLOW_NODES: {
 		LIST: {
 			path: `${workflowFileBase}/:workflowId/nodes`,

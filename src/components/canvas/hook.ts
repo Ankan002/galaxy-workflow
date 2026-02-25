@@ -58,6 +58,11 @@ export interface WorkflowCanvasTriggers {
 	onEdgeDeleted?: (edgeId: string) => void;
 	/** Fired when an edge is updated (e.g. reconnected – source/target/handles change). */
 	onEdgeUpdated?: (edge: Edge) => void;
+	/** Fired when a node’s position changes (e.g. after drag end). Use to persist position to the server. */
+	onNodePositionChange?: (
+		nodeId: string,
+		position: { x: number; y: number },
+	) => void;
 	/** Fired when the user triggers a workflow run (e.g. Run button). Use with a Run action in your UI. */
 	onWorkflowRun?: (payload: WorkflowChangePayload) => void;
 }
@@ -110,9 +115,10 @@ export function useWorkflowCanvas(options: UseWorkflowCanvasOptions = {}) {
 			onEdgeCreated: options.onEdgeCreated,
 			onEdgeDeleted: options.onEdgeDeleted,
 			onEdgeUpdated: options.onEdgeUpdated,
+			onNodePositionChange: options.onNodePositionChange,
 			onWorkflowRun: options.onWorkflowRun,
 		};
-	}, [options.onWorkflowChange, options.onNodeCreated, options.onNodeDeleted, options.onEdgeCreated, options.onEdgeDeleted, options.onEdgeUpdated, options.onWorkflowRun]);
+	}, [options.onWorkflowChange, options.onNodeCreated, options.onNodeDeleted, options.onEdgeCreated, options.onEdgeDeleted, options.onEdgeUpdated, options.onNodePositionChange, options.onWorkflowRun]);
 
 	useEffect(() => {
 		const fn = onWorkflowChangeRef.current;
@@ -198,6 +204,19 @@ export function useWorkflowCanvas(options: UseWorkflowCanvasOptions = {}) {
 						const node = currentNodes.find((n) => n.id === c.id) ?? null;
 						triggersRef.current.onNodeDeleted?.(c.id, node);
 					}
+				}
+			}
+			const positionChanges = changes.filter(
+				(c): c is NodeChange & { type: "position"; id: string; position: { x: number; y: number } } =>
+					c.type === "position" &&
+					"position" in c &&
+					typeof (c as { position?: { x: number; y: number } }).position?.x === "number" &&
+					typeof (c as { position?: { x: number; y: number } }).position?.y === "number",
+			);
+			for (const c of positionChanges) {
+				const pos = (c as { position: { x: number; y: number } }).position;
+				if (pos) {
+					triggersRef.current.onNodePositionChange?.(c.id, pos);
 				}
 			}
 			onNodesChange(changes);

@@ -139,3 +139,13 @@ model node_execution {
 
   @@unique([workflow_execution_id, node_id])
 }
+
+model workflow_template {
+  id         String   @id @default(ulid())
+  name       String
+  json       Json
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@index([name])
+}

@@ -1,5 +1,6 @@
 import type { Connection, Edge, Node } from "@xyflow/react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useDebouncedCallback } from "use-debounce";
 import { useRouter } from "next/navigation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -243,12 +244,43 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 		}
 	}
 
+	const flushPositionUpdate = useRef<{
+		nodeId: string;
+		x: number;
+		y: number;
+	} | null>(null);
+	const debouncedPersistPosition = useDebouncedCallback(
+		async () => {
+			const pending = flushPositionUpdate.current;
+			flushPositionUpdate.current = null;
+			if (!pending) return;
+			try {
+				await updateWorkflowNode({
+					workflowId,
+					nodeId: pending.nodeId,
+					positionX: pending.x,
+					positionY: pending.y,
+				});
+			} catch (error) {
+				updateNodeErrorHandler(error);
+			}
+		},
+		400,
+		{ leading: false, trailing: true },
+	);
+
+	function onNodePositionChange(nodeId: string, position: { x: number; y: number }) {
+		flushPositionUpdate.current = { nodeId, x: position.x, y: position.y };
+		debouncedPersistPosition();
+	}
+
 	const workflowCanvasEvents: WorkflowCanvasTriggers = {
 		onNodeCreated,
 		onNodeDeleted,
 		onEdgeCreated,
 		onEdgeDeleted,
 		onEdgeUpdated,
+		onNodePositionChange,
 	};
 
 	const hydratedForWorkflowIdRef = useRef<string | null>(null);
