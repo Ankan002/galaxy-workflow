@@ -139,7 +139,11 @@ export async function resolveInputsForNode(
 			arr.push(value as string);
 			payload.image_urls = arr;
 		} else if (payloadKey) {
-			payload[payloadKey] = value;
+			const resolved =
+				payloadKey === "prompt" || payloadKey === "systemPrompt"
+					? extractTextFromPredecessorOutput(value)
+					: value;
+			payload[payloadKey] = resolved;
 		}
 	}
 
@@ -160,6 +164,21 @@ export async function resolveInputsForNode(
 	}
 
 	return { payload, missingInputs };
+}
+
+/**
+ * When using a predecessor's output as prompt or systemPrompt, accept either a string
+ * or an object with `response` or `text` (e.g. LLM node output). Returns a string for payload.
+ */
+export function extractTextFromPredecessorOutput(value: unknown): unknown {
+	if (value == null) return value;
+	if (typeof value === "string") return value;
+	if (typeof value === "object" && value !== null) {
+		const o = value as Record<string, unknown>;
+		if (typeof o.response === "string") return o.response;
+		if (typeof o.text === "string") return o.text;
+	}
+	return value;
 }
 
 function getRequiredInputHandles(type: workflow_node_type): string[] {
@@ -218,7 +237,11 @@ function mergeNodeConfigIntoPayload(
 			break;
 		case "run_llm":
 			payload.model = getValidLlmModel(config.model);
-			if (config.systemPrompt != null) payload.systemPrompt = config.systemPrompt;
+			if (
+				(payload.systemPrompt == null || payload.systemPrompt === "") &&
+				config.systemPrompt != null
+			)
+				payload.systemPrompt = config.systemPrompt;
 			if (config.temperature != null) payload.temperature = config.temperature;
 			if (payload.prompt == null || payload.prompt === "")
 				payload.prompt = (config.userMessages as string) ?? "";

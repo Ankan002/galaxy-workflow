@@ -102,7 +102,7 @@ export function CanvasRightSidebar({
 	return (
 		<aside
 			className={cn(
-				"flex h-full w-56 shrink-0 flex-col border-l border-sidebar-border bg-sidebar text-sidebar-foreground transition-[width] duration-200 ease-linear",
+				"flex h-full w-72 shrink-0 flex-col border-l border-sidebar-border bg-sidebar text-sidebar-foreground transition-[width] duration-200 ease-linear",
 			)}
 		>
 			{/* Top: Run buttons – one line */}

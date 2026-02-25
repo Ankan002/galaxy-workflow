@@ -15,6 +15,7 @@ import { ApiError } from "@/types/errors/api-error";
 import { getValidLlmModel } from "./llm-models";
 import {
 	EXECUTABLE_NODE_TYPES,
+	extractTextFromPredecessorOutput,
 	NON_EXECUTABLE_NODE_TYPES,
 	type WorkflowNodeWithConfig,
 } from "./single-node-execution";
@@ -145,7 +146,11 @@ function mergeNodeConfigIntoPayload(node: WorkflowNodeWithConfig, payload: Recor
 	if (node.type === "extract_video_frame" && config.timestamp !== undefined) payload.timestamp = config.timestamp;
 	if (node.type === "run_llm") {
 		payload.model = getValidLlmModel(config.model);
-		if (config.systemPrompt != null) payload.systemPrompt = config.systemPrompt;
+		if (
+			(payload.systemPrompt == null || payload.systemPrompt === "") &&
+			config.systemPrompt != null
+		)
+			payload.systemPrompt = config.systemPrompt;
 		if (config.temperature != null) payload.temperature = config.temperature;
 		if (payload.prompt == null || payload.prompt === "") payload.prompt = (config.userMessages as string) ?? "";
 	}
@@ -200,7 +205,11 @@ export async function resolveInputsForNodeInFlow(
 			arr.push(value as string);
 			payload.image_urls = arr;
 		} else if (payloadKey) {
-			payload[payloadKey] = value;
+			const resolved =
+				payloadKey === "prompt" || payloadKey === "systemPrompt"
+					? extractTextFromPredecessorOutput(value)
+					: value;
+			payload[payloadKey] = resolved;
 		}
 	}
 	mergeNodeConfigIntoPayload(node, payload);

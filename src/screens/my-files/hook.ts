@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { useEffect } from "react";
 import { useDebounce, useDebouncedCallback } from "use-debounce";
 import { useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { DEBOUNCE_TIME, API_ROUTES } from "@/config/client-constants";
 import { clientUtils } from "@/utils/client";
 import { workflow_file } from "@/db/prisma/client";
@@ -18,6 +19,7 @@ export const useMyFiles = () => {
 	const { APIErrorHandler } = useAPIErrorHandler();
 	const { user, isLoaded } = useUser();
 	const queryClient = useQueryClient();
+	const router = useRouter();
 
 	const { search, setSearch } = useFileSearchStore();
 
@@ -60,6 +62,7 @@ export const useMyFiles = () => {
 				(prev) => (prev ? [newFile, ...prev] : [newFile]),
 			);
 			toast.success("Workflow file created successfully!");
+			router.push(`/workflow/${newFile.id}`);
 		} catch (error) {
 			createWorkflowFileErrorHandler(error);
 		}

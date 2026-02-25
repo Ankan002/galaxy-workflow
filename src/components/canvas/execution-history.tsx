@@ -92,10 +92,13 @@ function getVideoUrl(output: unknown): string | null {
 	return null;
 }
 
+/** For LLM node: show only the response (or text) value, not the whole JSON. */
 function getLLMText(output: unknown): string | null {
 	if (output == null || typeof output !== "object") return null;
 	const o = output as Record<string, unknown>;
-	return typeof o.text === "string" ? o.text : null;
+	if (typeof o.response === "string") return o.response;
+	if (typeof o.text === "string") return o.text;
+	return null;
 }
 
 const LLM_ANSWER_KEYS = ["response", "answer", "result", "content", "text"];
