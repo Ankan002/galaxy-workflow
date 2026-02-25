@@ -413,6 +413,16 @@
 	fill: var(--border);
 }
 
+/* Edge sparkle: dash travels from source to target, color matches edge */
+@keyframes edge-sparkle {
+	from {
+		stroke-dashoffset: 0;
+	}
+	to {
+		stroke-dashoffset: -100;
+	}
+}
+
 /* Node card: cute primary glow when that node is actively running */
 @keyframes node-pulse-glow {
 	0%,
