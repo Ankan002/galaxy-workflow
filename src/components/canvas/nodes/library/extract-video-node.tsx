@@ -77,6 +77,7 @@ export function ExtractVideoNode({ id, data, selected }: NodeProps) {
 			inputHandles={EXTRACT_VIDEO_DEFINITION.inputHandles}
 			outputHandles={EXTRACT_VIDEO_DEFINITION.outputHandles}
 			selected={selected}
+			isPulsating={data?.isPulsating}
 		>
 			<div className="space-y-2 nodrag nopan" onBlur={handleBlur}>
 				<div className="grid grid-cols-2 gap-2">

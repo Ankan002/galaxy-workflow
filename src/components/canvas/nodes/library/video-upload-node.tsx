@@ -126,6 +126,7 @@ export function VideoUploadNode({ id, data, selected }: NodeProps) {
 			inputHandles={VIDEO_UPLOAD_DEFINITION.inputHandles}
 			outputHandles={VIDEO_UPLOAD_DEFINITION.outputHandles}
 			selected={selected}
+			isPulsating={data?.isPulsating}
 		>
 			<div className="space-y-2 nodrag nopan" onBlur={handleBlur}>
 				<div className="space-y-1">

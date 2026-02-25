@@ -27,6 +27,7 @@ export interface BaseNodeData extends Record<string, unknown> {
 		| "connection-image"
 		| "success";
 	status?: NodeStatus | "success" | "error";
+	isPulsating?: boolean;
 	sourceHandles?: Array<{ id: string; position?: Position; style?: React.CSSProperties }>;
 	targetHandles?: Array<{ id: string; position?: Position; style?: React.CSSProperties }>;
 }
@@ -64,6 +65,7 @@ function legacyDataToBaseNodeProps(
 		icon: data.icon,
 		badge: data.badge,
 		badgeVariant: data.badgeVariant,
+		isPulsating: !!data.isPulsating,
 		inputHandles: targetHandles.map((h) => ({
 			key: h.id,
 			type: "any" as const,
@@ -205,6 +207,7 @@ export function BaseNode(props: BaseNodeProps | NodeProps) {
 		icon,
 		badge,
 		badgeVariant = "secondary",
+		isPulsating = false,
 	} = resolved;
 
 	return (
@@ -216,6 +219,7 @@ export function BaseNode(props: BaseNodeProps | NodeProps) {
 				className={cn(
 					"min-w-[200px] max-w-[280px] transition-shadow",
 					selected && "shadow-lg",
+					isPulsating && "node-pulse",
 				)}
 			>
 				<div className="flex items-center gap-2.5 px-3.5 py-2.5">

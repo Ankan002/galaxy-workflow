@@ -1,5 +1,5 @@
 import type { Connection, Edge, Node } from "@xyflow/react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { useRouter } from "next/navigation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -26,6 +26,7 @@ import {
 } from "@/services/client-api/workflow-nodes";
 import { executeWorkflowFlow as executeWorkflowFlowApi } from "@/services/client-api/workflow-executions/execute-workflow-flow";
 import {
+	useGetWorkflowExecution,
 	useGetWorkflowExecutions,
 	useStopWorkflowExecution,
 } from "@/services/client-api/workflow-executions";
@@ -110,7 +111,30 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 	const { data: workflowExecutions } = useGetWorkflowExecutions({
 		workflowId,
 		limit: 5,
+		// Poll list while a run is in progress (use function so we read query data, not workflowExecutions)
+		refetchInterval: (query) =>
+			(query.state.data as { status: string }[] | undefined)?.[0]?.status ===
+			"running"
+				? 1500
+				: false,
 	});
+	const runningExecutionId =
+		workflowExecutions?.[0]?.status === "running"
+			? workflowExecutions[0].id
+			: null;
+	const { data: runningExecution } = useGetWorkflowExecution({
+		workflowId,
+		executionId: runningExecutionId,
+		refetchInterval: runningExecutionId ? 1500 : undefined,
+	});
+	const isExecutionRunning = !!runningExecutionId;
+	const runningNodeIds = useMemo(
+		() =>
+			runningExecution?.node_executions
+				?.filter((ne) => ne.status === "running")
+				.map((ne) => ne.node_id) ?? [],
+		[runningExecution?.node_executions],
+	);
 	const { mutateAsync: stopWorkflowExecution, isPending: isStopFlowLoading } =
 		useStopWorkflowExecution(workflowId);
 
@@ -333,6 +357,18 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 	}, [setNodes, setEdges]);
 
 	useEffect(() => {
+		setNodes((prev) =>
+			prev.map((n) => ({
+				...n,
+				data: {
+					...n.data,
+					isPulsating: runningNodeIds.includes(n.id),
+				},
+			})),
+		);
+	}, [runningNodeIds, setNodes, workflowNodes, workflowEdges]);
+
+	useEffect(() => {
 		if (workflowNodesError) {
 			getWorkflowNodesErrorHandler(workflowNodesError);
 		}
@@ -345,7 +381,7 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 	}, [workflowEdgesError]);
 
 	const isEditorDisabled =
-		isLoadingWorkflowNodes || isLoadingWorkflowEdges;
+		isLoadingWorkflowNodes || isLoadingWorkflowEdges || isExecutionRunning;
 
 	const onNodeDetailsBlur = useCallback(
 		async (
