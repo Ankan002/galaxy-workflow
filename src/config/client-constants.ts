@@ -65,6 +65,58 @@ export const API_ROUTES = {
 			method: "PATCH" as const,
 			key: "update-workflow-file",
 		},
+		DELETE: {
+			path: `${workflowFileBase}/:workflowId`,
+			dynamicPath: (workflowId: string) =>
+				`${workflowFileBase}/${workflowId}`,
+			method: "DELETE" as const,
+			key: "delete-workflow-file",
+		},
+		EXPORT: {
+			path: `${workflowFileBase}/:workflowId/export`,
+			dynamicPath: (workflowId: string) =>
+				`${workflowFileBase}/${workflowId}/export`,
+			method: "GET" as const,
+			key: "export-workflow",
+		},
+		IMPORT: {
+			path: `${workflowFileBase}/import`,
+			method: "POST" as const,
+			key: "import-workflow",
+		},
+	},
+	WORKFLOW_TEMPLATE: {
+		LIST: {
+			path: "/api/workflow-template",
+			method: "GET" as const,
+			key: "get-workflow-templates",
+		},
+		GET_ONE: {
+			path: "/api/workflow-template/:templateId",
+			dynamicPath: (templateId: string) =>
+				`/api/workflow-template/${templateId}`,
+			method: "GET" as const,
+			key: "get-workflow-template",
+		},
+		CREATE: {
+			path: "/api/workflow-template",
+			method: "POST" as const,
+			key: "create-workflow-template",
+		},
+		UPDATE: {
+			path: "/api/workflow-template/:templateId",
+			dynamicPath: (templateId: string) =>
+				`/api/workflow-template/${templateId}`,
+			method: "PATCH" as const,
+			key: "update-workflow-template",
+		},
+		DELETE: {
+			path: "/api/workflow-template/:templateId",
+			dynamicPath: (templateId: string) =>
+				`/api/workflow-template/${templateId}`,
+			method: "DELETE" as const,
+			key: "delete-workflow-template",
+		},
 	},
 	WORKFLOW_NODES: {
 		LIST: {
@@ -103,6 +155,50 @@ export const API_ROUTES = {
 				`${workflowFileBase}/${workflowId}/nodes/${nodeId}`,
 			method: "DELETE" as const,
 			key: "delete-workflow-node",
+		},
+		UPLOAD_PREPARE: {
+			path: `${workflowFileBase}/:workflowId/nodes/:nodeId/upload/prepare`,
+			dynamicPath: (workflowId: string, nodeId: string) =>
+				`${workflowFileBase}/${workflowId}/nodes/${nodeId}/upload/prepare`,
+			method: "POST" as const,
+			key: "upload-prepare",
+		},
+		UPLOAD_COMPLETE: {
+			path: `${workflowFileBase}/:workflowId/nodes/:nodeId/upload/complete`,
+			dynamicPath: (workflowId: string, nodeId: string) =>
+				`${workflowFileBase}/${workflowId}/nodes/${nodeId}/upload/complete`,
+			method: "POST" as const,
+			key: "upload-complete",
+		},
+		EXECUTE: {
+			path: `${workflowFileBase}/:workflowId/nodes/:nodeId/execute`,
+			dynamicPath: (workflowId: string, nodeId: string) =>
+				`${workflowFileBase}/${workflowId}/nodes/${nodeId}/execute`,
+			method: "POST" as const,
+			key: "execute-node",
+		},
+	},
+	WORKFLOW_EXECUTE_FLOW: {
+		path: `${workflowFileBase}/:workflowId/execute-flow`,
+		dynamicPath: (workflowId: string) =>
+			`${workflowFileBase}/${workflowId}/execute-flow`,
+		method: "POST" as const,
+		key: "execute-workflow-flow",
+	},
+	WORKFLOW_EXECUTIONS: {
+		LIST: {
+			path: `${workflowFileBase}/:workflowId/executions`,
+			dynamicPath: (workflowId: string) =>
+				`${workflowFileBase}/${workflowId}/executions`,
+			method: "GET" as const,
+			key: "get-workflow-executions",
+		},
+		GET_ONE: {
+			path: `${workflowFileBase}/:workflowId/executions/:executionId`,
+			dynamicPath: (workflowId: string, executionId: string) =>
+				`${workflowFileBase}/${workflowId}/executions/${executionId}`,
+			method: "GET" as const,
+			key: "get-workflow-execution",
 		},
 	},
 	WORKFLOW_EDGES: {

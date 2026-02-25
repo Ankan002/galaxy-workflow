@@ -1,5 +1,11 @@
 import { task, logger, retry } from "@trigger.dev/sdk";
-import { GoogleGenerativeAI, type Part } from "@google/generative-ai";
+import {
+	stripExecutionMeta,
+	notifyExecutionComplete,
+	type ExecutionMeta,
+} from "./execution-callback";
+import { getValidLlmModel } from "@/lib/execution/llm-models";
+import { generateContentWithGemini } from "@/services/llm/gemini";
 
 export interface RunLLMPayload {
 	prompt: string;
@@ -40,69 +46,62 @@ export const runLLM = task({
 		maxTimeoutInMs: 30_000,
 		randomize: true,
 	},
-	run: async (payload: RunLLMPayload): Promise<RunLLMOutput> => {
-		const apiKey = process.env["GEMINI_API_KEY"];
-		if (!apiKey) {
-			throw new Error("GEMINI_API_KEY is not set");
-		}
+	run: async (
+		payload: RunLLMPayload & { _executionMeta?: ExecutionMeta },
+	): Promise<RunLLMOutput> => {
+		const { payload: rawPayload, meta } = stripExecutionMeta(payload);
+		const cleanPayload = rawPayload as RunLLMPayload;
 
-		const { prompt, image_urls, systemPrompt, model } = payload;
+		const { prompt, image_urls, systemPrompt, model: modelFromPayload } = cleanPayload;
+		const model = getValidLlmModel(modelFromPayload);
 		if (!prompt || typeof prompt !== "string") {
 			throw new Error("payload.prompt is required and must be a string");
 		}
 
-		const client = new GoogleGenerativeAI(apiKey);
-		const modelName = model?.trim() || "gemini-2.5-flash";
-		const genModel = client.getGenerativeModel({
-			model: modelName,
-			...(systemPrompt && {
-				systemInstruction: systemPrompt,
-			}),
-		});
-
-		const contentParts: Part[] = [];
+		const apiKey = process.env["GEMINI_API_KEY"];
+		if (!apiKey) {
+			throw new Error("GEMINI_API_KEY is not set");
+		}
 
 		if (image_urls?.length) {
 			logger.info("Fetching images for context", {
 				count: image_urls.length,
 				urls: image_urls.slice(0, 3),
 			});
-			for (const url of image_urls) {
-				const { mimeType, data } = await fetchImageAsInlineData(url);
-				contentParts.push({ inlineData: { mimeType, data } });
+		}
+
+		try {
+			const result = await logger.trace(
+				"gemini-generateContent",
+				async () => {
+					return await generateContentWithGemini({
+						apiKey,
+						prompt,
+						image_urls,
+						systemPrompt,
+						model, // always valid (gemini-2.5-flash | gemini-2.5-pro) from getValidLlmModel
+						fetchImageAsBase64: fetchImageAsInlineData,
+					});
+				},
+			);
+			const output = { text: result.text };
+			if (meta) {
+				await notifyExecutionComplete(meta, output, null);
 			}
-		}
-
-		contentParts.push({ text: prompt });
-
-		const result = await logger.trace(
-			"gemini-generateContent",
-			async () => {
-				return await genModel.generateContent({
-					contents: [{ role: "user", parts: contentParts }],
+			return output;
+		} catch (err) {
+			if (meta) {
+				console.log("notifyExecutionComplete error", {
+					meta,
+					err,
 				});
-			},
-		);
-
-		const response = result.response;
-		if (!response?.candidates?.length) {
-			const text = response?.promptFeedback?.blockReason
-				? `Blocked: ${response.promptFeedback.blockReason}`
-				: "No text generated";
-			throw new Error(text);
-		}
-
-		const candidate = response.candidates[0];
-		const textPart = candidate.content?.parts?.find((p) => p.text != null);
-		const text = textPart?.text?.trim() ?? "";
-
-		return { text };
-	},
-	onComplete: async (params) => {
-		if (params.result.ok) {
-			const { text } = params.result.data;
-
-			console.log(text);
+				await notifyExecutionComplete(
+					meta,
+					null,
+					err instanceof Error ? err.message : String(err),
+				);
+			}
+			throw err;
 		}
 	},
 });

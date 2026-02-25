@@ -1,4 +1,9 @@
 import { task, retry } from "@trigger.dev/sdk";
+import {
+	stripExecutionMeta,
+	notifyExecutionComplete,
+	type ExecutionMeta,
+} from "./execution-callback";
 import { spawn } from "node:child_process";
 import fs from "node:fs/promises";
 import os from "node:os";
@@ -166,14 +171,18 @@ export const cropImage = task({
 		maxTimeoutInMs: 30_000,
 		randomize: true,
 	},
-	run: async (payload: CropImagePayload): Promise<CropImageOutput> => {
+	run: async (
+		payload: CropImagePayload & { _executionMeta?: ExecutionMeta },
+	): Promise<CropImageOutput> => {
+		const { payload: rawPayload, meta } = stripExecutionMeta(payload);
+		const cleanPayload = rawPayload as CropImagePayload;
 		const {
 			picture_url,
 			x_percent = 0,
 			y_percent = 0,
 			width_percent = 100,
 			height_percent = 100,
-		} = payload;
+		} = cleanPayload;
 
 		if (!picture_url || typeof picture_url !== "string") {
 			throw new Error("payload.picture_url is required");
@@ -249,7 +258,6 @@ export const cropImage = task({
 				typeof s === "string" &&
 				(s.startsWith("https://") || s.startsWith("http://"));
 
-			// Prefer URL from template result steps; fall back to upload's URL (the file we sent = cropped image)
 			let uploaded_url: string | null = null;
 			const resultsMap = status.results ?? {};
 			for (const stepResults of Object.values(resultsMap)) {
@@ -282,15 +290,27 @@ export const cropImage = task({
 				);
 			}
 
-			return { uploaded_url };
+			const output = { uploaded_url };
+			if (meta) {
+				await notifyExecutionComplete(
+					meta,
+					output as unknown as Record<string, unknown>,
+					null,
+				);
+			}
+			return output;
+		} catch (err) {
+			if (meta) {
+				await notifyExecutionComplete(
+					meta,
+					null,
+					err instanceof Error ? err.message : String(err),
+				);
+			}
+			throw err;
 		} finally {
 			await fs.unlink(inputPath).catch(() => {});
 			await fs.unlink(outputPath).catch(() => {});
 		}
-	},
-	onComplete: async (params) => {
-		console.log({
-			result: params.result,
-		});
 	},
 });

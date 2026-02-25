@@ -35,9 +35,14 @@ export const createWorkflowEdge = async (
 	);
 
 	if (!response.ok) {
-		throw new Error(
-			`Failed to create workflow edge: ${response.statusText}`,
-		);
+		let message = response.statusText;
+		try {
+			const body = (await response.json()) as { error?: string };
+			if (body?.error) message = body.error;
+		} catch {
+			// ignore
+		}
+		throw new Error(message);
 	}
 
 	const responseData =

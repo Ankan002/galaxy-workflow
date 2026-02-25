@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback } from "react";
-import { useReactFlow, type NodeProps } from "@xyflow/react";
+import { useCallback, useEffect } from "react";
+import { useReactFlow, useUpdateNodeInternals, type NodeProps } from "@xyflow/react";
 import { Plus, Minus } from "lucide-react";
 import { NodeType } from "../registry/types";
 import { BaseNode } from "../base-node";
@@ -9,9 +9,23 @@ import type { NodeDefinition, InputHandleDef } from "../registry/types";
 import { useUpdateNodeConfig } from "../use-update-node-config";
 import { useWorkflowNodePersistence } from "@/components/canvas/workflow-node-persistence-context";
 import { Button } from "@/components/ui";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
+import {
+	ALLOWED_LLM_MODELS,
+	DEFAULT_LLM_MODEL,
+	getValidLlmModel,
+} from "@/lib/execution/llm-models";
+
+export const LLM_MODELS = ALLOWED_LLM_MODELS;
+export type LLMModelId = (typeof LLM_MODELS)[number];
 
 export interface RunLlmNodeConfig {
 	model?: string;
@@ -32,7 +46,7 @@ export const RUN_LLM_DEFINITION: Omit<NodeDefinition<RunLlmNodeConfig>, "Compone
 	provider: "TRIGGER_DEV",
 	inputHandles: [...STATIC_INPUT_HANDLES],
 	outputHandles: [{ key: "response", type: "string" }],
-	defaultConfig: { model: "gpt-4o", systemPrompt: "", temperature: 0.7, imageInputCount: 0 },
+	defaultConfig: { model: DEFAULT_LLM_MODEL, systemPrompt: "", temperature: 0.7, imageInputCount: 0 },
 };
 
 function buildInputHandles(imageCount: number): InputHandleDef[] {
@@ -47,14 +61,20 @@ const clampImageCount = (n: number) => Math.max(0, Math.floor(Number(n)));
 
 export function RunLlmNode({ id, data, selected }: NodeProps) {
 	const { setNodes, setEdges, getNode } = useReactFlow();
+	const updateNodeInternals = useUpdateNodeInternals();
 	const updateConfig = useUpdateNodeConfig(id);
 	const { onNodeDetailsBlur } = useWorkflowNodePersistence();
 	const config = (data?.config ?? RUN_LLM_DEFINITION.defaultConfig) as RunLlmNodeConfig;
 	const status = data?.status as "idle" | "running" | "completed" | "failed" | undefined;
 	const imageCount = clampImageCount(config.imageInputCount ?? 0);
 	const inputHandles = buildInputHandles(imageCount);
+
+	// Re-render handles and edges when image input count changes so order and connections map correctly
+	useEffect(() => {
+		updateNodeInternals(id);
+	}, [id, imageCount, updateNodeInternals]);
 	const temperature = Math.min(2, Math.max(0, Number(config.temperature) ?? 0.7));
-	const model = String(config.model ?? "gpt-4o").trim() || "gpt-4o";
+	const model = getValidLlmModel(config.model) as LLMModelId;
 
 	const addImageInput = useCallback(() => {
 		setNodes((nodes) =>
@@ -134,12 +154,21 @@ export function RunLlmNode({ id, data, selected }: NodeProps) {
 			>
 				<div className="space-y-1">
 					<Label className="text-[10px] text-muted-foreground">Model</Label>
-					<Input
+					<Select
 						value={model}
-						onChange={(e) => updateConfig({ model: e.target.value })}
-						placeholder="gpt-4o"
-						className="h-7 text-xs"
-					/>
+						onValueChange={(v) => updateConfig({ model: v })}
+					>
+						<SelectTrigger className="h-7 text-xs">
+							<SelectValue placeholder="Select model" />
+						</SelectTrigger>
+						<SelectContent>
+							{LLM_MODELS.map((m) => (
+								<SelectItem key={m} value={m} className="text-xs">
+									{m}
+								</SelectItem>
+							))}
+						</SelectContent>
+					</Select>
 				</div>
 				<div className="space-y-1">
 					<Label className="text-[10px] text-muted-foreground">

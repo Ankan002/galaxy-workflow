@@ -12,6 +12,7 @@ import { WorkflowCanvas } from "./workflow-canvas";
 import { CanvasNodeSidebar } from "./canvas-node-sidebar";
 import { CanvasRightSidebar } from "./canvas-right-sidebar";
 import { WorkflowNodePersistenceProvider } from "./workflow-node-persistence-context";
+import { WorkflowIdProvider } from "./workflow-id-context";
 import { NODE_REGISTRY, NodeType } from "./nodes/registry";
 import type { InteractionMode } from "./canvas-bottom-island";
 
@@ -35,6 +36,12 @@ export interface WorkflowSidebarProps {
 	setRenameValue: (value: string) => void;
 	isCreatingNewFile: boolean;
 	isRenaming: boolean;
+	/** Export current workflow as JSON file. */
+	onExport?: () => void | Promise<void>;
+	/** Called when user selects a file to import (workflow JSON). */
+	onImportFile?: (file: File) => void | Promise<void>;
+	isExporting?: boolean;
+	isImporting?: boolean;
 }
 
 interface CanvasWorkflowLayoutProps {
@@ -64,6 +71,14 @@ interface CanvasWorkflowLayoutProps {
 			positionY: number;
 		},
 	) => void | Promise<void>;
+	/** Called when the user clicks "Run selected node". */
+	onRunSelectedNode?: () => void | Promise<void>;
+	/** Called when the user clicks "Run flow" (execute all nodes). */
+	onTriggerFlow?: () => void | Promise<void>;
+	/** True while run-selected-node request is in flight (disables Run node button). */
+	isRunNodeLoading?: boolean;
+	/** True while run-flow request is in flight (disables Run flow button). */
+	isRunFlowLoading?: boolean;
 }
 
 function CanvasWorkflowLayoutInner({
@@ -83,6 +98,10 @@ function CanvasWorkflowLayoutInner({
 	onNodeCreated,
 	isEditorDisabled = false,
 	onNodeDetailsBlur,
+	onRunSelectedNode,
+	onTriggerFlow,
+	isRunNodeLoading = false,
+	isRunFlowLoading = false,
 }: CanvasWorkflowLayoutProps) {
 	const flowInstanceRef = useRef<ReactFlowInstance | null>(null);
 	const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -96,11 +115,11 @@ function CanvasWorkflowLayoutInner({
 	);
 
 	const handleRunSelectedNode = useCallback(() => {
-		// TODO: wire to run selected node action
-	}, []);
+		onRunSelectedNode?.();
+	}, [onRunSelectedNode]);
 	const handleTriggerFlow = useCallback(() => {
-		// TODO: wire to trigger whole flow action
-	}, []);
+		onTriggerFlow?.();
+	}, [onTriggerFlow]);
 
 	const onDrop = useCallback(
 		(e: React.DragEvent) => {
@@ -150,6 +169,7 @@ function CanvasWorkflowLayoutInner({
 	}, []);
 
 	return (
+		<WorkflowIdProvider workflowId={workflowId}>
 		<WorkflowNodePersistenceProvider onNodeDetailsBlur={onNodeDetailsBlur ?? (() => {})}>
 		<div className="flex h-full w-full">
 			<CanvasNodeSidebar
@@ -200,9 +220,13 @@ function CanvasWorkflowLayoutInner({
 				onRunSelectedNode={handleRunSelectedNode}
 				onTriggerFlow={handleTriggerFlow}
 				disabled={isEditorDisabled}
+				isRunNodeLoading={isRunNodeLoading}
+				isRunFlowLoading={isRunFlowLoading}
+				workflowId={workflowId}
 			/>
 		</div>
 		</WorkflowNodePersistenceProvider>
+		</WorkflowIdProvider>
 	);
 }
 

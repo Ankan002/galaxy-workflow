@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useCallback } from "react";
+import { useMemo, useState, useCallback, useRef } from "react";
 import {
 	Type,
 	ImagePlus,
@@ -12,6 +12,9 @@ import {
 	LayoutDashboard,
 	FilePlus,
 	Pencil,
+	Download,
+	Loader2,
+	Upload,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { WorkflowSidebarProps } from "./canvas-workflow-layout";
@@ -96,7 +99,26 @@ export function CanvasNodeSidebar({
 		setRenameValue,
 		isCreatingNewFile,
 		isRenaming,
+		onExport,
+		onImportFile,
+		isExporting = false,
+		isImporting = false,
 	} = workflowSidebar;
+
+	const importInputRef = useRef<HTMLInputElement>(null);
+
+	const handleImportClick = useCallback(() => {
+		importInputRef.current?.click();
+	}, []);
+
+	const handleImportFileChange = useCallback(
+		(e: React.ChangeEvent<HTMLInputElement>) => {
+			const file = e.target.files?.[0];
+			if (file && onImportFile) onImportFile(file);
+			e.target.value = "";
+		},
+		[onImportFile],
+	);
 
 	const filteredAndOrdered = useMemo(() => {
 		const lower = search.trim().toLowerCase();
@@ -136,6 +158,17 @@ export function CanvasNodeSidebar({
 				collapsed ? "w-18" : "w-64 min-w-64",
 			)}
 		>
+			{/* Hidden file input for import: outside dropdown so it stays mounted when menu closes and onChange fires. */}
+			{onImportFile && (
+				<input
+					ref={importInputRef}
+					type="file"
+					accept=".json,application/json"
+					className="hidden"
+					aria-hidden
+					onChange={handleImportFileChange}
+				/>
+			)}
 			{/* Header: logo dropdown (Back to dashboard, New file, Rename) */}
 			<div
 				className={cn(
@@ -186,13 +219,37 @@ export function CanvasNodeSidebar({
 							<FilePlus className="size-4" />
 							New file
 						</DropdownMenuItem>
-						<DropdownMenuItem
-							onClick={onOpenRename}
-							className="flex items-center gap-2"
-						>
-							<Pencil className="size-4" />
-							Rename file
-						</DropdownMenuItem>
+					<DropdownMenuItem
+						onClick={onOpenRename}
+						className="flex items-center gap-2"
+					>
+						<Pencil className="size-4" />
+						Rename file
+					</DropdownMenuItem>
+						{onExport && (
+							<DropdownMenuItem
+								onClick={onExport}
+								disabled={isExporting}
+								className="flex items-center gap-2"
+							>
+								<Download className="size-4" />
+								{isExporting ? "Exporting…" : "Export workflow"}
+							</DropdownMenuItem>
+						)}
+						{onImportFile && (
+							<DropdownMenuItem
+								onClick={handleImportClick}
+								disabled={isImporting}
+								className="flex items-center gap-2"
+							>
+								{isImporting ? (
+									<Loader2 className="size-4 shrink-0 animate-spin" />
+								) : (
+									<Upload className="size-4" />
+								)}
+								{isImporting ? "Importing…" : "Import workflow"}
+							</DropdownMenuItem>
+						)}
 					</DropdownMenuContent>
 				</DropdownMenu>
 

@@ -17,6 +17,7 @@ const MyFilesScreen = () => {
 		isLoaded,
 		handleCreateWorkflowFile,
 		isCreatingWorkflowFile,
+		handleDeleteWorkflowFile,
 		isLoadingWorkflowFiles,
 		onSearchChange,
 		search,
@@ -99,6 +100,7 @@ const MyFilesScreen = () => {
 									key={file.id}
 									file={file}
 									href={`/workflow/${file.id}`}
+									onDelete={handleDeleteWorkflowFile}
 								/>
 							))}
 						</div>

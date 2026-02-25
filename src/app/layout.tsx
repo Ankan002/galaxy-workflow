@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { DM_Sans, DM_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
+import { DesktopOnlyGate } from "@/components/elements";
 import { AuthProvider, QueryProvider } from "@/components/providers";
 import { SidebarProvider } from "@/components/ui";
 
@@ -35,7 +36,7 @@ export default function RootLayout({
 				>
 					<QueryProvider>
 						<SidebarProvider>
-							{children}
+							<DesktopOnlyGate>{children}</DesktopOnlyGate>
 							<Toaster />
 						</SidebarProvider>
 					</QueryProvider>

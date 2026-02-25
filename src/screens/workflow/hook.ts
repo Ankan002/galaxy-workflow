@@ -1,20 +1,30 @@
 import type { Connection, Edge, Node } from "@xyflow/react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useDebouncedCallback } from "use-debounce";
 import { useRouter } from "next/navigation";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { DASHBOARD_URL } from "@/config/client-constants";
+import {
+	DASHBOARD_URL,
+	API_ROUTES,
+} from "@/config/client-constants";
 import { useAPIErrorHandler } from "@/hooks/use-error-handler";
 import {
+	exportWorkflow,
 	useCreateWorkflowFile,
 	useGetWorkflowFile,
+	useImportWorkflow,
 	useUpdateWorkflowFile,
 } from "@/services/client-api/workflow-file";
+import { workflowExportPayloadSchema } from "@/lib/workflow-export/schema";
 import {
 	useCreateWorkflowNode,
 	useDeleteWorkflowNode,
 	useGetWorkflowNodes,
 	useUpdateWorkflowNodeMutation,
+	executeWorkflowNode as executeWorkflowNodeApi,
 } from "@/services/client-api/workflow-nodes";
+import { executeWorkflowFlow as executeWorkflowFlowApi } from "@/services/client-api/workflow-executions/execute-workflow-flow";
 import {
 	useCreateWorkflowEdge,
 	useDeleteWorkflowEdge,
@@ -32,6 +42,7 @@ interface UseWorkflowFileArgs {
 }
 
 export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
+	const queryClient = useQueryClient();
 	const canvasStateRef = useRef<{
 		setNodes: React.Dispatch<React.SetStateAction<Node[]>>;
 		setEdges: React.Dispatch<React.SetStateAction<Edge[]>>;
@@ -80,6 +91,21 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 		useDeleteWorkflowEdge(workflowId);
 	const { mutateAsync: updateWorkflowNode } =
 		useUpdateWorkflowNodeMutation(workflowId);
+
+	const { mutateAsync: executeWorkflowNode, isPending: isRunNodeLoading } =
+		useMutation({
+			mutationFn: (args: { workflowId: string; nodeId: string }) =>
+				executeWorkflowNodeApi(args),
+		});
+	const { mutateAsync: executeWorkflowFlow, isPending: isRunFlowLoading } =
+		useMutation({
+			mutationFn: (args: { workflowId: string }) =>
+				executeWorkflowFlowApi(args),
+		});
+
+	const [isExporting, setIsExporting] = useState(false);
+	const { mutateAsync: importWorkflowMutation, isPending: isImporting } =
+		useImportWorkflow();
 
 	useEffect(() => {
 		if (workflowFileError) {
@@ -179,6 +205,11 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 				);
 			}
 		} catch (error) {
+			// Revert the optimistically added edge so UI stays in sync with server (e.g. duplicate edge 409)
+			const state = canvasStateRef?.current;
+			if (state) {
+				state.setEdges((prev) => prev.filter((e) => e.id !== edge.id));
+			}
 			createEdgeErrorHandler(error);
 		}
 	}
@@ -213,12 +244,43 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 		}
 	}
 
+	const flushPositionUpdate = useRef<{
+		nodeId: string;
+		x: number;
+		y: number;
+	} | null>(null);
+	const debouncedPersistPosition = useDebouncedCallback(
+		async () => {
+			const pending = flushPositionUpdate.current;
+			flushPositionUpdate.current = null;
+			if (!pending) return;
+			try {
+				await updateWorkflowNode({
+					workflowId,
+					nodeId: pending.nodeId,
+					positionX: pending.x,
+					positionY: pending.y,
+				});
+			} catch (error) {
+				updateNodeErrorHandler(error);
+			}
+		},
+		400,
+		{ leading: false, trailing: true },
+	);
+
+	function onNodePositionChange(nodeId: string, position: { x: number; y: number }) {
+		flushPositionUpdate.current = { nodeId, x: position.x, y: position.y };
+		debouncedPersistPosition();
+	}
+
 	const workflowCanvasEvents: WorkflowCanvasTriggers = {
 		onNodeCreated,
 		onNodeDeleted,
 		onEdgeCreated,
 		onEdgeDeleted,
 		onEdgeUpdated,
+		onNodePositionChange,
 	};
 
 	const hydratedForWorkflowIdRef = useRef<string | null>(null);
@@ -247,8 +309,8 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 		) {
 			return;
 		}
-		setNodes(mapWorkflowNodesToFlow(workflowNodes));
-		setEdges(mapWorkflowEdgesToFlow(workflowEdges));
+		setNodes(mapWorkflowNodesToFlow(workflowNodes, workflowEdges));
+		setEdges(mapWorkflowEdgesToFlow(workflowEdges, workflowNodes));
 		hydratedForWorkflowIdRef.current = workflowId;
 	}, [workflowId, workflowNodes, workflowEdges, setNodes, setEdges]);
 
@@ -298,6 +360,89 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 		[workflowId, updateWorkflowNode, updateNodeErrorHandler],
 	);
 
+	const runSelectedNode = useCallback(async () => {
+		const selected = nodes.find((n) => n.selected);
+		if (!selected) {
+			toast.error("Select a node to run");
+			return;
+		}
+		try {
+			await executeWorkflowNode({ workflowId, nodeId: selected.id });
+			queryClient.invalidateQueries({
+				queryKey: [API_ROUTES.WORKFLOW_EXECUTIONS.LIST.key, workflowId],
+			});
+			toast.success("Execution started");
+		} catch (error) {
+			updateNodeErrorHandler(error);
+		}
+	}, [workflowId, nodes, executeWorkflowNode, updateNodeErrorHandler, queryClient]);
+
+	const runFlow = useCallback(async () => {
+		try {
+			await executeWorkflowFlow({ workflowId });
+			queryClient.invalidateQueries({
+				queryKey: [API_ROUTES.WORKFLOW_EXECUTIONS.LIST.key, workflowId],
+			});
+			toast.success("Full flow execution started");
+		} catch (error) {
+			updateNodeErrorHandler(error);
+		}
+	}, [workflowId, executeWorkflowFlow, updateNodeErrorHandler, queryClient]);
+
+	const onExport = useCallback(async () => {
+		setIsExporting(true);
+		try {
+			const payload = await exportWorkflow({ workflowId });
+			const blob = new Blob([JSON.stringify(payload, null, 2)], {
+				type: "application/json",
+			});
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement("a");
+			a.href = url;
+			a.download = `${payload.name.replace(/[^a-zA-Z0-9-_]/g, "_")}_workflow.json`;
+			a.click();
+			URL.revokeObjectURL(url);
+			toast.success("Workflow exported");
+		} catch (error) {
+			APIErrorHandler()(error);
+		} finally {
+			setIsExporting(false);
+		}
+	}, [workflowId]);
+
+	const onImportFile = useCallback(
+		async (file: File) => {
+			try {
+				const text = await file.text();
+				const raw = JSON.parse(text) as unknown;
+				// Accept either raw payload or wrapped API response { success, data }
+				const payloadCandidate =
+					typeof raw === "object" &&
+					raw !== null &&
+					"data" in (raw as { data?: unknown }) &&
+					typeof (raw as { success?: boolean }).success === "boolean"
+						? (raw as { data: unknown }).data
+						: raw;
+				const parsed = workflowExportPayloadSchema.safeParse(payloadCandidate);
+				if (!parsed.success) {
+					const msg = parsed.error.issues.map((e) => e.message).join("; ");
+					toast.error(`Invalid workflow file: ${msg}`);
+					return;
+				}
+				const result = await importWorkflowMutation({ payload: parsed.data });
+				toast.success(`Workflow "${result.workflow_name}" imported`);
+				router.push(`/workflow/${result.workflow_id}`);
+			} catch (err) {
+				if (err instanceof SyntaxError) {
+					toast.error("Invalid JSON in file");
+					return;
+				}
+				APIErrorHandler()(err);
+			}
+		},
+		[importWorkflowMutation, router],
+	);
+
 	return {
 		workflowSidebar: {
 			workflowFile,
@@ -311,6 +456,10 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 			setRenameValue,
 			isCreatingNewFile,
 			isRenaming,
+			onExport,
+			onImportFile,
+			isExporting,
+			isImporting,
 		},
 		nodes,
 		edges,
@@ -326,5 +475,9 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 		onNodeCreated: onNodeCreatedPassThrough,
 		isEditorDisabled,
 		onNodeDetailsBlur,
+		runSelectedNode,
+		runFlow,
+		isRunNodeLoading,
+		isRunFlowLoading,
 	};
 };

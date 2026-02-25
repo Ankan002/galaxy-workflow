@@ -4,13 +4,14 @@ import { useAPIErrorHandler } from "@/hooks/use-error-handler";
 import { useCreateWorkflowFile } from "@/services/client-api/workflow-file";
 import { useFileSearchStore } from "@/store";
 import { useQueryClient } from "@tanstack/react-query";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useDebounce } from "use-debounce";
 
 export const useAppSidebar = () => {
 	const { APIErrorHandler } = useAPIErrorHandler();
 	const pathname = usePathname();
+	const router = useRouter();
 	const queryClient = useQueryClient();
 	const { search } = useFileSearchStore();
 
@@ -37,8 +38,8 @@ export const useAppSidebar = () => {
 				[API_ROUTES.WORKFLOW_FILE.GET.key, debouncedSearch],
 				(prev) => (prev ? [newFile, ...prev] : [newFile]),
 			);
-			// TODO: Handle the page redirection here!
 			toast.success("Workflow file created successfully!");
+			router.push(`/workflow/${newFile.id}`);
 		} catch (error) {
 			createWorkflowFileErrorHandler(error);
 		}

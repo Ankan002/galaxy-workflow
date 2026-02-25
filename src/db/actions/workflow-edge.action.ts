@@ -78,6 +78,19 @@ export const createWorkflowEdge = async (args: CreateWorkflowEdgeArgs) => {
 		);
 	}
 
+	const existing = await prisma.workflow_edge.findFirst({
+		where: {
+			workflow_id: args.workflowId,
+			source_node_id: args.sourceNodeId,
+			target_node_id: args.targetNodeId,
+			source_handle: args.sourceHandle,
+			target_handle: args.targetHandle,
+		},
+	});
+	if (existing) {
+		throw new ApiError("An edge with the same connection already exists", 409);
+	}
+
 	return prisma.workflow_edge.create({
 		data: {
 			workflow_id: args.workflowId,

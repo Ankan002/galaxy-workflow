@@ -2,12 +2,14 @@ import { useUser } from "@clerk/nextjs";
 import { useAPIErrorHandler } from "@/hooks/use-error-handler";
 import {
 	useCreateWorkflowFile,
+	useDeleteWorkflowFile,
 	useGetWorkflowFiles,
 } from "@/services/client-api/workflow-file";
 import { toast } from "sonner";
 import { useEffect } from "react";
 import { useDebounce, useDebouncedCallback } from "use-debounce";
 import { useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { DEBOUNCE_TIME, API_ROUTES } from "@/config/client-constants";
 import { clientUtils } from "@/utils/client";
 import { workflow_file } from "@/db/prisma/client";
@@ -17,6 +19,7 @@ export const useMyFiles = () => {
 	const { APIErrorHandler } = useAPIErrorHandler();
 	const { user, isLoaded } = useUser();
 	const queryClient = useQueryClient();
+	const router = useRouter();
 
 	const { search, setSearch } = useFileSearchStore();
 
@@ -38,8 +41,11 @@ export const useMyFiles = () => {
 		query: debouncedSearch,
 	});
 
+	const { mutateAsync: deleteWorkflowFile } = useDeleteWorkflowFile();
+
 	const createWorkflowFileErrorHandler = APIErrorHandler();
 	const getWorkflowFilesErrorHandler = APIErrorHandler();
+	const deleteWorkflowFileErrorHandler = APIErrorHandler();
 
 	const handleCreateWorkflowFile = async () => {
 		if (isCreatingWorkflowFile) {
@@ -56,8 +62,22 @@ export const useMyFiles = () => {
 				(prev) => (prev ? [newFile, ...prev] : [newFile]),
 			);
 			toast.success("Workflow file created successfully!");
+			router.push(`/workflow/${newFile.id}`);
 		} catch (error) {
 			createWorkflowFileErrorHandler(error);
+		}
+	};
+
+	const handleDeleteWorkflowFile = async (workflowId: string) => {
+		try {
+			await deleteWorkflowFile(workflowId);
+			queryClient.setQueryData<workflow_file[]>(
+				[API_ROUTES.WORKFLOW_FILE.GET.key, debouncedSearch],
+				(prev) => (prev ?? []).filter((f) => f.id !== workflowId),
+			);
+			toast.success("Workflow deleted");
+		} catch (error) {
+			deleteWorkflowFileErrorHandler(error);
 		}
 	};
 
@@ -78,6 +98,7 @@ export const useMyFiles = () => {
 		isLoaded,
 		handleCreateWorkflowFile,
 		isCreatingWorkflowFile,
+		handleDeleteWorkflowFile,
 		isLoadingWorkflowFiles,
 		workflowFiles,
 		search,
