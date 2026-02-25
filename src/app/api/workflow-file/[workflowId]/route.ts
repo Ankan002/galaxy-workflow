@@ -1,4 +1,7 @@
-import { updateWorkflowFileName } from "@/db/actions/workflow-file.action";
+import {
+	deleteWorkflowFile,
+	updateWorkflowFileName,
+} from "@/db/actions/workflow-file.action";
 import { assertWorkflowOwnership } from "@/utils/server/workflow-validators";
 import { serverUtilsRegistry } from "@/utils/server";
 
@@ -90,6 +93,27 @@ export const PATCH = createApi<
 					updated_at: updated.updated_at,
 				},
 			},
+		});
+	},
+});
+
+export const DELETE = createApi<undefined, undefined, true>({
+	requireAuth: true,
+	execute: async ({ user, params }) => {
+		const workflowId = params?.workflowId;
+		if (!workflowId) {
+			return sendJsonApiResponse({
+				success: false,
+				code: 400,
+				error: "Invalid workflow ID",
+			});
+		}
+		await assertWorkflowOwnership(workflowId, user!.id);
+		await deleteWorkflowFile(workflowId);
+		return sendJsonApiResponse({
+			code: 200,
+			success: true,
+			message: "Deleted",
 		});
 	},
 });

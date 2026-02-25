@@ -71,6 +71,12 @@ export const getWorkflowFileById = async (id: string) => {
 	});
 };
 
+export const deleteWorkflowFile = async (id: string) => {
+	return prisma.workflow_file.delete({
+		where: { id },
+	});
+};
+
 export const updateWorkflowFileName = async (id: string, name: string) => {
 	return prisma.workflow_file.update({
 		where: { id },

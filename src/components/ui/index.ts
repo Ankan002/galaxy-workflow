@@ -7,6 +7,15 @@ export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent, 
 export { Checkbox, checkboxVariants } from "./checkbox"
 export { Collapsible, CollapsibleTrigger, CollapsibleContent } from "./collapsible"
 export {
+	ContextMenu,
+	ContextMenuTrigger,
+	ContextMenuContent,
+	ContextMenuItem,
+	ContextMenuSeparator,
+	ContextMenuPortal,
+	ContextMenuGroup,
+} from "./context-menu"
+export {
 	Dialog,
 	DialogPortal,
 	DialogOverlay,

@@ -53,19 +53,12 @@ export const DELETE = createApi<undefined, undefined, true>({
 		}
 		await assertWorkflowOwnership(workflowId, user!.id);
 
-		const deleted = await deleteWorkflowEdge({
+		await deleteWorkflowEdge({
 			id: edgeId,
 			workflowId,
 		});
 
-		if (!deleted) {
-			return sendJsonApiResponse({
-				success: false,
-				code: 404,
-				error: "Edge not found",
-			});
-		}
-
+		// Idempotent: treat "already deleted" (e.g. by cascade) as success to avoid 404s
 		return sendJsonApiResponse({
 			code: 200,
 			success: true,

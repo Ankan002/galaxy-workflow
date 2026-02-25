@@ -2,6 +2,7 @@ import { useUser } from "@clerk/nextjs";
 import { useAPIErrorHandler } from "@/hooks/use-error-handler";
 import {
 	useCreateWorkflowFile,
+	useDeleteWorkflowFile,
 	useGetWorkflowFiles,
 } from "@/services/client-api/workflow-file";
 import { toast } from "sonner";
@@ -38,8 +39,11 @@ export const useMyFiles = () => {
 		query: debouncedSearch,
 	});
 
+	const { mutateAsync: deleteWorkflowFile } = useDeleteWorkflowFile();
+
 	const createWorkflowFileErrorHandler = APIErrorHandler();
 	const getWorkflowFilesErrorHandler = APIErrorHandler();
+	const deleteWorkflowFileErrorHandler = APIErrorHandler();
 
 	const handleCreateWorkflowFile = async () => {
 		if (isCreatingWorkflowFile) {
@@ -61,6 +65,19 @@ export const useMyFiles = () => {
 		}
 	};
 
+	const handleDeleteWorkflowFile = async (workflowId: string) => {
+		try {
+			await deleteWorkflowFile(workflowId);
+			queryClient.setQueryData<workflow_file[]>(
+				[API_ROUTES.WORKFLOW_FILE.GET.key, debouncedSearch],
+				(prev) => (prev ?? []).filter((f) => f.id !== workflowId),
+			);
+			toast.success("Workflow deleted");
+		} catch (error) {
+			deleteWorkflowFileErrorHandler(error);
+		}
+	};
+
 	useEffect(() => {
 		if (workflowFilesError) {
 			getWorkflowFilesErrorHandler(workflowFilesError);
@@ -78,6 +95,7 @@ export const useMyFiles = () => {
 		isLoaded,
 		handleCreateWorkflowFile,
 		isCreatingWorkflowFile,
+		handleDeleteWorkflowFile,
 		isLoadingWorkflowFiles,
 		workflowFiles,
 		search,

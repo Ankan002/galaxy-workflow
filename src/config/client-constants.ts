@@ -65,6 +65,13 @@ export const API_ROUTES = {
 			method: "PATCH" as const,
 			key: "update-workflow-file",
 		},
+		DELETE: {
+			path: `${workflowFileBase}/:workflowId`,
+			dynamicPath: (workflowId: string) =>
+				`${workflowFileBase}/${workflowId}`,
+			method: "DELETE" as const,
+			key: "delete-workflow-file",
+		},
 		EXPORT: {
 			path: `${workflowFileBase}/:workflowId/export`,
 			dynamicPath: (workflowId: string) =>

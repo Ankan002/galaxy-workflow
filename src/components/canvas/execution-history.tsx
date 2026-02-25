@@ -1,7 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Loader2 } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import { Loader2, ChevronRight } from "lucide-react";
 import {
 	Accordion,
 	AccordionContent,
@@ -9,6 +11,12 @@ import {
 	AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import {
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+} from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import {
 	useGetWorkflowExecutions,
@@ -20,6 +28,8 @@ import {
 	ExecutionStatusBadge,
 	ExecutionStatusIcon,
 } from "./execution-status";
+
+const LLM_PREVIEW_CHARS = 280;
 
 const NODE_TYPE_LABEL: Record<string, string> = {
 	run_llm: "LLM Node",
@@ -49,12 +59,91 @@ function formatDuration(createdAt: string, updatedAt: string): string {
 	return `${s.toFixed(1)}s`;
 }
 
+function isImageUrl(s: string): boolean {
+	try {
+		const u = new URL(s);
+		return u.protocol === "http:" || u.protocol === "https:";
+	} catch {
+		return false;
+	}
+}
+
+function getImageUrl(output: unknown): string | null {
+	if (output == null) return null;
+	if (typeof output === "string" && isImageUrl(output)) return output;
+	if (typeof output === "object" && output !== null) {
+		const o = output as Record<string, unknown>;
+		for (const key of ["uploaded_url", "image", "output"]) {
+			const v = o[key];
+			if (typeof v === "string" && isImageUrl(v)) return v;
+		}
+	}
+	return null;
+}
+
+function getVideoUrl(output: unknown): string | null {
+	if (output == null) return null;
+	if (typeof output === "string" && isImageUrl(output)) return output;
+	if (typeof output === "object" && output !== null) {
+		const o = output as Record<string, unknown>;
+		const v = o["url"];
+		if (typeof v === "string" && isImageUrl(v)) return v;
+	}
+	return null;
+}
+
+function getLLMText(output: unknown): string | null {
+	if (output == null || typeof output !== "object") return null;
+	const o = output as Record<string, unknown>;
+	return typeof o.text === "string" ? o.text : null;
+}
+
+const LLM_ANSWER_KEYS = ["response", "answer", "result", "content", "text"];
+
+function tryParseLLMJson(
+	text: string,
+): { parsed: unknown; formatted: string; answer: string | null } | null {
+	const trimmed = text.trim();
+	// Accept optional leading/trailing code fence or "json" tag
+	let toParse = trimmed;
+	const jsonMatch = trimmed.match(/^```(?:json)?\s*([\s\S]*?)```$/);
+	if (jsonMatch) toParse = jsonMatch[1].trim();
+	try {
+		const parsed = JSON.parse(toParse) as unknown;
+		const formatted =
+			typeof parsed === "object" && parsed !== null
+				? JSON.stringify(parsed, null, 2)
+				: String(parsed);
+		let answer: string | null = null;
+		if (typeof parsed === "object" && parsed !== null && !Array.isArray(parsed)) {
+			const obj = parsed as Record<string, unknown>;
+			for (const key of LLM_ANSWER_KEYS) {
+				const v = obj[key];
+				if (typeof v === "string") {
+					answer = v;
+					break;
+				}
+			}
+			if (answer == null) {
+				const first = Object.values(obj).find((v) => typeof v === "string");
+				if (typeof first === "string") answer = first;
+			}
+		} else if (typeof parsed === "string") {
+			answer = parsed;
+		}
+		return { parsed, formatted, answer };
+	} catch {
+		return null;
+	}
+}
+
 function outputPreview(output: unknown): string {
 	if (output == null) return "";
 	if (typeof output === "string") return output;
 	if (typeof output === "object" && output !== null) {
 		const o = output as Record<string, unknown>;
 		if (typeof o.text === "string") return o.text;
+		if (typeof o.value === "string") return o.value;
 		if (typeof o.output === "string") return o.output;
 		if (typeof o.uploaded_url === "string") return o.uploaded_url;
 		if (typeof o.url === "string") return o.url;
@@ -219,8 +308,37 @@ function NodeExecutionItem({
 				)
 			: null;
 
+	const nodeType = nodeExecution.node.type as string;
 	const outputStr = outputPreview(nodeExecution.output);
 	const errorStr = errorPreview(nodeExecution.error);
+
+	const videoUrl =
+		nodeType === "video_upload" ? getVideoUrl(nodeExecution.output) : null;
+	const imageUrl =
+		nodeType === "image_upload" ||
+		nodeType === "crop_image" ||
+		nodeType === "extract_video_frame"
+			? getImageUrl(nodeExecution.output)
+			: null;
+	const llmText =
+		nodeType === "run_llm" ? getLLMText(nodeExecution.output) : null;
+	const llmJson = llmText != null ? tryParseLLMJson(llmText) : null;
+	const [llmModalOpen, setLlmModalOpen] = useState(false);
+	// For JSON: show only the extracted answer (markdown); for plain text use full/truncated llmText
+	const llmMarkdownPreview =
+		llmJson?.answer != null
+			? llmJson.answer.length > LLM_PREVIEW_CHARS
+				? `${llmJson.answer.slice(0, LLM_PREVIEW_CHARS)}…`
+				: llmJson.answer
+			: null;
+	const showLlmReadMore =
+		llmJson != null && llmJson.answer != null
+			? llmJson.answer.length > LLM_PREVIEW_CHARS
+			: (llmText != null && llmText.length > LLM_PREVIEW_CHARS);
+	const llmPreview =
+		llmText != null && llmText.length > LLM_PREVIEW_CHARS
+			? llmText.slice(0, LLM_PREVIEW_CHARS) + "…"
+			: llmText ?? "";
 
 	return (
 		<div className="rounded-md border border-border/60 bg-muted/30 p-2">
@@ -242,11 +360,111 @@ function NodeExecutionItem({
 							{errorStr}
 						</p>
 					) : (
-						<p className="wrap-break-word text-muted-foreground">
-							{outputStr.length > 200
-								? `${outputStr.slice(0, 200)}…`
-								: outputStr}
-						</p>
+						<>
+							{llmText != null && (
+								<div className="mb-2">
+									{llmJson != null && llmJson.answer != null ? (
+										<>
+											<div className="llm-markdown text-muted-foreground wrap-break-word [&_a]:text-primary [&_a]:underline [&_pre]:overflow-x-auto [&_pre]:rounded [&_pre]:bg-muted [&_pre]:p-2 [&_code]:rounded [&_code]:bg-muted [&_code]:px-1 [&_ul]:list-inside [&_ol]:list-inside [&_h1]:text-sm [&_h2]:text-sm [&_h3]:text-sm">
+												<ReactMarkdown remarkPlugins={[remarkGfm]}>
+													{showLlmReadMore
+														? (llmMarkdownPreview ?? llmJson.answer)
+														: llmJson.answer}
+												</ReactMarkdown>
+											</div>
+											{showLlmReadMore && (
+												<>
+													<button
+														type="button"
+														onClick={() => setLlmModalOpen(true)}
+														className="mt-1 flex items-center gap-0.5 text-xs text-primary hover:underline"
+													>
+														Know more
+														<ChevronRight className="size-3.5" />
+													</button>
+													<Dialog
+														open={llmModalOpen}
+														onOpenChange={setLlmModalOpen}
+													>
+														<DialogContent className="flex max-h-[85vh] max-w-2xl flex-col overflow-hidden">
+															<DialogHeader>
+																<DialogTitle>LLM Response</DialogTitle>
+															</DialogHeader>
+															<div className="llm-markdown min-h-0 overflow-y-auto rounded-md border border-border bg-muted/30 p-3 text-sm text-muted-foreground [&_a]:text-primary [&_a]:underline [&_pre]:overflow-x-auto [&_pre]:rounded [&_pre]:bg-muted [&_pre]:p-2 [&_code]:rounded [&_code]:bg-muted [&_code]:px-1 [&_ul]:list-inside [&_ol]:list-inside [&_h1]:text-base [&_h2]:text-base [&_h3]:text-base">
+																<ReactMarkdown remarkPlugins={[remarkGfm]}>
+																	{llmJson.answer}
+																</ReactMarkdown>
+															</div>
+														</DialogContent>
+													</Dialog>
+												</>
+											)}
+										</>
+									) : (
+										<>
+											<div className="llm-markdown text-muted-foreground wrap-break-word [&_a]:text-primary [&_a]:underline [&_pre]:overflow-x-auto [&_pre]:rounded [&_pre]:bg-muted [&_pre]:p-2 [&_code]:rounded [&_code]:bg-muted [&_code]:px-1 [&_ul]:list-inside [&_ol]:list-inside [&_h1]:text-sm [&_h2]:text-sm [&_h3]:text-sm">
+												<ReactMarkdown remarkPlugins={[remarkGfm]}>
+													{llmPreview}
+												</ReactMarkdown>
+											</div>
+											{showLlmReadMore && (
+												<>
+													<button
+														type="button"
+														onClick={() => setLlmModalOpen(true)}
+														className="mt-1 flex items-center gap-0.5 text-xs text-primary hover:underline"
+													>
+														Know more
+														<ChevronRight className="size-3.5" />
+													</button>
+													<Dialog
+														open={llmModalOpen}
+														onOpenChange={setLlmModalOpen}
+													>
+														<DialogContent className="flex max-h-[85vh] max-w-2xl flex-col overflow-hidden">
+															<DialogHeader>
+																<DialogTitle>LLM Response</DialogTitle>
+															</DialogHeader>
+															<div className="llm-markdown min-h-0 overflow-y-auto rounded-md border border-border bg-muted/30 p-3 text-sm text-muted-foreground [&_a]:text-primary [&_a]:underline [&_pre]:overflow-x-auto [&_pre]:rounded [&_pre]:bg-muted [&_pre]:p-2 [&_code]:rounded [&_code]:bg-muted [&_code]:px-1 [&_ul]:list-inside [&_ol]:list-inside [&_h1]:text-base [&_h2]:text-base [&_h3]:text-base">
+																<ReactMarkdown remarkPlugins={[remarkGfm]}>
+																	{llmText}
+																</ReactMarkdown>
+															</div>
+														</DialogContent>
+													</Dialog>
+												</>
+											)}
+										</>
+									)}
+								</div>
+							)}
+							{videoUrl != null && (
+								<div className="mb-2 space-y-1">
+									<video
+										src={videoUrl}
+										controls
+										className="max-h-40 max-w-full rounded border border-border object-contain"
+										preload="metadata"
+									/>
+								</div>
+							)}
+							{imageUrl != null && (
+								<div className="mb-2">
+									<img
+										src={imageUrl}
+										alt="Preview"
+										className="max-h-40 max-w-full rounded border border-border object-contain"
+									/>
+								</div>
+							)}
+							{llmText == null && (
+								<p className="wrap-break-word text-muted-foreground">
+									{outputStr.length > 200
+										? `${outputStr.slice(0, 200)}…`
+										: outputStr}
+								</p>
+							)}
+						</>
 					)}
 				</div>
 			)}
