@@ -253,6 +253,25 @@ export const getCompletedNodeIdsInRun = async (args: {
 	return new Set(list.map((r) => r.node_id));
 };
 
+/** Returns all node executions for a run (node_id, status, output, error). Used to build workflow execution result when full flow completes. */
+export const getWorkflowRunNodeResults = async (args: {
+	workflowExecutionId: string;
+	workflowId: string;
+}) => {
+	return prisma.node_execution.findMany({
+		where: {
+			workflow_execution_id: args.workflowExecutionId,
+			workflow_id: args.workflowId,
+		},
+		select: {
+			node_id: true,
+			status: true,
+			output: true,
+			error: true,
+		},
+	});
+};
+
 /** Returns total, terminal (completed | failed) counts and whether any node failed. Used to mark workflow complete when all nodes are done. */
 export const getWorkflowRunNodeExecutionCounts = async (args: {
 	workflowExecutionId: string;

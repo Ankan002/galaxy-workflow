@@ -1,6 +1,7 @@
 import { API_ROUTES } from "@/config/client-constants";
 import { JsonApiResponse } from "@/types/api";
 import { useAuth } from "@clerk/nextjs";
+import type { Query } from "@tanstack/react-query";
 import {
 	keepPreviousData,
 	QueryFunctionContext,
@@ -26,6 +27,8 @@ interface GetWorkflowExecutionsArgs {
 	workflowId: string;
 	limit?: number;
 	execution_type?: "full" | "one_node";
+	/** Poll interval in ms, or function (use to avoid circular ref: read from query.state.data). */
+	refetchInterval?: number | false | ((query: Query) => number | false | undefined);
 }
 
 const getWorkflowExecutions = async (
@@ -76,5 +79,6 @@ export const useGetWorkflowExecutions = (args: GetWorkflowExecutionsArgs) => {
 		queryFn: getWorkflowExecutions,
 		enabled: isSignedIn && !!args.workflowId,
 		placeholderData: keepPreviousData,
+		refetchInterval: args.refetchInterval,
 	});
 };

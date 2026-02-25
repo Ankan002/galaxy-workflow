@@ -4,6 +4,7 @@ import {
 	getNodeExecutionById,
 	getWorkflowExecutionMeta,
 	getWorkflowRunNodeExecutionCounts,
+	getWorkflowRunNodeResults,
 	updateWorkflowExecutionResult,
 } from "@/db/actions/workflow-execution.action";
 import { getWorkflowNode } from "@/db/actions/workflow-node.action";
@@ -105,8 +106,8 @@ export const POST = createApi<typeof bodySchema, undefined, false>({
 							: undefined,
 					error: error ?? undefined,
 				});
-			} else {
-				// full (or unknown): ensure workflow execution is updated when all nodes are terminal
+			} else if (meta?.execution_type === "full") {
+				// full flow: when all nodes are terminal, set workflow result from node outputs
 				const { total, terminal, hasAnyFailed } =
 					await getWorkflowRunNodeExecutionCounts({
 						workflowExecutionId: executionId,
@@ -115,11 +116,32 @@ export const POST = createApi<typeof bodySchema, undefined, false>({
 				if (
 					total > 0 &&
 					total === terminal &&
-					meta?.status === "running"
+					meta.status === "running"
 				) {
+					const nodeResults = await getWorkflowRunNodeResults({
+						workflowExecutionId: executionId,
+						workflowId,
+					});
+					const nodesPayload: Record<string, unknown> = {};
+					for (const ne of nodeResults) {
+						const value: Record<string, unknown> = { status: ne.status };
+						if (ne.output != null)
+							value.output =
+								typeof ne.output === "object" && ne.output !== null
+									? (ne.output as Record<string, unknown>)
+									: { value: ne.output };
+						if (ne.error != null)
+							value.error =
+								typeof ne.error === "string"
+									? ne.error
+									: JSON.stringify(ne.error);
+						nodesPayload[ne.node_id] = value;
+					}
+					const result = { nodes: nodesPayload } as Record<string, unknown>;
 					await updateWorkflowExecutionResult({
 						workflowExecutionId: executionId,
 						workflowId,
+						result: JSON.parse(JSON.stringify(result)),
 						error: hasAnyFailed ? "One or more nodes failed" : undefined,
 					});
 				}

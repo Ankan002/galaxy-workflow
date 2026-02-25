@@ -181,6 +181,13 @@ export function ExecutionHistory({
 		useGetWorkflowExecutions({
 			workflowId,
 			limit: 50,
+			// Poll list while any run is in progress (function reads query data to avoid circular ref)
+			refetchInterval: (query) =>
+				(query.state.data as { status: string }[] | undefined)?.some(
+					(e) => e.status === "running",
+				)
+					? 1500
+					: false,
 		});
 
 	const { data: expandedExecution, isLoading: isLoadingDetail } =
@@ -243,9 +250,9 @@ export function ExecutionHistory({
 										/>
 										{run.status === "running" && onStopExecution && (
 											<Button
-												variant="ghost"
-												size="icon"
-												className="ml-auto size-6 shrink-0 nodrag nopan"
+												variant="outline"
+												size="sm"
+												className="ml-auto shrink-0 nodrag nopan h-7 gap-1.5 border-destructive/40 px-2 text-destructive hover:bg-destructive/10 hover:text-destructive"
 												title="Stop this run"
 												disabled={isStopFlowLoading}
 												onClick={(e) => {
@@ -256,10 +263,11 @@ export function ExecutionHistory({
 												aria-label="Stop this run"
 											>
 												{isStopFlowLoading ? (
-													<Loader2 className="size-3 animate-spin" />
+													<Loader2 className="size-3.5 shrink-0 animate-spin" />
 												) : (
-													<Square className="size-3" />
+													<Square className="size-3.5 shrink-0 fill-current" />
 												)}
+												<span className="text-xs font-medium">Stop</span>
 											</Button>
 										)}
 									</div>

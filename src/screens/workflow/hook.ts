@@ -111,6 +111,12 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 	const { data: workflowExecutions } = useGetWorkflowExecutions({
 		workflowId,
 		limit: 5,
+		// Poll list while a run is in progress (use function so we read query data, not workflowExecutions)
+		refetchInterval: (query) =>
+			(query.state.data as { status: string }[] | undefined)?.[0]?.status ===
+			"running"
+				? 1500
+				: false,
 	});
 	const runningExecutionId =
 		workflowExecutions?.[0]?.status === "running"
