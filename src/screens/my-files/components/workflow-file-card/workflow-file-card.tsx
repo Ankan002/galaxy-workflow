@@ -10,7 +10,7 @@ import {
 } from "@/components/ui";
 import type { workflow_file } from "@/db/prisma/browser";
 import { cn, formatRelativeTime } from "@/lib/utils";
-import { Trash2 } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
 
 export type WorkflowFileCardProps = {
@@ -19,6 +19,8 @@ export type WorkflowFileCardProps = {
 	href?: string;
 	/** Optional click handler when not using href. */
 	onClick?: () => void;
+	/** Called when user chooses "Rename" from the context menu. */
+	onRename?: (file: workflow_file) => void;
 	/** Called when user chooses "Delete workflow" from the context menu. When not provided, no context menu is shown. */
 	onDelete?: (workflowId: string) => void;
 	className?: string;
@@ -31,6 +33,7 @@ export const WorkflowFileCard = ({
 	file,
 	href,
 	onClick,
+	onRename,
 	onDelete,
 	className,
 }: WorkflowFileCardProps) => {
@@ -52,18 +55,26 @@ export const WorkflowFileCard = ({
 	);
 
 	const wrapWithContextMenu = (children: React.ReactNode) => {
-		if (!onDelete) return children;
+		if (!onRename && !onDelete) return children;
 		return (
 			<ContextMenu>
 				<ContextMenuTrigger asChild>{children}</ContextMenuTrigger>
 				<ContextMenuContent>
-					<ContextMenuItem
-						className="text-destructive focus:text-destructive"
-						onSelect={() => onDelete(file.id)}
-					>
-						<Trash2 className="size-4" />
-						Delete workflow
-					</ContextMenuItem>
+					{onRename && (
+						<ContextMenuItem onSelect={() => onRename(file)}>
+							<Pencil className="size-4" />
+							Rename
+						</ContextMenuItem>
+					)}
+					{onDelete && (
+						<ContextMenuItem
+							className="text-destructive focus:text-destructive"
+							onSelect={() => onDelete(file.id)}
+						>
+							<Trash2 className="size-4" />
+							Delete workflow
+						</ContextMenuItem>
+					)}
 				</ContextMenuContent>
 			</ContextMenu>
 		);
