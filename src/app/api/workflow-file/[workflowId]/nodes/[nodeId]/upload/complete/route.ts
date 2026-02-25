@@ -39,11 +39,23 @@ export const POST = createApi<typeof bodySchema, undefined, true>({
 				error: "Node not found",
 			});
 		}
+		const uploadNodeTypes = ["image_upload", "video_upload"] as const;
+		if (!uploadNodeTypes.includes(existing.type as (typeof uploadNodeTypes)[number])) {
+			return sendJsonApiResponse({
+				success: false,
+				code: 400,
+				error: "Node is not an upload node (image_upload or video_upload)",
+			});
+		}
 		const currentConfig = (existing.config as Record<string, unknown>) ?? {};
 		await updateWorkflowNode({
 			id: nodeId,
 			workflowId,
-			config: { ...currentConfig, previewUrl },
+			config: {
+				...currentConfig,
+				previewUrl,
+				url: previewUrl,
+			},
 		});
 
 		return sendJsonApiResponse<CompleteResponseData>({

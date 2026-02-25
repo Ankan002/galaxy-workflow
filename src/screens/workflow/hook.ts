@@ -14,6 +14,7 @@ import {
 	useDeleteWorkflowNode,
 	useGetWorkflowNodes,
 	useUpdateWorkflowNodeMutation,
+	executeWorkflowNode,
 } from "@/services/client-api/workflow-nodes";
 import {
 	useCreateWorkflowEdge,
@@ -298,6 +299,20 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 		[workflowId, updateWorkflowNode, updateNodeErrorHandler],
 	);
 
+	const runSelectedNode = useCallback(async () => {
+		const selected = nodes.find((n) => n.selected);
+		if (!selected) {
+			toast.error("Select a node to run");
+			return;
+		}
+		try {
+			await executeWorkflowNode({ workflowId, nodeId: selected.id });
+			toast.success("Execution started");
+		} catch (error) {
+			updateNodeErrorHandler(error);
+		}
+	}, [workflowId, nodes, updateNodeErrorHandler]);
+
 	return {
 		workflowSidebar: {
 			workflowFile,
@@ -326,5 +341,6 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 		onNodeCreated: onNodeCreatedPassThrough,
 		isEditorDisabled,
 		onNodeDetailsBlur,
+		runSelectedNode,
 	};
 };

@@ -118,6 +118,13 @@ export const API_ROUTES = {
 			method: "POST" as const,
 			key: "upload-complete",
 		},
+		EXECUTE: {
+			path: `${workflowFileBase}/:workflowId/nodes/:nodeId/execute`,
+			dynamicPath: (workflowId: string, nodeId: string) =>
+				`${workflowFileBase}/${workflowId}/nodes/${nodeId}/execute`,
+			method: "POST" as const,
+			key: "execute-node",
+		},
 	},
 	WORKFLOW_EDGES: {
 		LIST: {

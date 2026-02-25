@@ -65,11 +65,22 @@ export async function POST(
 		if (!existing) {
 			return NextResponse.json({ error: "Node not found" }, { status: 404 });
 		}
+		const uploadNodeTypes = ["image_upload", "video_upload"] as const;
+		if (!uploadNodeTypes.includes(existing.type as (typeof uploadNodeTypes)[number])) {
+			return NextResponse.json(
+				{ error: "Node is not an upload node" },
+				{ status: 400 },
+			);
+		}
 		const currentConfig = (existing.config as Record<string, unknown>) ?? {};
 		await updateWorkflowNode({
 			id: nodeId,
 			workflowId,
-			config: { ...currentConfig, previewUrl: uploadedUrl },
+			config: {
+				...currentConfig,
+				previewUrl: uploadedUrl,
+				url: uploadedUrl,
+			},
 		});
 
 		return new NextResponse(null, { status: 200 });

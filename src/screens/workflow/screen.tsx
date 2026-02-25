@@ -29,6 +29,7 @@ const WorkflowScreen = ({ workflowId }: WorkflowScreenProps) => {
 				onNodeCreated={workflow.onNodeCreated}
 				isEditorDisabled={workflow.isEditorDisabled}
 				onNodeDetailsBlur={workflow.onNodeDetailsBlur}
+				onRunSelectedNode={workflow.runSelectedNode}
 			/>
 		</div>
 	);
