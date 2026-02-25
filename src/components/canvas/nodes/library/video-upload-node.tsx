@@ -1,22 +1,27 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useReactFlow, type NodeProps } from "@xyflow/react";
 import { NodeType } from "../registry/types";
 import { BaseNode } from "../base-node";
 import type { NodeDefinition } from "../registry/types";
 import { useUpdateNodeConfig } from "../use-update-node-config";
 import { useWorkflowNodePersistence } from "@/components/canvas/workflow-node-persistence-context";
+import { useWorkflowId } from "@/components/canvas/workflow-id-context";
+import { useTransloaditUpload } from "@/hooks/use-transloadit-upload";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Progress } from "@/components/ui/progress";
 import { VideoIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-const ACCEPTED_VIDEO_EXTENSIONS = "mp4, mov, webm, m4v";
 const DEFAULT_ACCEPT = "video/mp4,video/quicktime,video/webm,video/x-m4v";
+const ACCEPT_TYPES = DEFAULT_ACCEPT.split(",").map((s) => s.trim());
+
+function isAcceptedVideoType(type: string): boolean {
+	return ACCEPT_TYPES.some((a) => type === a || type.startsWith("video/"));
+}
 
 export interface VideoUploadNodeConfig {
-	accept?: string;
-	maxSizeMb?: number;
 	/** Preview URL after upload (via Transloadit). Shown in video player preview. */
 	previewUrl?: string;
 }
@@ -31,31 +36,72 @@ export const VIDEO_UPLOAD_DEFINITION: Omit<
 	provider: "TRANSLOADIT",
 	inputHandles: [],
 	outputHandles: [{ key: "url", type: "string" }],
-	defaultConfig: { accept: DEFAULT_ACCEPT, maxSizeMb: 500 },
+	defaultConfig: {},
 };
 
 export function VideoUploadNode({ id, data, selected }: NodeProps) {
 	const { getNode } = useReactFlow();
+	const workflowId = useWorkflowId();
 	const updateConfig = useUpdateNodeConfig(id);
 	const { onNodeDetailsBlur } = useWorkflowNodePersistence();
+	const fileInputRef = useRef<HTMLInputElement>(null);
+	const [isDragOver, setIsDragOver] = useState(false);
 	const config = (data?.config ?? VIDEO_UPLOAD_DEFINITION.defaultConfig) as VideoUploadNodeConfig;
 	const status = data?.status as "idle" | "running" | "completed" | "failed" | undefined;
-	const accept = config.accept ?? DEFAULT_ACCEPT;
-	const maxSizeMb = config.maxSizeMb ?? 500;
 	const previewUrl = config.previewUrl ?? "";
 
-	const setAccept = useCallback(
-		(v: string) => updateConfig({ accept: v || DEFAULT_ACCEPT }),
-		[updateConfig],
-	);
-	const setMaxSizeMb = useCallback(
-		(v: number) => updateConfig({ maxSizeMb: Math.max(0, v) }),
-		[updateConfig],
-	);
+	const { uploadFile, isUploading, progressPercent, error } = useTransloaditUpload({
+		workflowId: workflowId ?? "",
+		nodeId: id,
+		type: "video",
+		onSuccess: (url) => updateConfig({ previewUrl: url }),
+	});
+
 	const setPreviewUrl = useCallback(
 		(v: string) => updateConfig({ previewUrl: v }),
 		[updateConfig],
 	);
+
+	const startUpload = useCallback(
+		(file: File) => {
+			if (!workflowId || isUploading) return;
+			if (!isAcceptedVideoType(file.type)) return;
+			uploadFile(file);
+		},
+		[workflowId, isUploading, uploadFile],
+	);
+
+	const onFileChange = useCallback(
+		(e: React.ChangeEvent<HTMLInputElement>) => {
+			const file = e.target.files?.[0];
+			if (file) startUpload(file);
+			e.target.value = "";
+		},
+		[startUpload],
+	);
+
+	const onDrop = useCallback(
+		(e: React.DragEvent) => {
+			e.preventDefault();
+			e.stopPropagation();
+			setIsDragOver(false);
+			const file = e.dataTransfer.files?.[0];
+			if (file) startUpload(file);
+		},
+		[startUpload],
+	);
+
+	const onDragOver = useCallback((e: React.DragEvent) => {
+		e.preventDefault();
+		e.stopPropagation();
+		setIsDragOver(true);
+	}, []);
+
+	const onDragLeave = useCallback((e: React.DragEvent) => {
+		e.preventDefault();
+		e.stopPropagation();
+		setIsDragOver(false);
+	}, []);
 
 	const handleBlur = useCallback(
 		(e: React.FocusEvent) => {
@@ -82,45 +128,60 @@ export function VideoUploadNode({ id, data, selected }: NodeProps) {
 		>
 			<div className="space-y-2 nodrag nopan" onBlur={handleBlur}>
 				<div className="space-y-1">
-					<Label className="text-[10px] text-muted-foreground">
-						Accept ({ACCEPTED_VIDEO_EXTENSIONS})
-					</Label>
-					<Input
-						value={accept}
-						onChange={(e) => setAccept(e.target.value)}
-						placeholder={DEFAULT_ACCEPT}
-						className="h-7 text-xs"
-					/>
-				</div>
-				<div className="space-y-1">
-					<Label className="text-[10px] text-muted-foreground">Max size (MB)</Label>
-					<Input
-						type="number"
-						min={0}
-						step={1}
-						value={maxSizeMb}
-						onChange={(e) => setMaxSizeMb(Number(e.target.value) || 0)}
-						className="h-7 text-xs"
-					/>
-				</div>
-				<div className="space-y-1">
-					<Label className="text-[10px] text-muted-foreground">Video player preview</Label>
-					<div className="rounded-md border border-border bg-muted/30 aspect-video min-h-[80px] flex items-center justify-center overflow-hidden">
+					{workflowId ? (
+						<input
+							ref={fileInputRef}
+							type="file"
+							accept={DEFAULT_ACCEPT}
+							onChange={onFileChange}
+							className="hidden"
+							disabled={isUploading}
+						/>
+					) : null}
+					<div
+						role="button"
+						tabIndex={0}
+						onClick={() => workflowId && !isUploading && fileInputRef.current?.click()}
+						onKeyDown={(e) => {
+							if ((e.key === "Enter" || e.key === " ") && workflowId && !isUploading) {
+								e.preventDefault();
+								fileInputRef.current?.click();
+							}
+						}}
+						onDrop={onDrop}
+						onDragOver={onDragOver}
+						onDragLeave={onDragLeave}
+						className={cn(
+							"rounded-md border border-border bg-muted/30 aspect-video min-h-[80px] flex items-center justify-center overflow-hidden cursor-pointer transition-colors",
+							workflowId && !isUploading && "hover:bg-muted/50",
+							isDragOver && "ring-2 ring-primary bg-muted/50",
+						)}
+						aria-label="Click or drop video to upload"
+					>
 						{previewUrl ? (
 							<video
 								src={previewUrl}
 								controls
-								className="max-h-full w-full object-contain"
+								className="max-h-full w-full object-contain pointer-events-none"
 								playsInline
 								preload="metadata"
+								onClick={(e) => e.stopPropagation()}
 							/>
 						) : (
-							<div className="flex flex-col items-center gap-1 text-muted-foreground">
+							<div className="flex flex-col items-center gap-1 text-muted-foreground pointer-events-none">
 								<VideoIcon className="size-8" />
-								<span className="text-[10px]">Upload via Transloadit</span>
+								<span className="text-[10px]">
+									{isDragOver ? "Drop video here" : "Click or drop video"}
+								</span>
 							</div>
 						)}
 					</div>
+					{isUploading && (
+						<Progress value={progressPercent} className="h-1.5" />
+					)}
+					{error && (
+						<p className="text-[10px] text-destructive">{error.message}</p>
+					)}
 					<Input
 						value={previewUrl}
 						onChange={(e) => setPreviewUrl(e.target.value)}

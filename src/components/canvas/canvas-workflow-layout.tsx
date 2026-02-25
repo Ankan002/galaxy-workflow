@@ -12,6 +12,7 @@ import { WorkflowCanvas } from "./workflow-canvas";
 import { CanvasNodeSidebar } from "./canvas-node-sidebar";
 import { CanvasRightSidebar } from "./canvas-right-sidebar";
 import { WorkflowNodePersistenceProvider } from "./workflow-node-persistence-context";
+import { WorkflowIdProvider } from "./workflow-id-context";
 import { NODE_REGISTRY, NodeType } from "./nodes/registry";
 import type { InteractionMode } from "./canvas-bottom-island";
 
@@ -150,6 +151,7 @@ function CanvasWorkflowLayoutInner({
 	}, []);
 
 	return (
+		<WorkflowIdProvider workflowId={workflowId}>
 		<WorkflowNodePersistenceProvider onNodeDetailsBlur={onNodeDetailsBlur ?? (() => {})}>
 		<div className="flex h-full w-full">
 			<CanvasNodeSidebar
@@ -203,6 +205,7 @@ function CanvasWorkflowLayoutInner({
 			/>
 		</div>
 		</WorkflowNodePersistenceProvider>
+		</WorkflowIdProvider>
 	);
 }
 

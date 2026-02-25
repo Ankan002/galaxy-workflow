@@ -104,6 +104,20 @@ export const API_ROUTES = {
 			method: "DELETE" as const,
 			key: "delete-workflow-node",
 		},
+		UPLOAD_PREPARE: {
+			path: `${workflowFileBase}/:workflowId/nodes/:nodeId/upload/prepare`,
+			dynamicPath: (workflowId: string, nodeId: string) =>
+				`${workflowFileBase}/${workflowId}/nodes/${nodeId}/upload/prepare`,
+			method: "POST" as const,
+			key: "upload-prepare",
+		},
+		UPLOAD_COMPLETE: {
+			path: `${workflowFileBase}/:workflowId/nodes/:nodeId/upload/complete`,
+			dynamicPath: (workflowId: string, nodeId: string) =>
+				`${workflowFileBase}/${workflowId}/nodes/${nodeId}/upload/complete`,
+			method: "POST" as const,
+			key: "upload-complete",
+		},
 	},
 	WORKFLOW_EDGES: {
 		LIST: {
