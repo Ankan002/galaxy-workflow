@@ -26,6 +26,10 @@ import {
 } from "@/services/client-api/workflow-nodes";
 import { executeWorkflowFlow as executeWorkflowFlowApi } from "@/services/client-api/workflow-executions/execute-workflow-flow";
 import {
+	useGetWorkflowExecutions,
+	useStopWorkflowExecution,
+} from "@/services/client-api/workflow-executions";
+import {
 	useCreateWorkflowEdge,
 	useDeleteWorkflowEdge,
 	useGetWorkflowEdges,
@@ -102,6 +106,13 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 			mutationFn: (args: { workflowId: string }) =>
 				executeWorkflowFlowApi(args),
 		});
+
+	const { data: workflowExecutions } = useGetWorkflowExecutions({
+		workflowId,
+		limit: 5,
+	});
+	const { mutateAsync: stopWorkflowExecution, isPending: isStopFlowLoading } =
+		useStopWorkflowExecution(workflowId);
 
 	const [isExporting, setIsExporting] = useState(false);
 	const { mutateAsync: importWorkflowMutation, isPending: isImporting } =
@@ -389,6 +400,22 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 		}
 	}, [workflowId, executeWorkflowFlow, updateNodeErrorHandler, queryClient]);
 
+	const runStopFlow = useCallback(
+		async (executionId?: string) => {
+			try {
+				const result = await stopWorkflowExecution(executionId);
+				if (result.stopped) {
+					toast.success("Flow stopped");
+				} else {
+					toast.info("No running flow to stop");
+				}
+			} catch (error) {
+				updateNodeErrorHandler(error);
+			}
+		},
+		[stopWorkflowExecution, updateNodeErrorHandler],
+	);
+
 	const onExport = useCallback(async () => {
 		setIsExporting(true);
 		try {
@@ -477,7 +504,9 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 		onNodeDetailsBlur,
 		runSelectedNode,
 		runFlow,
+		runStopFlow,
 		isRunNodeLoading,
 		isRunFlowLoading,
+		isStopFlowLoading,
 	};
 };

@@ -3,7 +3,8 @@
 import { useMemo, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { Loader2, ChevronRight } from "lucide-react";
+import { Loader2, ChevronRight, Square } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
 	Accordion,
 	AccordionContent,
@@ -164,9 +165,16 @@ function errorPreview(error: unknown): string {
 
 export interface ExecutionHistoryProps {
 	workflowId: string;
+	/** Called with the execution id to stop that run. */
+	onStopExecution?: (executionId: string) => void | Promise<void>;
+	isStopFlowLoading?: boolean;
 }
 
-export function ExecutionHistory({ workflowId }: ExecutionHistoryProps) {
+export function ExecutionHistory({
+	workflowId,
+	onStopExecution,
+	isStopFlowLoading = false,
+}: ExecutionHistoryProps) {
 	const [expandedId, setExpandedId] = useState<string | null>(null);
 
 	const { data: executions, isLoading: isLoadingList } =
@@ -223,7 +231,7 @@ export function ExecutionHistory({ workflowId }: ExecutionHistoryProps) {
 							className="border-sidebar-border"
 						>
 							<AccordionTrigger className="py-2 hover:no-underline [&[data-state=open]>svg]:rotate-180">
-								<div className="flex flex-col gap-0.5 text-left">
+								<div className="flex flex-1 flex-col gap-0.5 text-left">
 									<div className="flex items-center gap-2">
 										<span className="text-xs font-medium text-foreground">
 											Run #{runList.length - index}
@@ -233,6 +241,27 @@ export function ExecutionHistory({ workflowId }: ExecutionHistoryProps) {
 											showIcon={true}
 											className="shrink-0"
 										/>
+										{run.status === "running" && onStopExecution && (
+											<Button
+												variant="ghost"
+												size="icon"
+												className="ml-auto size-6 shrink-0 nodrag nopan"
+												title="Stop this run"
+												disabled={isStopFlowLoading}
+												onClick={(e) => {
+													e.preventDefault();
+													e.stopPropagation();
+													onStopExecution(run.id);
+												}}
+												aria-label="Stop this run"
+											>
+												{isStopFlowLoading ? (
+													<Loader2 className="size-3 animate-spin" />
+												) : (
+													<Square className="size-3" />
+												)}
+											</Button>
+										)}
 									</div>
 									<span className="block truncate text-xs text-muted-foreground">
 										{formatRunDate(run.created_at)}{" "}

@@ -20,6 +20,10 @@ export interface CanvasRightSidebarProps {
 	isRunNodeLoading?: boolean;
 	/** True while run-flow is queuing (disables Run flow, shows spinner). */
 	isRunFlowLoading?: boolean;
+	/** Called with execution id to stop that run. */
+	onStopFlow?: (executionId?: string) => void | Promise<void>;
+	/** True while stop-flow is in flight. */
+	isStopFlowLoading?: boolean;
 	/** Workflow ID for execution history. */
 	workflowId: string;
 }
@@ -33,6 +37,8 @@ export function CanvasRightSidebar({
 	disabled = false,
 	isRunNodeLoading = false,
 	isRunFlowLoading = false,
+	onStopFlow,
+	isStopFlowLoading = false,
 	workflowId,
 }: CanvasRightSidebarProps) {
 	const runNodeDisabled = !hasSelectedNode || disabled || isRunNodeLoading;
@@ -141,7 +147,15 @@ export function CanvasRightSidebar({
 				</Button>
 			</div>
 			<div className="min-h-0 flex-1 overflow-auto p-3">
-				<ExecutionHistory workflowId={workflowId} />
+				<ExecutionHistory
+					workflowId={workflowId}
+					onStopExecution={
+						onStopFlow
+							? (executionId) => onStopFlow(executionId)
+							: undefined
+					}
+					isStopFlowLoading={isStopFlowLoading}
+				/>
 			</div>
 			{/* Bottom: small collapse sidebar toggle */}
 			<div className="shrink-0 border-t border-sidebar-border p-2">

@@ -207,7 +207,7 @@ export const getWorkflowExecutionWithNodeExecutions = async (
 	});
 };
 
-/** Get workflow execution meta (execution_type, status) by id. */
+/** Get workflow execution meta (execution_type, status, error) by id. */
 export const getWorkflowExecutionMeta = async (args: {
 	workflowExecutionId: string;
 	workflowId: string;
@@ -217,7 +217,7 @@ export const getWorkflowExecutionMeta = async (args: {
 			id: args.workflowExecutionId,
 			workflow_id: args.workflowId,
 		},
-		select: { execution_type: true, status: true },
+		select: { execution_type: true, status: true, error: true },
 	});
 	return we;
 };
@@ -332,3 +332,74 @@ export const updateWorkflowExecutionResult = async (
 		data,
 	});
 };
+
+const STOPPED_BY_USER_MESSAGE = "Stopped by user";
+
+/** Get the current running workflow execution for a workflow, if any (latest by created_at). */
+export const getRunningWorkflowExecution = async (args: {
+	workflowId: string;
+}) => {
+	return prisma.workflow_execution.findFirst({
+		where: {
+			workflow_id: args.workflowId,
+			status: "running",
+		},
+		orderBy: { created_at: "desc" },
+		select: { id: true, workflow_id: true },
+	});
+};
+
+/**
+ * Force-stop a running workflow execution. If executionId is provided, stops that execution
+ * (if it belongs to the workflow and is running). Otherwise stops the current running execution for the workflow.
+ * Returns the stopped execution id if one was stopped, null otherwise.
+ */
+export const stopWorkflowExecution = async (args: {
+	workflowId: string;
+	executionId?: string;
+}): Promise<{ executionId: string } | null> => {
+	const running = args.executionId
+		? await prisma.workflow_execution.findFirst({
+				where: {
+					id: args.executionId,
+					workflow_id: args.workflowId,
+					status: "running",
+				},
+				select: { id: true },
+			})
+		: await getRunningWorkflowExecution({ workflowId: args.workflowId });
+	if (!running) return null;
+
+	await prisma.$transaction([
+		prisma.workflow_execution.updateMany({
+			where: {
+				id: running.id,
+				workflow_id: args.workflowId,
+			},
+			data: {
+				status: "failed" as workflow_execution_status,
+				error: STOPPED_BY_USER_MESSAGE,
+			},
+		}),
+		prisma.node_execution.updateMany({
+			where: {
+				workflow_execution_id: running.id,
+				workflow_id: args.workflowId,
+				status: { in: ["pending", "running"] },
+			},
+			data: {
+				status: "failed" as node_execution_status,
+				error: STOPPED_BY_USER_MESSAGE,
+			},
+		}),
+	]);
+
+	return { executionId: running.id };
+};
+
+/** Used by webhook to avoid triggering more nodes after user stopped the flow. */
+export async function isStoppedByUser(error: unknown): Promise<boolean> {
+	if (error == null) return false;
+	const s = typeof error === "string" ? error : String(error);
+	return s.includes(STOPPED_BY_USER_MESSAGE);
+}

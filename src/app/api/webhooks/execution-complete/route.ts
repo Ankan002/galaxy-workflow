@@ -87,7 +87,7 @@ export const POST = createApi<typeof bodySchema, undefined, false>({
 				workflowExecutionId: executionId,
 				workflowId,
 			});
-			if (meta?.execution_type === "full") {
+			if (meta?.execution_type === "full" && meta?.status === "running") {
 				const baseUrl = serverEnv.HOST.trim().startsWith("http")
 					? serverEnv.HOST.trim()
 					: `https://${serverEnv.HOST.trim()}`;
@@ -104,7 +104,7 @@ export const POST = createApi<typeof bodySchema, undefined, false>({
 						error: hasAnyFailed ? "One or more nodes failed" : undefined,
 					});
 				}
-			} else {
+			} else if (meta?.execution_type === "one_node") {
 				// one_node (or unknown): single node run — mark workflow complete with this node's result/error
 				await updateWorkflowExecutionResult({
 					workflowExecutionId: executionId,
