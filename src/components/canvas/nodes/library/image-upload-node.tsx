@@ -125,6 +125,7 @@ export function ImageUploadNode({ id, data, selected }: NodeProps) {
 			inputHandles={IMAGE_UPLOAD_DEFINITION.inputHandles}
 			outputHandles={IMAGE_UPLOAD_DEFINITION.outputHandles}
 			selected={selected}
+			isPulsating={data?.isPulsating}
 		>
 			<div className="space-y-2 nodrag nopan" onBlur={handleBlur}>
 				<div className="space-y-1">

@@ -87,6 +87,7 @@ export function CropImageNode({ id, data, selected }: NodeProps) {
 			inputHandles={CROP_IMAGE_DEFINITION.inputHandles}
 			outputHandles={CROP_IMAGE_DEFINITION.outputHandles}
 			selected={selected}
+			isPulsating={data?.isPulsating}
 		>
 			<div className="space-y-2 nodrag nopan" onBlur={handleBlur}>
 				<div className="grid grid-cols-2 gap-x-2 gap-y-1 text-[10px]">

@@ -54,6 +54,7 @@ export function TextNode({ id, data, selected }: NodeProps) {
 			inputHandles={TEXT_DEFINITION.inputHandles}
 			outputHandles={TEXT_DEFINITION.outputHandles}
 			selected={selected}
+			isPulsating={data?.isPulsating}
 		>
 			<div className="space-y-1 nodrag nopan">
 				<Textarea

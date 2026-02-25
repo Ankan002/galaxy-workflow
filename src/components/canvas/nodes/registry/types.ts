@@ -89,4 +89,6 @@ export interface BaseNodeProps {
 		| "success"
 		| "brand"
 		| "warning";
+	/** When true, shows a subtle pulsating glow (e.g. node is currently executing). */
+	isPulsating?: boolean;
 }

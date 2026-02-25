@@ -412,3 +412,18 @@
 	stroke: var(--border);
 	fill: var(--border);
 }
+
+/* Node card pulsating glow when that node is actively running (subtle, eye-catching) */
+@keyframes node-pulse-glow {
+	0%,
+	100% {
+		box-shadow: 0 0 0 0 rgba(247, 255, 168, 0.4);
+	}
+	50% {
+		box-shadow: 0 0 0 8px rgba(247, 255, 168, 0.06);
+	}
+}
+
+.node-pulse {
+	animation: node-pulse-glow 1.6s ease-in-out infinite;
+}
