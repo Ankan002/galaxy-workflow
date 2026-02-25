@@ -41,9 +41,22 @@ export const useStopWorkflowExecution = (workflowId: string) => {
 		mutationFn: (executionId?: string) =>
 			stopWorkflowExecution(workflowId, executionId),
 		mutationKey: [API_ROUTES.WORKFLOW_EXECUTIONS.STOP.key, workflowId],
-		onSuccess: () => {
+		onSuccess: (_data, executionId) => {
+			// Optimistically mark the stopped execution so pulsating and editor state update immediately
+			if (executionId != null) {
+				queryClient.setQueriesData(
+					{ queryKey: [API_ROUTES.WORKFLOW_EXECUTIONS.LIST.key, workflowId] },
+					(old: { status: string; id: string }[] | undefined) =>
+						old?.map((e) =>
+							e.id === executionId ? { ...e, status: "failed" as const } : e,
+						),
+				);
+			}
 			queryClient.invalidateQueries({
 				queryKey: [API_ROUTES.WORKFLOW_EXECUTIONS.LIST.key, workflowId],
+			});
+			queryClient.invalidateQueries({
+				queryKey: [API_ROUTES.WORKFLOW_EXECUTIONS.GET_ONE.key, workflowId],
 			});
 		},
 	});
