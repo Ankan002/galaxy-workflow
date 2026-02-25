@@ -36,6 +36,12 @@ export interface WorkflowSidebarProps {
 	setRenameValue: (value: string) => void;
 	isCreatingNewFile: boolean;
 	isRenaming: boolean;
+	/** Export current workflow as JSON file. */
+	onExport?: () => void | Promise<void>;
+	/** Called when user selects a file to import (workflow JSON). */
+	onImportFile?: (file: File) => void | Promise<void>;
+	isExporting?: boolean;
+	isImporting?: boolean;
 }
 
 interface CanvasWorkflowLayoutProps {

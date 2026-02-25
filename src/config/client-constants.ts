@@ -65,6 +65,18 @@ export const API_ROUTES = {
 			method: "PATCH" as const,
 			key: "update-workflow-file",
 		},
+		EXPORT: {
+			path: `${workflowFileBase}/:workflowId/export`,
+			dynamicPath: (workflowId: string) =>
+				`${workflowFileBase}/${workflowId}/export`,
+			method: "GET" as const,
+			key: "export-workflow",
+		},
+		IMPORT: {
+			path: `${workflowFileBase}/import`,
+			method: "POST" as const,
+			key: "import-workflow",
+		},
 	},
 	WORKFLOW_NODES: {
 		LIST: {

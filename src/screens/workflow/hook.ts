@@ -9,10 +9,13 @@ import {
 } from "@/config/client-constants";
 import { useAPIErrorHandler } from "@/hooks/use-error-handler";
 import {
+	exportWorkflow,
 	useCreateWorkflowFile,
 	useGetWorkflowFile,
+	useImportWorkflow,
 	useUpdateWorkflowFile,
 } from "@/services/client-api/workflow-file";
+import { workflowExportPayloadSchema } from "@/lib/workflow-export/schema";
 import {
 	useCreateWorkflowNode,
 	useDeleteWorkflowNode,
@@ -98,6 +101,10 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 			mutationFn: (args: { workflowId: string }) =>
 				executeWorkflowFlowApi(args),
 		});
+
+	const [isExporting, setIsExporting] = useState(false);
+	const { mutateAsync: importWorkflowMutation, isPending: isImporting } =
+		useImportWorkflow();
 
 	useEffect(() => {
 		if (workflowFileError) {
@@ -350,6 +357,60 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 		}
 	}, [workflowId, executeWorkflowFlow, updateNodeErrorHandler, queryClient]);
 
+	const onExport = useCallback(async () => {
+		setIsExporting(true);
+		try {
+			const payload = await exportWorkflow({ workflowId });
+			const blob = new Blob([JSON.stringify(payload, null, 2)], {
+				type: "application/json",
+			});
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement("a");
+			a.href = url;
+			a.download = `${payload.name.replace(/[^a-zA-Z0-9-_]/g, "_")}_workflow.json`;
+			a.click();
+			URL.revokeObjectURL(url);
+			toast.success("Workflow exported");
+		} catch (error) {
+			APIErrorHandler()(error);
+		} finally {
+			setIsExporting(false);
+		}
+	}, [workflowId]);
+
+	const onImportFile = useCallback(
+		async (file: File) => {
+			try {
+				const text = await file.text();
+				const raw = JSON.parse(text) as unknown;
+				// Accept either raw payload or wrapped API response { success, data }
+				const payloadCandidate =
+					typeof raw === "object" &&
+					raw !== null &&
+					"data" in (raw as { data?: unknown }) &&
+					typeof (raw as { success?: boolean }).success === "boolean"
+						? (raw as { data: unknown }).data
+						: raw;
+				const parsed = workflowExportPayloadSchema.safeParse(payloadCandidate);
+				if (!parsed.success) {
+					const msg = parsed.error.issues.map((e) => e.message).join("; ");
+					toast.error(`Invalid workflow file: ${msg}`);
+					return;
+				}
+				const result = await importWorkflowMutation({ payload: parsed.data });
+				toast.success(`Workflow "${result.workflow_name}" imported`);
+				router.push(`/workflow/${result.workflow_id}`);
+			} catch (err) {
+				if (err instanceof SyntaxError) {
+					toast.error("Invalid JSON in file");
+					return;
+				}
+				APIErrorHandler()(err);
+			}
+		},
+		[importWorkflowMutation, router],
+	);
+
 	return {
 		workflowSidebar: {
 			workflowFile,
@@ -363,6 +424,10 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 			setRenameValue,
 			isCreatingNewFile,
 			isRenaming,
+			onExport,
+			onImportFile,
+			isExporting,
+			isImporting,
 		},
 		nodes,
 		edges,
