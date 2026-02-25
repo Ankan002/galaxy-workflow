@@ -1,7 +1,7 @@
 import { task, retry } from "@trigger.dev/sdk";
 import {
 	stripExecutionMeta,
-	handleExecutionOnComplete,
+	notifyExecutionComplete,
 	type ExecutionMeta,
 } from "./execution-callback";
 import { spawn } from "node:child_process";
@@ -164,7 +164,7 @@ export const extractVideoFrame = task({
 	run: async (
 		payload: ExtractVideoFramePayload & { _executionMeta?: ExecutionMeta },
 	): Promise<ExtractVideoFrameOutput> => {
-		const { payload: rawPayload } = stripExecutionMeta(payload);
+		const { payload: rawPayload, meta } = stripExecutionMeta(payload);
 		const cleanPayload = rawPayload as ExtractVideoFramePayload;
 		const { video_url, timestamp = 0 } = cleanPayload;
 
@@ -259,13 +259,27 @@ export const extractVideoFrame = task({
 				);
 			}
 
-			return { output: uploaded_url };
+			const output = { output: uploaded_url };
+			if (meta) {
+				await notifyExecutionComplete(
+					meta,
+					output as unknown as Record<string, unknown>,
+					null,
+				);
+			}
+			return output;
+		} catch (err) {
+			if (meta) {
+				await notifyExecutionComplete(
+					meta,
+					null,
+					err instanceof Error ? err.message : String(err),
+				);
+			}
+			throw err;
 		} finally {
 			await fs.unlink(inputPath).catch(() => {});
 			await fs.unlink(outputPath).catch(() => {});
 		}
-	},
-	onComplete: async ({ payload, result }) => {
-		await handleExecutionOnComplete({ payload, result });
 	},
 });

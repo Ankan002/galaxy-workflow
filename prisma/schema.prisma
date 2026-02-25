@@ -33,6 +33,20 @@ enum workflow_execution_type {
   one_node
 }
 
+enum node_execution_status {
+  pending
+  running
+  completed
+  failed
+}
+
+enum workflow_execution_status {
+  pending
+  running
+  completed
+  failed
+}
+
 model user {
   id         String          @id @default(ulid())
   clerk_id   String          @unique
@@ -95,27 +109,29 @@ model workflow_edge {
 }
 
 model workflow_execution {
-  id             String                  @id @default(ulid())
+  id             String                     @id @default(ulid())
   workflow_id    String
   execution_type workflow_execution_type
+  status         workflow_execution_status  @default(pending)
   error          Json?
   result         Json?
-  created_at     DateTime                @default(now())
-  updated_at     DateTime                @updatedAt
+  created_at     DateTime                  @default(now())
+  updated_at     DateTime                  @updatedAt
 
   workflow        workflow_file    @relation(fields: [workflow_id], references: [id], onDelete: Cascade)
   node_executions node_execution[]
 }
 
 model node_execution {
-  id                    String   @id @default(ulid())
+  id                    String                @id @default(ulid())
   workflow_id           String
   node_id               String
   workflow_execution_id String
+  status                node_execution_status @default(pending)
   output                Json?
   error                 Json?
-  created_at            DateTime @default(now())
-  updated_at            DateTime @updatedAt
+  created_at            DateTime              @default(now())
+  updated_at            DateTime              @updatedAt
 
   workflow           workflow_file      @relation(fields: [workflow_id], references: [id], onDelete: Cascade)
   node               workflow_node      @relation(fields: [node_id], references: [id], onDelete: Cascade)

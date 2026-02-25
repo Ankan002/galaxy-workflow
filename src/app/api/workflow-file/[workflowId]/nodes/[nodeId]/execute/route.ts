@@ -79,7 +79,7 @@ export const POST = createApi<undefined, undefined, true>({
 		const baseUrl = serverEnv.HOST.trim().startsWith("http")
 			? serverEnv.HOST.trim()
 			: `https://${serverEnv.HOST.trim()}`;
-		const completionUrl = `${baseUrl.replace(/\/$/, "")}/api/workflow-file/${workflowId}/executions/complete`;
+		const completionUrl = `${baseUrl.replace(/\/$/, "")}/api/webhooks/execution-complete`;
 
 		const workflowExecution = await createWorkflowExecution({
 			workflowId,

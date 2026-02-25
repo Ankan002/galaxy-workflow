@@ -1,7 +1,7 @@
 import { task, logger, retry } from "@trigger.dev/sdk";
 import {
 	stripExecutionMeta,
-	handleExecutionOnComplete,
+	notifyExecutionComplete,
 	type ExecutionMeta,
 } from "./execution-callback";
 import { generateContentWithGemini } from "@/services/llm/gemini";
@@ -48,7 +48,7 @@ export const runLLM = task({
 	run: async (
 		payload: RunLLMPayload & { _executionMeta?: ExecutionMeta },
 	): Promise<RunLLMOutput> => {
-		const { payload: rawPayload } = stripExecutionMeta(payload);
+		const { payload: rawPayload, meta } = stripExecutionMeta(payload);
 		const cleanPayload = rawPayload as RunLLMPayload;
 
 		const { prompt, image_urls, systemPrompt, model } = cleanPayload;
@@ -68,20 +68,38 @@ export const runLLM = task({
 			});
 		}
 
-		const result = await logger.trace("gemini-generateContent", async () => {
-			return await generateContentWithGemini({
-				apiKey,
-				prompt,
-				image_urls,
-				systemPrompt,
-				model,
-				fetchImageAsBase64: fetchImageAsInlineData,
-			});
-		});
-
-		return { text: result.text };
-	},
-	onComplete: async ({ payload, result }) => {
-		await handleExecutionOnComplete({ payload, result });
+		try {
+			const result = await logger.trace(
+				"gemini-generateContent",
+				async () => {
+					return await generateContentWithGemini({
+						apiKey,
+						prompt,
+						image_urls,
+						systemPrompt,
+						model,
+						fetchImageAsBase64: fetchImageAsInlineData,
+					});
+				},
+			);
+			const output = { text: result.text };
+			if (meta) {
+				await notifyExecutionComplete(meta, output, null);
+			}
+			return output;
+		} catch (err) {
+			if (meta) {
+				console.log("notifyExecutionComplete error", {
+					meta,
+					err,
+				});
+				await notifyExecutionComplete(
+					meta,
+					null,
+					err instanceof Error ? err.message : String(err),
+				);
+			}
+			throw err;
+		}
 	},
 });

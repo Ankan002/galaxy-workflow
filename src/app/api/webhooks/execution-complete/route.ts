@@ -1,33 +1,35 @@
 import { serverUtilsRegistry } from "@/utils/server";
-import { serverEnv } from "@/config/server-env";
-import { updateNodeExecutionResult, getNodeExecutionById } from "@/db/actions/workflow-execution.action";
+import {
+	updateNodeExecutionResult,
+	getNodeExecutionById,
+	updateWorkflowExecutionResult,
+} from "@/db/actions/workflow-execution.action";
 import { getWorkflowNode } from "@/db/actions/workflow-node.action";
 import { taskOutputToNodeOutput } from "@/lib/execution/single-node-execution";
 import type { workflow_node_type } from "@/db/prisma/client";
+import { EXECUTION_COMPLETE_HEADER_KEY } from "@/trigger/execution-callback";
 import z from "zod";
 
 const { createApi, sendJsonApiResponse } = serverUtilsRegistry;
 
 const bodySchema = z.object({
-	nodeExecutionId: z.string(),
-	workflowId: z.string(),
+	execution_id: z.string().optional(),
+	execution_node_id: z.string(),
+	node_id: z.string().optional(),
+	workflow_id: z.string(),
 	output: z.record(z.string(), z.unknown()).optional().nullable(),
 	error: z.string().optional().nullable(),
 });
 
 /**
- * Called by Trigger.dev tasks when a single-node execution completes.
- * Verifies Authorization: Bearer TRIGGER_SECRET_KEY (set in Trigger env).
+ * Webhook: receives execution completion from trigger tasks. Auth: x-complete-key header.
  */
 export const POST = createApi<typeof bodySchema, undefined, false>({
 	requireAuth: false,
 	bodySchema,
 	execute: async ({ body, req }) => {
-		const authHeader = req.headers.get("authorization");
-		const bearer = authHeader?.startsWith("Bearer ")
-			? authHeader.slice(7)
-			: null;
-		if (bearer !== serverEnv.TRIGGER_SECRET_KEY) {
+		const key = req.headers.get("x-complete-key");
+		if (key !== EXECUTION_COMPLETE_HEADER_KEY) {
 			return sendJsonApiResponse({
 				success: false,
 				code: 401,
@@ -35,16 +37,19 @@ export const POST = createApi<typeof bodySchema, undefined, false>({
 			});
 		}
 
-		if (!body?.nodeExecutionId || !body?.workflowId) {
-			return sendJsonApiResponse({
-				success: false,
-				code: 400,
-				error: "nodeExecutionId and workflowId are required",
-			});
-		}
-		const { nodeExecutionId, workflowId, output, error } = body;
+		const {
+			execution_id: executionId,
+			execution_node_id: executionNodeId,
+			node_id: nodeId,
+			workflow_id: workflowId,
+			output,
+			error,
+		} = body!;
 
-		const existing = await getNodeExecutionById({ id: nodeExecutionId, workflowId });
+		const existing = await getNodeExecutionById({
+			id: executionNodeId,
+			workflowId,
+		});
 		if (!existing) {
 			return sendJsonApiResponse({
 				success: false,
@@ -54,21 +59,36 @@ export const POST = createApi<typeof bodySchema, undefined, false>({
 		}
 
 		const node = await getWorkflowNode({
-			id: existing.node_id,
+			id: nodeId ?? existing.node_id,
 			workflowId,
 		});
 		const nodeType = (node?.type ?? "run_llm") as workflow_node_type;
 		const outputToStore =
 			output && !error
-				? taskOutputToNodeOutput(nodeType, output as Record<string, unknown>)
+				? taskOutputToNodeOutput(
+						nodeType,
+						output as Record<string, unknown>,
+					)
 				: undefined;
 
 		await updateNodeExecutionResult({
-			nodeExecutionId,
+			nodeExecutionId: executionNodeId,
 			workflowId,
 			output: outputToStore ?? undefined,
 			error: error ?? undefined,
 		});
+
+		if (executionId) {
+			await updateWorkflowExecutionResult({
+				workflowExecutionId: executionId,
+				workflowId,
+				result:
+					output && !error
+						? (output as Record<string, unknown>)
+						: undefined,
+				error: error ?? undefined,
+			});
+		}
 
 		return sendJsonApiResponse({
 			code: 200,
