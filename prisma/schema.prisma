@@ -28,6 +28,11 @@ enum workflow_node_provider {
   transloadit
 }
 
+enum workflow_execution_type {
+  full
+  one_node
+}
+
 model user {
   id         String          @id @default(ulid())
   clerk_id   String          @unique
@@ -44,9 +49,11 @@ model workflow_file {
   created_at DateTime      @default(now())
   updated_at DateTime      @updatedAt
 
-  user  user?           @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  nodes workflow_node[]
-  edges workflow_edge[]
+  user            user?                @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  nodes           workflow_node[]
+  edges           workflow_edge[]
+  executions      workflow_execution[]
+  node_executions node_execution[]
 }
 
 model workflow_node {
@@ -61,9 +68,10 @@ model workflow_node {
   created_at  DateTime               @default(now())
   updated_at  DateTime               @updatedAt
 
-  workflow     workflow_file   @relation(fields: [workflow_id], references: [id], onDelete: Cascade)
-  source_edges workflow_edge[] @relation("edge_source")
-  target_edges workflow_edge[] @relation("edge_target")
+  workflow     workflow_file    @relation(fields: [workflow_id], references: [id], onDelete: Cascade)
+  source_edges workflow_edge[]  @relation("edge_source")
+  target_edges workflow_edge[]  @relation("edge_target")
+  executions   node_execution[]
 }
 
 model workflow_edge {
@@ -84,4 +92,32 @@ model workflow_edge {
   @@index([workflow_id])
   @@index([source_node_id])
   @@index([target_node_id])
+}
+
+model workflow_execution {
+  id             String                  @id @default(ulid())
+  workflow_id    String
+  execution_type workflow_execution_type
+  error          Json?
+  result         Json?
+  created_at     DateTime                @default(now())
+  updated_at     DateTime                @updatedAt
+
+  workflow        workflow_file    @relation(fields: [workflow_id], references: [id], onDelete: Cascade)
+  node_executions node_execution[]
+}
+
+model node_execution {
+  id                    String   @id @default(ulid())
+  workflow_id           String
+  node_id               String
+  workflow_execution_id String
+  output                Json?
+  error                 Json?
+  created_at            DateTime @default(now())
+  updated_at            DateTime @updatedAt
+
+  workflow           workflow_file      @relation(fields: [workflow_id], references: [id], onDelete: Cascade)
+  node               workflow_node      @relation(fields: [node_id], references: [id], onDelete: Cascade)
+  workflow_execution workflow_execution @relation(fields: [workflow_execution_id], references: [id], onDelete: Cascade)
 }
