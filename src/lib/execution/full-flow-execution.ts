@@ -288,7 +288,8 @@ export async function triggerReadyNodes(
 				nodeId,
 				workflowExecutionId,
 			});
-			const taskId = TRIGGER_TASK_IDS[nodeType];
+			const taskId =
+				TRIGGER_TASK_IDS[nodeType as keyof typeof TRIGGER_TASK_IDS];
 			await tasks.trigger(taskId, {
 				...payload,
 				_executionMeta: {

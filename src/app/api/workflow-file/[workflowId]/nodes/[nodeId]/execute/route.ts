@@ -91,7 +91,8 @@ export const POST = createApi<undefined, undefined, true>({
 			workflowExecutionId: workflowExecution.id,
 		});
 
-		const taskId = TRIGGER_TASK_IDS[nodeType];
+		const taskId =
+			TRIGGER_TASK_IDS[nodeType as keyof typeof TRIGGER_TASK_IDS];
 		await tasks.trigger(taskId, {
 			...payload,
 			_executionMeta: {
