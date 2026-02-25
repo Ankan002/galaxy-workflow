@@ -9,9 +9,10 @@ import { useUpdateNodeConfig } from "../use-update-node-config";
 import { useWorkflowNodePersistence } from "@/components/canvas/workflow-node-persistence-context";
 import { useWorkflowId } from "@/components/canvas/workflow-id-context";
 import { useTransloaditUpload } from "@/hooks/use-transloadit-upload";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
-import { VideoIcon } from "lucide-react";
+import { VideoIcon, Upload } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const DEFAULT_ACCEPT = "video/mp4,video/quicktime,video/webm,video/x-m4v";
@@ -170,6 +171,22 @@ export function VideoUploadNode({ id, data, selected }: NodeProps) {
 									preload="metadata"
 									onClick={(e) => e.stopPropagation()}
 								/>
+								{workflowId && !isUploading && (
+									<Button
+										type="button"
+										variant="secondary"
+										size="sm"
+										className="absolute bottom-2 right-2 z-20 h-7 gap-1 px-2 text-[10px] shadow-md"
+										onClick={(e) => {
+											e.stopPropagation();
+											fileInputRef.current?.click();
+										}}
+										aria-label="Upload new video"
+									>
+										<Upload className="size-3" />
+										Upload new
+									</Button>
+								)}
 							</>
 						) : (
 							<div className="flex flex-col items-center gap-2 text-muted-foreground pointer-events-none">
