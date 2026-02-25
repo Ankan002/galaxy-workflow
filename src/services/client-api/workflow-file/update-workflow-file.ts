@@ -65,3 +65,22 @@ export const useUpdateWorkflowFile = (workflowId: string) => {
 		},
 	});
 };
+
+/** Mutation to update any workflow file by id (e.g. from dashboard list). */
+export const useUpdateWorkflowFileMutation = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: (args: { workflowId: string; name: string }) =>
+			updateWorkflowFile(args),
+		mutationKey: [API_ROUTES.WORKFLOW_FILE.UPDATE.key],
+		onSuccess: (_data, variables) => {
+			queryClient.invalidateQueries({
+				queryKey: [API_ROUTES.WORKFLOW_FILE.GET_ONE.key, variables.workflowId],
+			});
+			queryClient.invalidateQueries({
+				queryKey: [API_ROUTES.WORKFLOW_FILE.GET.key],
+			});
+		},
+	});
+};

@@ -4,15 +4,16 @@ import {
 	useCreateWorkflowFile,
 	useDeleteWorkflowFile,
 	useGetWorkflowFiles,
+	useUpdateWorkflowFileMutation,
 } from "@/services/client-api/workflow-file";
 import { toast } from "sonner";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDebounce, useDebouncedCallback } from "use-debounce";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { DEBOUNCE_TIME, API_ROUTES } from "@/config/client-constants";
 import { clientUtils } from "@/utils/client";
-import { workflow_file } from "@/db/prisma/client";
+import type { workflow_file } from "@/db/prisma/client";
 import { useFileSearchStore } from "@/store/file-search.store";
 
 export const useMyFiles = () => {
@@ -42,8 +43,15 @@ export const useMyFiles = () => {
 	});
 
 	const { mutateAsync: deleteWorkflowFile } = useDeleteWorkflowFile();
+	const { mutateAsync: updateWorkflowFile, isPending: isRenaming } =
+		useUpdateWorkflowFileMutation();
+
+	const [renameDialogOpen, setRenameDialogOpen] = useState(false);
+	const [fileToRename, setFileToRename] = useState<workflow_file | null>(null);
+	const [renameValue, setRenameValue] = useState("");
 
 	const createWorkflowFileErrorHandler = APIErrorHandler();
+	const updateWorkflowFileErrorHandler = APIErrorHandler();
 	const getWorkflowFilesErrorHandler = APIErrorHandler();
 	const deleteWorkflowFileErrorHandler = APIErrorHandler();
 
@@ -81,6 +89,35 @@ export const useMyFiles = () => {
 		}
 	};
 
+	const handleOpenRename = (file: workflow_file) => {
+		setFileToRename(file);
+		setRenameValue(file.name);
+		setRenameDialogOpen(true);
+	};
+
+	const handleRenameSubmit = async () => {
+		if (!fileToRename) return;
+		const name = renameValue.trim();
+		if (!name || name === fileToRename.name) {
+			setRenameDialogOpen(false);
+			return;
+		}
+		try {
+			await updateWorkflowFile({ workflowId: fileToRename.id, name });
+			queryClient.setQueryData<workflow_file[]>(
+				[API_ROUTES.WORKFLOW_FILE.GET.key, debouncedSearch],
+				(prev) =>
+					prev?.map((f) => (f.id === fileToRename.id ? { ...f, name } : f)) ??
+					prev,
+			);
+			toast.success("Workflow renamed");
+			setRenameDialogOpen(false);
+			setFileToRename(null);
+		} catch (error) {
+			updateWorkflowFileErrorHandler(error);
+		}
+	};
+
 	useEffect(() => {
 		if (workflowFilesError) {
 			getWorkflowFilesErrorHandler(workflowFilesError);
@@ -99,6 +136,14 @@ export const useMyFiles = () => {
 		handleCreateWorkflowFile,
 		isCreatingWorkflowFile,
 		handleDeleteWorkflowFile,
+		handleOpenRename,
+		handleRenameSubmit,
+		renameDialogOpen,
+		setRenameDialogOpen,
+		renameValue,
+		setRenameValue,
+		fileToRename,
+		isRenaming,
 		isLoadingWorkflowFiles,
 		workflowFiles,
 		search,

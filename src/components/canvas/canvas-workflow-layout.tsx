@@ -79,6 +79,10 @@ interface CanvasWorkflowLayoutProps {
 	isRunNodeLoading?: boolean;
 	/** True while run-flow request is in flight (disables Run flow button). */
 	isRunFlowLoading?: boolean;
+	/** Called with execution id to stop that run. */
+	onStopFlow?: (executionId?: string) => void | Promise<void>;
+	/** True while stop-flow request is in flight. */
+	isStopFlowLoading?: boolean;
 }
 
 function CanvasWorkflowLayoutInner({
@@ -102,6 +106,8 @@ function CanvasWorkflowLayoutInner({
 	onTriggerFlow,
 	isRunNodeLoading = false,
 	isRunFlowLoading = false,
+	onStopFlow,
+	isStopFlowLoading = false,
 }: CanvasWorkflowLayoutProps) {
 	const flowInstanceRef = useRef<ReactFlowInstance | null>(null);
 	const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -219,9 +225,11 @@ function CanvasWorkflowLayoutInner({
 				hasSelectedNode={hasSelectedNode}
 				onRunSelectedNode={handleRunSelectedNode}
 				onTriggerFlow={handleTriggerFlow}
+				onStopFlow={onStopFlow}
 				disabled={isEditorDisabled}
 				isRunNodeLoading={isRunNodeLoading}
 				isRunFlowLoading={isRunFlowLoading}
+				isStopFlowLoading={isStopFlowLoading}
 				workflowId={workflowId}
 			/>
 		</div>

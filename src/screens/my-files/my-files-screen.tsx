@@ -4,9 +4,16 @@ import { DashboardProvider } from "@/components/providers";
 import { useMyFiles } from "./hook";
 import {
 	Button,
+	Dialog,
+	DialogContent,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+	Input,
 	InputGroup,
 	InputGroupAddon,
 	InputGroupInput,
+	Label,
 } from "@/components/ui";
 import { Loader2, Plus, Search, Volleyball } from "lucide-react";
 import { PrebuiltWorkflows, SkeletonCard, WorkflowFileCard } from "./components";
@@ -18,6 +25,14 @@ const MyFilesScreen = () => {
 		handleCreateWorkflowFile,
 		isCreatingWorkflowFile,
 		handleDeleteWorkflowFile,
+		handleOpenRename,
+		handleRenameSubmit,
+		renameDialogOpen,
+		setRenameDialogOpen,
+		renameValue,
+		setRenameValue,
+		fileToRename,
+		isRenaming,
 		isLoadingWorkflowFiles,
 		onSearchChange,
 		search,
@@ -101,6 +116,7 @@ const MyFilesScreen = () => {
 									key={file.id}
 									file={file}
 									href={`/workflow/${file.id}`}
+									onRename={handleOpenRename}
 									onDelete={handleDeleteWorkflowFile}
 								/>
 							))}
@@ -108,6 +124,49 @@ const MyFilesScreen = () => {
 					)}
 				</div>
 			)}
+
+			<Dialog open={renameDialogOpen} onOpenChange={setRenameDialogOpen}>
+				<DialogContent className="sm:max-w-md">
+					<DialogHeader>
+						<DialogTitle>Rename workflow</DialogTitle>
+					</DialogHeader>
+					<div className="grid gap-2 py-2">
+						<Label htmlFor="dashboard-rename-input">Name</Label>
+						<Input
+							id="dashboard-rename-input"
+							value={renameValue}
+							onChange={(e) => setRenameValue(e.target.value)}
+							placeholder="Workflow name"
+							onKeyDown={(e) => {
+								if (e.key === "Enter") handleRenameSubmit();
+							}}
+						/>
+					</div>
+					<DialogFooter>
+						<Button
+							variant="outline"
+							onClick={() => setRenameDialogOpen(false)}
+							disabled={isRenaming}
+						>
+							Cancel
+						</Button>
+						<Button
+							onClick={handleRenameSubmit}
+							disabled={
+								!renameValue.trim() ||
+								(fileToRename != null &&
+									renameValue.trim() === fileToRename.name) ||
+								isRenaming
+							}
+						>
+							{isRenaming && (
+								<Loader2 className="size-4 shrink-0 animate-spin" />
+							)}
+							Save
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
 		</DashboardProvider>
 	);
 };

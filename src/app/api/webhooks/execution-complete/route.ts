@@ -87,25 +87,15 @@ export const POST = createApi<typeof bodySchema, undefined, false>({
 				workflowExecutionId: executionId,
 				workflowId,
 			});
-			if (meta?.execution_type === "full") {
+			if (meta?.execution_type === "full" && meta?.status === "running") {
 				const baseUrl = serverEnv.HOST.trim().startsWith("http")
 					? serverEnv.HOST.trim()
 					: `https://${serverEnv.HOST.trim()}`;
 				const completionUrl = `${baseUrl.replace(/\/$/, "")}/api/webhooks/execution-complete`;
 				await triggerReadyNodes(workflowId, executionId, completionUrl);
-				const { total, terminal, hasAnyFailed } = await getWorkflowRunNodeExecutionCounts({
-					workflowExecutionId: executionId,
-					workflowId,
-				});
-				if (total > 0 && total === terminal) {
-					await updateWorkflowExecutionResult({
-						workflowExecutionId: executionId,
-						workflowId,
-						error: hasAnyFailed ? "One or more nodes failed" : undefined,
-					});
-				}
-			} else {
-				// one_node (or unknown): single node run — mark workflow complete with this node's result/error
+			}
+			if (meta?.execution_type === "one_node") {
+				// one_node: single node run — mark workflow complete with this node's result/error
 				await updateWorkflowExecutionResult({
 					workflowExecutionId: executionId,
 					workflowId,
@@ -115,6 +105,24 @@ export const POST = createApi<typeof bodySchema, undefined, false>({
 							: undefined,
 					error: error ?? undefined,
 				});
+			} else {
+				// full (or unknown): ensure workflow execution is updated when all nodes are terminal
+				const { total, terminal, hasAnyFailed } =
+					await getWorkflowRunNodeExecutionCounts({
+						workflowExecutionId: executionId,
+						workflowId,
+					});
+				if (
+					total > 0 &&
+					total === terminal &&
+					meta?.status === "running"
+				) {
+					await updateWorkflowExecutionResult({
+						workflowExecutionId: executionId,
+						workflowId,
+						error: hasAnyFailed ? "One or more nodes failed" : undefined,
+					});
+				}
 			}
 		}
 

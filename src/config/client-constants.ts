@@ -200,6 +200,13 @@ export const API_ROUTES = {
 			method: "GET" as const,
 			key: "get-workflow-execution",
 		},
+		STOP: {
+			path: `${workflowFileBase}/:workflowId/executions/stop`,
+			dynamicPath: (workflowId: string) =>
+				`${workflowFileBase}/${workflowId}/executions/stop`,
+			method: "POST" as const,
+			key: "stop-workflow-execution",
+		},
 	},
 	WORKFLOW_EDGES: {
 		LIST: {
