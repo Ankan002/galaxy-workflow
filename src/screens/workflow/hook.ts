@@ -130,10 +130,12 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 	const isExecutionRunning = !!runningExecutionId;
 	const runningNodeIds = useMemo(
 		() =>
-			runningExecution?.node_executions
-				?.filter((ne) => ne.status === "running")
-				.map((ne) => ne.node_id) ?? [],
-		[runningExecution?.node_executions],
+			!runningExecutionId
+				? []
+				: (runningExecution?.node_executions
+						?.filter((ne) => ne.status === "running")
+						.map((ne) => ne.node_id) ?? []),
+		[runningExecutionId, runningExecution?.node_executions],
 	);
 	const { mutateAsync: stopWorkflowExecution, isPending: isStopFlowLoading } =
 		useStopWorkflowExecution(workflowId);
