@@ -13,6 +13,7 @@ import {
 	FilePlus,
 	Pencil,
 	Download,
+	Loader2,
 	Upload,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -241,7 +242,11 @@ export function CanvasNodeSidebar({
 								disabled={isImporting}
 								className="flex items-center gap-2"
 							>
-								<Upload className="size-4" />
+								{isImporting ? (
+									<Loader2 className="size-4 shrink-0 animate-spin" />
+								) : (
+									<Upload className="size-4" />
+								)}
 								{isImporting ? "Importing…" : "Import workflow"}
 							</DropdownMenuItem>
 						)}
