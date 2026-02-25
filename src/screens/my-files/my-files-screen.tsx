@@ -9,7 +9,7 @@ import {
 	InputGroupInput,
 } from "@/components/ui";
 import { Loader2, Plus, Search, Volleyball } from "lucide-react";
-import { SkeletonCard, WorkflowFileCard } from "./components";
+import { PrebuiltWorkflows, SkeletonCard, WorkflowFileCard } from "./components";
 
 const MyFilesScreen = () => {
 	const {
@@ -43,6 +43,7 @@ const MyFilesScreen = () => {
 				</Button>
 			}
 		>
+			{search.length === 0 && <PrebuiltWorkflows />}
 			{isLoadingWorkflowFiles && workflowFiles === undefined && (
 				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
 					{Array.from({ length: 16 }).map((_, i) => (
