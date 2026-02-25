@@ -42,6 +42,54 @@ export const createNodeExecution = async (args: CreateNodeExecutionArgs) => {
 	});
 };
 
+interface CreateSourceNodeExecutionArgs {
+	workflowId: string;
+	nodeId: string;
+	workflowExecutionId: string;
+	output: Record<string, unknown>;
+}
+
+/** Create a node execution already completed (for source nodes in full-flow: text, image_upload, video_upload). */
+export const createSourceNodeExecution = async (
+	args: CreateSourceNodeExecutionArgs,
+) => {
+	return prisma.node_execution.create({
+		data: {
+			workflow_id: args.workflowId,
+			node_id: args.nodeId,
+			workflow_execution_id: args.workflowExecutionId,
+			status: "completed" as node_execution_status,
+			output: args.output as object,
+		},
+	});
+};
+
+interface GetNodeOutputForExecutionArgs {
+	workflowExecutionId: string;
+	workflowId: string;
+	nodeId: string;
+}
+
+/**
+ * Returns the output of the given node in a specific workflow run, or null if not found/completed.
+ * Used when resolving inputs during full-flow execution (same run).
+ */
+export const getNodeOutputForExecution = async (
+	args: GetNodeOutputForExecutionArgs,
+): Promise<Record<string, unknown> | null> => {
+	const ne = await prisma.node_execution.findFirst({
+		where: {
+			workflow_execution_id: args.workflowExecutionId,
+			workflow_id: args.workflowId,
+			node_id: args.nodeId,
+			status: "completed",
+		},
+		select: { output: true },
+	});
+	if (!ne?.output || typeof ne.output !== "object") return null;
+	return ne.output as Record<string, unknown>;
+};
+
 interface GetLatestNodeOutputArgs {
 	workflowId: string;
 	nodeId: string;
@@ -157,6 +205,82 @@ export const getWorkflowExecutionWithNodeExecutions = async (
 			},
 		},
 	});
+};
+
+/** Get workflow execution meta (execution_type, status) by id. */
+export const getWorkflowExecutionMeta = async (args: {
+	workflowExecutionId: string;
+	workflowId: string;
+}) => {
+	const we = await prisma.workflow_execution.findFirst({
+		where: {
+			id: args.workflowExecutionId,
+			workflow_id: args.workflowId,
+		},
+		select: { execution_type: true, status: true },
+	});
+	return we;
+};
+
+/** Node IDs that already have a node_execution in this run (any status). Used to find "ready" nodes. */
+export const getNodeIdsWithExecutionInRun = async (args: {
+	workflowExecutionId: string;
+	workflowId: string;
+}): Promise<Set<string>> => {
+	const list = await prisma.node_execution.findMany({
+		where: {
+			workflow_execution_id: args.workflowExecutionId,
+			workflow_id: args.workflowId,
+		},
+		select: { node_id: true },
+	});
+	return new Set(list.map((r) => r.node_id));
+};
+
+/** Node IDs that have completed in this run. Used to find nodes whose inputs are now satisfied. */
+export const getCompletedNodeIdsInRun = async (args: {
+	workflowExecutionId: string;
+	workflowId: string;
+}): Promise<Set<string>> => {
+	const list = await prisma.node_execution.findMany({
+		where: {
+			workflow_execution_id: args.workflowExecutionId,
+			workflow_id: args.workflowId,
+			status: "completed",
+		},
+		select: { node_id: true },
+	});
+	return new Set(list.map((r) => r.node_id));
+};
+
+/** Returns total, terminal (completed | failed) counts and whether any node failed. Used to mark workflow complete when all nodes are done. */
+export const getWorkflowRunNodeExecutionCounts = async (args: {
+	workflowExecutionId: string;
+	workflowId: string;
+}) => {
+	const [total, terminal, failedCount] = await Promise.all([
+		prisma.node_execution.count({
+			where: {
+				workflow_execution_id: args.workflowExecutionId,
+				workflow_id: args.workflowId,
+			},
+		}),
+		prisma.node_execution.count({
+			where: {
+				workflow_execution_id: args.workflowExecutionId,
+				workflow_id: args.workflowId,
+				status: { in: ["completed", "failed"] },
+			},
+		}),
+		prisma.node_execution.count({
+			where: {
+				workflow_execution_id: args.workflowExecutionId,
+				workflow_id: args.workflowId,
+				status: "failed",
+			},
+		}),
+	]);
+	return { total, terminal, hasAnyFailed: failedCount > 0 };
 };
 
 interface GetNodeExecutionByIdArgs {

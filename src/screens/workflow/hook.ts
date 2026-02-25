@@ -20,6 +20,7 @@ import {
 	useUpdateWorkflowNodeMutation,
 	executeWorkflowNode,
 } from "@/services/client-api/workflow-nodes";
+import { executeWorkflowFlow } from "@/services/client-api/workflow-executions/execute-workflow-flow";
 import {
 	useCreateWorkflowEdge,
 	useDeleteWorkflowEdge,
@@ -321,6 +322,18 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 		}
 	}, [workflowId, nodes, updateNodeErrorHandler, queryClient]);
 
+	const runFlow = useCallback(async () => {
+		try {
+			await executeWorkflowFlow({ workflowId });
+			queryClient.invalidateQueries({
+				queryKey: [API_ROUTES.WORKFLOW_EXECUTIONS.LIST.key, workflowId],
+			});
+			toast.success("Full flow execution started");
+		} catch (error) {
+			updateNodeErrorHandler(error);
+		}
+	}, [workflowId, updateNodeErrorHandler, queryClient]);
+
 	return {
 		workflowSidebar: {
 			workflowFile,
@@ -350,5 +363,6 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 		isEditorDisabled,
 		onNodeDetailsBlur,
 		runSelectedNode,
+		runFlow,
 	};
 };

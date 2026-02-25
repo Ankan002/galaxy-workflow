@@ -80,7 +80,6 @@ export function ExecutionHistory({ workflowId }: ExecutionHistoryProps) {
 	const { data: executions, isLoading: isLoadingList } =
 		useGetWorkflowExecutions({
 			workflowId,
-			execution_type: "one_node",
 			limit: 50,
 		});
 
@@ -115,7 +114,7 @@ export function ExecutionHistory({ workflowId }: ExecutionHistoryProps) {
 				</div>
 			) : runList.length === 0 ? (
 				<p className="text-xs text-muted-foreground">
-					No single-node runs yet. Run a node to see history.
+					No runs yet. Run a node or run the full flow to see history.
 				</p>
 			) : (
 				<Accordion
@@ -144,8 +143,10 @@ export function ExecutionHistory({ workflowId }: ExecutionHistoryProps) {
 										/>
 									</div>
 									<span className="block truncate text-xs text-muted-foreground">
-										{formatRunDate(run.created_at)} (Single
-										Node)
+										{formatRunDate(run.created_at)}{" "}
+										{run.execution_type === "full"
+											? "(Full flow)"
+											: "(Single Node)"}
 									</span>
 								</div>
 							</AccordionTrigger>

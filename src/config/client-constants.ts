@@ -126,6 +126,13 @@ export const API_ROUTES = {
 			key: "execute-node",
 		},
 	},
+	WORKFLOW_EXECUTE_FLOW: {
+		path: `${workflowFileBase}/:workflowId/execute-flow`,
+		dynamicPath: (workflowId: string) =>
+			`${workflowFileBase}/${workflowId}/execute-flow`,
+		method: "POST" as const,
+		key: "execute-workflow-flow",
+	},
 	WORKFLOW_EXECUTIONS: {
 		LIST: {
 			path: `${workflowFileBase}/:workflowId/executions`,

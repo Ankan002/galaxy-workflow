@@ -30,6 +30,7 @@ const WorkflowScreen = ({ workflowId }: WorkflowScreenProps) => {
 				isEditorDisabled={workflow.isEditorDisabled}
 				onNodeDetailsBlur={workflow.onNodeDetailsBlur}
 				onRunSelectedNode={workflow.runSelectedNode}
+				onTriggerFlow={workflow.runFlow}
 			/>
 		</div>
 	);

@@ -2,12 +2,16 @@ import { serverUtilsRegistry } from "@/utils/server";
 import {
 	updateNodeExecutionResult,
 	getNodeExecutionById,
+	getWorkflowExecutionMeta,
+	getWorkflowRunNodeExecutionCounts,
 	updateWorkflowExecutionResult,
 } from "@/db/actions/workflow-execution.action";
 import { getWorkflowNode } from "@/db/actions/workflow-node.action";
 import { taskOutputToNodeOutput } from "@/lib/execution/single-node-execution";
+import { triggerReadyNodes } from "@/lib/execution/full-flow-execution";
 import type { workflow_node_type } from "@/db/prisma/client";
 import { EXECUTION_COMPLETE_HEADER_KEY } from "@/trigger/execution-callback";
+import { serverEnv } from "@/config/server-env";
 import z from "zod";
 
 const { createApi, sendJsonApiResponse } = serverUtilsRegistry;
@@ -79,15 +83,39 @@ export const POST = createApi<typeof bodySchema, undefined, false>({
 		});
 
 		if (executionId) {
-			await updateWorkflowExecutionResult({
+			const meta = await getWorkflowExecutionMeta({
 				workflowExecutionId: executionId,
 				workflowId,
-				result:
-					output && !error
-						? (output as Record<string, unknown>)
-						: undefined,
-				error: error ?? undefined,
 			});
+			if (meta?.execution_type === "full") {
+				const baseUrl = serverEnv.HOST.trim().startsWith("http")
+					? serverEnv.HOST.trim()
+					: `https://${serverEnv.HOST.trim()}`;
+				const completionUrl = `${baseUrl.replace(/\/$/, "")}/api/webhooks/execution-complete`;
+				await triggerReadyNodes(workflowId, executionId, completionUrl);
+				const { total, terminal, hasAnyFailed } = await getWorkflowRunNodeExecutionCounts({
+					workflowExecutionId: executionId,
+					workflowId,
+				});
+				if (total > 0 && total === terminal) {
+					await updateWorkflowExecutionResult({
+						workflowExecutionId: executionId,
+						workflowId,
+						error: hasAnyFailed ? "One or more nodes failed" : undefined,
+					});
+				}
+			} else {
+				// one_node (or unknown): single node run — mark workflow complete with this node's result/error
+				await updateWorkflowExecutionResult({
+					workflowExecutionId: executionId,
+					workflowId,
+					result:
+						output && !error
+							? (output as Record<string, unknown>)
+							: undefined,
+					error: error ?? undefined,
+				});
+			}
 		}
 
 		return sendJsonApiResponse({
