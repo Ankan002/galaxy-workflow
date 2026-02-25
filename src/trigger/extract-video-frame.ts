@@ -141,12 +141,16 @@ function parseTimestamp(
 	durationSeconds: number,
 ): number {
 	if (value === undefined || value === null) return 0;
-	if (typeof value === "number" && Number.isFinite(value)) return Math.max(0, value);
+	if (typeof value === "number" && Number.isFinite(value))
+		return Math.max(0, value);
 	const s = String(value).trim();
 	if (s.endsWith("%")) {
 		const pct = Number(s.slice(0, -1));
 		if (!Number.isFinite(pct)) return 0;
-		return Math.max(0, (durationSeconds * Math.min(100, Math.max(0, pct))) / 100);
+		return Math.max(
+			0,
+			(durationSeconds * Math.min(100, Math.max(0, pct))) / 100,
+		);
 	}
 	const n = Number(s);
 	return Number.isFinite(n) ? Math.max(0, n) : 0;
@@ -154,6 +158,7 @@ function parseTimestamp(
 
 export const extractVideoFrame = task({
 	id: "extract-video-frame",
+	machine: "large-1x",
 	retry: {
 		maxAttempts: 3,
 		factor: 1.8,
