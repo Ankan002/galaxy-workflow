@@ -126,6 +126,22 @@ export const API_ROUTES = {
 			key: "execute-node",
 		},
 	},
+	WORKFLOW_EXECUTIONS: {
+		LIST: {
+			path: `${workflowFileBase}/:workflowId/executions`,
+			dynamicPath: (workflowId: string) =>
+				`${workflowFileBase}/${workflowId}/executions`,
+			method: "GET" as const,
+			key: "get-workflow-executions",
+		},
+		GET_ONE: {
+			path: `${workflowFileBase}/:workflowId/executions/:executionId`,
+			dynamicPath: (workflowId: string, executionId: string) =>
+				`${workflowFileBase}/${workflowId}/executions/${executionId}`,
+			method: "GET" as const,
+			key: "get-workflow-execution",
+		},
+	},
 	WORKFLOW_EDGES: {
 		LIST: {
 			path: `${workflowFileBase}/:workflowId/edges`,

@@ -205,6 +205,7 @@ function CanvasWorkflowLayoutInner({
 				onRunSelectedNode={handleRunSelectedNode}
 				onTriggerFlow={handleTriggerFlow}
 				disabled={isEditorDisabled}
+				workflowId={workflowId}
 			/>
 		</div>
 		</WorkflowNodePersistenceProvider>

@@ -1,8 +1,12 @@
 import type { Connection, Edge, Node } from "@xyflow/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { DASHBOARD_URL } from "@/config/client-constants";
+import {
+	DASHBOARD_URL,
+	API_ROUTES,
+} from "@/config/client-constants";
 import { useAPIErrorHandler } from "@/hooks/use-error-handler";
 import {
 	useCreateWorkflowFile,
@@ -33,6 +37,7 @@ interface UseWorkflowFileArgs {
 }
 
 export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
+	const queryClient = useQueryClient();
 	const canvasStateRef = useRef<{
 		setNodes: React.Dispatch<React.SetStateAction<Node[]>>;
 		setEdges: React.Dispatch<React.SetStateAction<Edge[]>>;
@@ -307,11 +312,14 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 		}
 		try {
 			await executeWorkflowNode({ workflowId, nodeId: selected.id });
+			queryClient.invalidateQueries({
+				queryKey: [API_ROUTES.WORKFLOW_EXECUTIONS.LIST.key, workflowId],
+			});
 			toast.success("Execution started");
 		} catch (error) {
 			updateNodeErrorHandler(error);
 		}
-	}, [workflowId, nodes, updateNodeErrorHandler]);
+	}, [workflowId, nodes, updateNodeErrorHandler, queryClient]);
 
 	return {
 		workflowSidebar: {

@@ -4,6 +4,7 @@ import { useCallback } from "react";
 import { PanelRight, PanelRightClose, Play, Workflow } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { ExecutionHistory } from "./execution-history";
 
 export interface CanvasRightSidebarProps {
 	/** Whether the sidebar is collapsed (only buttons visible). */
@@ -15,6 +16,8 @@ export interface CanvasRightSidebarProps {
 	onTriggerFlow: () => void;
 	/** Optional: disable both actions (e.g. when editor is loading). */
 	disabled?: boolean;
+	/** Workflow ID for execution history. */
+	workflowId: string;
 }
 
 export function CanvasRightSidebar({
@@ -24,6 +27,7 @@ export function CanvasRightSidebar({
 	onRunSelectedNode,
 	onTriggerFlow,
 	disabled = false,
+	workflowId,
 }: CanvasRightSidebarProps) {
 	const handleRunSelected = useCallback(() => {
 		if (!hasSelectedNode || disabled) return;
@@ -111,9 +115,8 @@ export function CanvasRightSidebar({
 					Run flow
 				</Button>
 			</div>
-			{/* Placeholder for execution history – layout only, no design yet */}
 			<div className="min-h-0 flex-1 overflow-auto p-3">
-				{/* Execution history content will be implemented in a follow-up step */}
+				<ExecutionHistory workflowId={workflowId} />
 			</div>
 			{/* Bottom: small collapse sidebar toggle */}
 			<div className="shrink-0 border-t border-sidebar-border p-2">

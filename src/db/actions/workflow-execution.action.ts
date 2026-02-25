@@ -98,6 +98,67 @@ export const updateNodeExecutionResult = async (
 	});
 };
 
+interface GetWorkflowExecutionsArgs {
+	workflowId: string;
+	limit?: number;
+	executionType?: "full" | "one_node";
+}
+
+export const getWorkflowExecutions = async (
+	args: GetWorkflowExecutionsArgs,
+) => {
+	return prisma.workflow_execution.findMany({
+		where: {
+			workflow_id: args.workflowId,
+			...(args.executionType && {
+				execution_type: args.executionType,
+			}),
+		},
+		orderBy: { created_at: "desc" },
+		take: args.limit ?? 50,
+		select: {
+			id: true,
+			workflow_id: true,
+			execution_type: true,
+			status: true,
+			error: true,
+			result: true,
+			created_at: true,
+			updated_at: true,
+		},
+	});
+};
+
+interface GetWorkflowExecutionWithNodeExecutionsArgs {
+	workflowId: string;
+	executionId: string;
+}
+
+export const getWorkflowExecutionWithNodeExecutions = async (
+	args: GetWorkflowExecutionWithNodeExecutionsArgs,
+) => {
+	return prisma.workflow_execution.findFirst({
+		where: {
+			id: args.executionId,
+			workflow_id: args.workflowId,
+		},
+		include: {
+			node_executions: {
+				orderBy: { created_at: "asc" },
+				include: {
+					node: {
+						select: {
+							id: true,
+							type: true,
+							config: true,
+						},
+					},
+				},
+			},
+		},
+	});
+};
+
 interface GetNodeExecutionByIdArgs {
 	id: string;
 	workflowId: string;
