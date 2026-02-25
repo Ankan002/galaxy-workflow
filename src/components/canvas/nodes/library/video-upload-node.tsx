@@ -152,25 +152,31 @@ export function VideoUploadNode({ id, data, selected }: NodeProps) {
 						onDragOver={onDragOver}
 						onDragLeave={onDragLeave}
 						className={cn(
-							"rounded-md border border-border bg-muted/30 aspect-video min-h-[80px] flex items-center justify-center overflow-hidden cursor-pointer transition-colors",
-							workflowId && !isUploading && "hover:bg-muted/50",
-							isDragOver && "ring-2 ring-primary bg-muted/50",
+							"relative aspect-video min-h-[120px] flex items-center justify-center overflow-hidden cursor-pointer transition-all duration-200 rounded-xl border border-border/80 bg-neutral-950 shadow-inner",
+							workflowId && !isUploading && "hover:border-primary/40 hover:shadow-md hover:shadow-primary/5",
+							isDragOver && "ring-2 ring-primary ring-offset-2 ring-offset-background border-primary/60 scale-[1.01]",
+							previewUrl && "shadow-lg",
 						)}
 						aria-label="Click or drop video to upload"
 					>
 						{previewUrl ? (
-							<video
-								src={previewUrl}
-								controls
-								className="max-h-full w-full object-contain pointer-events-none"
-								playsInline
-								preload="metadata"
-								onClick={(e) => e.stopPropagation()}
-							/>
+							<>
+								<div className="absolute inset-0 bg-neutral-950" aria-hidden />
+								<video
+									src={previewUrl}
+									controls
+									className="relative z-10 max-h-full w-full object-contain rounded-lg"
+									playsInline
+									preload="metadata"
+									onClick={(e) => e.stopPropagation()}
+								/>
+							</>
 						) : (
-							<div className="flex flex-col items-center gap-1 text-muted-foreground pointer-events-none">
-								<VideoIcon className="size-8" />
-								<span className="text-[10px]">
+							<div className="flex flex-col items-center gap-2 text-muted-foreground pointer-events-none">
+								<div className="rounded-full bg-neutral-800/80 p-3 ring-1 ring-neutral-700/50">
+									<VideoIcon className="size-7 text-neutral-400" />
+								</div>
+								<span className="text-[11px] font-medium text-neutral-400">
 									{isDragOver ? "Drop video here" : "Click or drop video"}
 								</span>
 							</div>
