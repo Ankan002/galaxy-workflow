@@ -413,17 +413,24 @@
 	fill: var(--border);
 }
 
-/* Node card: subtle, cute pulsating glow when that node is actively running */
+/* Node card: cute primary glow when that node is actively running */
 @keyframes node-pulse-glow {
 	0%,
 	100% {
-		box-shadow: 0 0 0 0 rgba(247, 255, 168, 0.18);
+		box-shadow:
+			0 0 0 1px rgba(247, 255, 168, 0.18),
+			0 0 8px 0 rgba(247, 255, 168, 0.04);
+		transform: scale(1);
 	}
 	50% {
-		box-shadow: 0 0 0 6px rgba(247, 255, 168, 0.04);
+		box-shadow:
+			0 0 0 2px rgba(247, 255, 168, 0.32),
+			0 0 14px 4px rgba(247, 255, 168, 0.12);
+		transform: scale(1.006);
 	}
 }
 
 .node-pulse {
-	animation: node-pulse-glow 2.2s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+	transform-origin: center;
+	animation: node-pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }

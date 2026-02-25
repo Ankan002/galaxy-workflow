@@ -237,8 +237,8 @@ export function ExecutionHistory({
 							value={run.id}
 							className="border-sidebar-border"
 						>
-							<AccordionTrigger className="py-2 hover:no-underline [&[data-state=open]>svg]:rotate-180">
-								<div className="flex flex-1 flex-col gap-0.5 text-left">
+							<AccordionTrigger className="flex items-center justify-start gap-2 py-2 hover:no-underline [&[data-state=open]>svg]:rotate-180">
+								<div className="min-w-0 flex-1 flex flex-col gap-0.5 text-left">
 									<div className="flex items-center gap-2">
 										<span className="text-xs font-medium text-foreground">
 											Run #{runList.length - index}
@@ -248,28 +248,6 @@ export function ExecutionHistory({
 											showIcon={true}
 											className="shrink-0"
 										/>
-										{run.status === "running" && onStopExecution && (
-											<Button
-												variant="outline"
-												size="sm"
-												className="ml-auto shrink-0 nodrag nopan h-7 gap-1.5 border-destructive/40 px-2 text-destructive hover:bg-destructive/10 hover:text-destructive"
-												title="Stop this run"
-												disabled={isStopFlowLoading}
-												onClick={(e) => {
-													e.preventDefault();
-													e.stopPropagation();
-													onStopExecution(run.id);
-												}}
-												aria-label="Stop this run"
-											>
-												{isStopFlowLoading ? (
-													<Loader2 className="size-3.5 shrink-0 animate-spin" />
-												) : (
-													<Square className="size-3.5 shrink-0 fill-current" />
-												)}
-												<span className="text-xs font-medium">Stop</span>
-											</Button>
-										)}
 									</div>
 									<span className="block truncate text-xs text-muted-foreground">
 										{formatRunDate(run.created_at)}{" "}
@@ -278,6 +256,28 @@ export function ExecutionHistory({
 											: "(Single Node)"}
 									</span>
 								</div>
+								{run.status === "running" && onStopExecution && (
+									<Button
+										variant="outline"
+										size="sm"
+										className="h-7 shrink-0 gap-1.5 nodrag nopan border-destructive/40 px-2 text-destructive hover:bg-destructive/10 hover:text-destructive"
+										title="Stop this run"
+										disabled={isStopFlowLoading}
+										onClick={(e) => {
+											e.preventDefault();
+											e.stopPropagation();
+											onStopExecution(run.id);
+										}}
+										aria-label="Stop this run"
+									>
+										{isStopFlowLoading ? (
+											<Loader2 className="size-3.5 shrink-0 animate-spin" />
+										) : (
+											<Square className="size-3.5 shrink-0 fill-current" />
+										)}
+										<span className="text-xs font-medium">Stop</span>
+									</Button>
+								)}
 							</AccordionTrigger>
 							<AccordionContent className="pb-2 pt-0">
 								{expandedId === run.id &&
