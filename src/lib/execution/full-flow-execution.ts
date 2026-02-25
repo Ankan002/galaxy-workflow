@@ -1,4 +1,5 @@
 import type { workflow_node_type } from "@/db/prisma/client";
+import { Prisma } from "@/db/prisma/client";
 import {
 	createNodeExecution,
 	createSourceNodeExecution,
@@ -11,12 +12,19 @@ import {
 import { getWorkflowEdges } from "@/db/actions/workflow-edge.action";
 import { getWorkflowNodes } from "@/db/actions/workflow-node.action";
 import { ApiError } from "@/types/errors/api-error";
+import { getValidLlmModel } from "./llm-models";
 import {
 	EXECUTABLE_NODE_TYPES,
 	NON_EXECUTABLE_NODE_TYPES,
 	type WorkflowNodeWithConfig,
 } from "./single-node-execution";
 import { tasks } from "@trigger.dev/sdk";
+
+function isPrismaUniqueViolation(e: unknown): boolean {
+	return (
+		e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002"
+	);
+}
 
 const TRIGGER_TASK_IDS: Record<
 	Exclude<workflow_node_type, "text" | "image_upload" | "video_upload">,
@@ -35,7 +43,7 @@ function getSourceNodeOutputRecord(node: WorkflowNodeWithConfig): Record<string,
 	const config = node.config ?? {};
 	switch (node.type) {
 		case "text":
-			return { value: config.value ?? "" };
+			return { value: (config.value ?? config.text) ?? "" };
 		case "image_upload":
 			return { image: config.previewUrl ?? config.url };
 		case "video_upload":
@@ -136,7 +144,7 @@ function mergeNodeConfigIntoPayload(node: WorkflowNodeWithConfig, payload: Recor
 	}
 	if (node.type === "extract_video_frame" && config.timestamp !== undefined) payload.timestamp = config.timestamp;
 	if (node.type === "run_llm") {
-		if (config.model != null) payload.model = config.model;
+		payload.model = getValidLlmModel(config.model);
 		if (config.systemPrompt != null) payload.systemPrompt = config.systemPrompt;
 		if (config.temperature != null) payload.temperature = config.temperature;
 		if (payload.prompt == null || payload.prompt === "") payload.prompt = (config.userMessages as string) ?? "";
@@ -227,12 +235,17 @@ export async function triggerReadyNodes(
 		const node = nodesById.get(nodeId)!;
 		const nodeType = node.type as workflow_node_type;
 		if (!EXECUTABLE_NODE_TYPES.has(nodeType)) {
-			await createSourceNodeExecution({
-				workflowId,
-				nodeId,
-				workflowExecutionId,
-				output: {},
-			});
+			try {
+				await createSourceNodeExecution({
+					workflowId,
+					nodeId,
+					workflowExecutionId,
+					output: {},
+				});
+			} catch (e) {
+				if (isPrismaUniqueViolation(e)) continue;
+				throw e;
+			}
 			continue;
 		}
 		const { payload, missingInputs } = await resolveInputsForNodeInFlow(
@@ -243,34 +256,44 @@ export async function triggerReadyNodes(
 			edges,
 		);
 		if (missingInputs.length > 0) {
-			const ne = await createNodeExecution({
-				workflowId,
-				nodeId,
-				workflowExecutionId,
-			});
-			await updateNodeExecutionResult({
-				nodeExecutionId: ne.id,
-				workflowId,
-				error: missingInputs.map((m) => m.message).join(" "),
-			});
+			try {
+				const ne = await createNodeExecution({
+					workflowId,
+					nodeId,
+					workflowExecutionId,
+				});
+				await updateNodeExecutionResult({
+					nodeExecutionId: ne.id,
+					workflowId,
+					error: missingInputs.map((m) => m.message).join(" "),
+				});
+			} catch (e) {
+				if (isPrismaUniqueViolation(e)) continue;
+				throw e;
+			}
 			continue;
 		}
-		const nodeExecution = await createNodeExecution({
-			workflowId,
-			nodeId,
-			workflowExecutionId,
-		});
-		const taskId = TRIGGER_TASK_IDS[nodeType];
-		await tasks.trigger(taskId, {
-			...payload,
-			_executionMeta: {
+		try {
+			const nodeExecution = await createNodeExecution({
 				workflowId,
 				nodeId,
-				nodeExecutionId: nodeExecution.id,
 				workflowExecutionId,
-				completionUrl,
-			},
-		});
+			});
+			const taskId = TRIGGER_TASK_IDS[nodeType];
+			await tasks.trigger(taskId, {
+				...payload,
+				_executionMeta: {
+					workflowId,
+					nodeId,
+					nodeExecutionId: nodeExecution.id,
+					workflowExecutionId,
+					completionUrl,
+				},
+			});
+		} catch (e) {
+			if (isPrismaUniqueViolation(e)) continue;
+			throw e;
+		}
 	}
 }
 

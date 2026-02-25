@@ -3,6 +3,7 @@ import { getLatestNodeOutput } from "@/db/actions/workflow-execution.action";
 import { getWorkflowEdges } from "@/db/actions/workflow-edge.action";
 import { getWorkflowNode, getWorkflowNodes } from "@/db/actions/workflow-node.action";
 import { ApiError } from "@/types/errors/api-error";
+import { getValidLlmModel } from "./llm-models";
 
 /** Node types that cannot be executed singly (source nodes). */
 export const NON_EXECUTABLE_NODE_TYPES: Set<workflow_node_type> = new Set([
@@ -33,7 +34,7 @@ function getSourceNodeOutput(
 	const config = node.config ?? {};
 	switch (node.type) {
 		case "text":
-			return sourceHandle === "value" ? config.value : undefined;
+			return sourceHandle === "value" ? (config.value ?? config.text) : undefined;
 		case "image_upload":
 			return sourceHandle === "image" ? config.previewUrl : undefined;
 		case "video_upload":
@@ -216,7 +217,7 @@ function mergeNodeConfigIntoPayload(
 			if (config.timestamp !== undefined) payload.timestamp = config.timestamp;
 			break;
 		case "run_llm":
-			if (config.model != null) payload.model = config.model;
+			payload.model = getValidLlmModel(config.model);
 			if (config.systemPrompt != null) payload.systemPrompt = config.systemPrompt;
 			if (config.temperature != null) payload.temperature = config.temperature;
 			if (payload.prompt == null || payload.prompt === "")

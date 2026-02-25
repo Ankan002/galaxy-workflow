@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback } from "react";
-import { PanelRight, PanelRightClose, Play, Workflow } from "lucide-react";
+import { Loader2, PanelRight, PanelRightClose, Play, Workflow } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ExecutionHistory } from "./execution-history";
@@ -16,6 +16,10 @@ export interface CanvasRightSidebarProps {
 	onTriggerFlow: () => void;
 	/** Optional: disable both actions (e.g. when editor is loading). */
 	disabled?: boolean;
+	/** True while run-selected-node is queuing (disables Run node, shows spinner). */
+	isRunNodeLoading?: boolean;
+	/** True while run-flow is queuing (disables Run flow, shows spinner). */
+	isRunFlowLoading?: boolean;
 	/** Workflow ID for execution history. */
 	workflowId: string;
 }
@@ -27,17 +31,22 @@ export function CanvasRightSidebar({
 	onRunSelectedNode,
 	onTriggerFlow,
 	disabled = false,
+	isRunNodeLoading = false,
+	isRunFlowLoading = false,
 	workflowId,
 }: CanvasRightSidebarProps) {
+	const runNodeDisabled = !hasSelectedNode || disabled || isRunNodeLoading;
+	const runFlowDisabled = disabled || isRunFlowLoading;
+
 	const handleRunSelected = useCallback(() => {
-		if (!hasSelectedNode || disabled) return;
+		if (runNodeDisabled) return;
 		onRunSelectedNode();
-	}, [hasSelectedNode, disabled, onRunSelectedNode]);
+	}, [runNodeDisabled, onRunSelectedNode]);
 
 	const handleTriggerFlow = useCallback(() => {
-		if (disabled) return;
+		if (runFlowDisabled) return;
 		onTriggerFlow();
-	}, [disabled, onTriggerFlow]);
+	}, [runFlowDisabled, onTriggerFlow]);
 
 	if (collapsed) {
 		return (
@@ -51,22 +60,30 @@ export function CanvasRightSidebar({
 					size="icon"
 					className="size-9 shrink-0"
 					title="Run selected node"
-					disabled={!hasSelectedNode || disabled}
+					disabled={runNodeDisabled}
 					onClick={handleRunSelected}
 					aria-label="Run selected node"
 				>
-					<Play className="size-4" />
+					{isRunNodeLoading ? (
+						<Loader2 className="size-4 animate-spin" />
+					) : (
+						<Play className="size-4" />
+					)}
 				</Button>
 				<Button
 					variant="outline"
 					size="icon"
 					className="size-9 shrink-0"
 					title="Trigger whole flow"
-					disabled={disabled}
+					disabled={runFlowDisabled}
 					onClick={handleTriggerFlow}
 					aria-label="Trigger whole flow"
 				>
-					<Workflow className="size-4" />
+					{isRunFlowLoading ? (
+						<Loader2 className="size-4 animate-spin" />
+					) : (
+						<Workflow className="size-4" />
+					)}
 				</Button>
 				<Button
 					variant="ghost"
@@ -95,11 +112,15 @@ export function CanvasRightSidebar({
 					size="sm"
 					className="min-w-0 flex-1 justify-center gap-1.5"
 					title="Run selected node"
-					disabled={!hasSelectedNode || disabled}
+					disabled={runNodeDisabled}
 					onClick={handleRunSelected}
 					aria-label="Run selected node"
 				>
-					<Play className="size-4 shrink-0" />
+					{isRunNodeLoading ? (
+						<Loader2 className="size-4 shrink-0 animate-spin" />
+					) : (
+						<Play className="size-4 shrink-0" />
+					)}
 					Run node
 				</Button>
 				<Button
@@ -107,11 +128,15 @@ export function CanvasRightSidebar({
 					size="sm"
 					className="min-w-0 flex-1 justify-center gap-1.5"
 					title="Trigger whole flow"
-					disabled={disabled}
+					disabled={runFlowDisabled}
 					onClick={handleTriggerFlow}
 					aria-label="Trigger whole flow"
 				>
-					<Workflow className="size-4 shrink-0" />
+					{isRunFlowLoading ? (
+						<Loader2 className="size-4 shrink-0 animate-spin" />
+					) : (
+						<Workflow className="size-4 shrink-0" />
+					)}
 					Run flow
 				</Button>
 			</div>

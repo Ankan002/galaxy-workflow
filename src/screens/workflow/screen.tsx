@@ -31,6 +31,8 @@ const WorkflowScreen = ({ workflowId }: WorkflowScreenProps) => {
 				onNodeDetailsBlur={workflow.onNodeDetailsBlur}
 				onRunSelectedNode={workflow.runSelectedNode}
 				onTriggerFlow={workflow.runFlow}
+				isRunNodeLoading={workflow.isRunNodeLoading}
+				isRunFlowLoading={workflow.isRunFlowLoading}
 			/>
 		</div>
 	);

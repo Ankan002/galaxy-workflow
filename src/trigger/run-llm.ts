@@ -4,6 +4,7 @@ import {
 	notifyExecutionComplete,
 	type ExecutionMeta,
 } from "./execution-callback";
+import { getValidLlmModel } from "@/lib/execution/llm-models";
 import { generateContentWithGemini } from "@/services/llm/gemini";
 
 export interface RunLLMPayload {
@@ -51,7 +52,8 @@ export const runLLM = task({
 		const { payload: rawPayload, meta } = stripExecutionMeta(payload);
 		const cleanPayload = rawPayload as RunLLMPayload;
 
-		const { prompt, image_urls, systemPrompt, model } = cleanPayload;
+		const { prompt, image_urls, systemPrompt, model: modelFromPayload } = cleanPayload;
+		const model = getValidLlmModel(modelFromPayload);
 		if (!prompt || typeof prompt !== "string") {
 			throw new Error("payload.prompt is required and must be a string");
 		}
@@ -77,7 +79,7 @@ export const runLLM = task({
 						prompt,
 						image_urls,
 						systemPrompt,
-						model,
+						model, // always valid (gemini-2.5-flash | gemini-2.5-pro) from getValidLlmModel
 						fetchImageAsBase64: fetchImageAsInlineData,
 					});
 				},

@@ -136,4 +136,6 @@ model node_execution {
   workflow           workflow_file      @relation(fields: [workflow_id], references: [id], onDelete: Cascade)
   node               workflow_node      @relation(fields: [node_id], references: [id], onDelete: Cascade)
   workflow_execution workflow_execution @relation(fields: [workflow_execution_id], references: [id], onDelete: Cascade)
+
+  @@unique([workflow_execution_id, node_id])
 }

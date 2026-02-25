@@ -158,11 +158,21 @@ export function useWorkflowCanvas(options: UseWorkflowCanvasOptions = {}) {
 
 	const onConnect: OnConnect = useCallback(
 		(connection) => {
+			const currentEdges = latestRef.current.edges;
+			const isDuplicate = currentEdges.some(
+				(e) =>
+					e.source === connection.source &&
+					e.target === connection.target &&
+					e.sourceHandle === connection.sourceHandle &&
+					e.targetHandle === connection.targetHandle,
+			);
+			if (isDuplicate) return;
+
 			pushHistoryBeforeChange();
 			const variant = getEdgeVariantFromConnection(nodes, connection);
 			const newEdges = addEdge(
 				{ ...connection, type: "workflow", data: { variant } },
-				latestRef.current.edges,
+				currentEdges,
 			);
 			setEdges(newEdges);
 			const newEdge = newEdges.find(

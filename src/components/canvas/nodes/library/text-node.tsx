@@ -10,7 +10,7 @@ import { useWorkflowNodePersistence } from "@/components/canvas/workflow-node-pe
 import { Textarea } from "@/components/ui/textarea";
 
 export interface TextNodeConfig {
-	text: string;
+	value: string;
 }
 
 export const TEXT_DEFINITION: Omit<NodeDefinition<TextNodeConfig>, "Component"> = {
@@ -20,7 +20,7 @@ export const TEXT_DEFINITION: Omit<NodeDefinition<TextNodeConfig>, "Component"> 
 	provider: "INTERNAL",
 	inputHandles: [],
 	outputHandles: [{ key: "value", type: "string" }],
-	defaultConfig: { text: "" },
+	defaultConfig: { value: "" },
 };
 
 export function TextNode({ id, data, selected }: NodeProps) {
@@ -29,10 +29,10 @@ export function TextNode({ id, data, selected }: NodeProps) {
 	const { onNodeDetailsBlur } = useWorkflowNodePersistence();
 	const config = (data?.config ?? TEXT_DEFINITION.defaultConfig) as TextNodeConfig;
 	const status = data?.status as "idle" | "running" | "completed" | "failed" | undefined;
-	const text = config.text ?? "";
+	const value = config.value ?? "";
 
-	const setText = useCallback(
-		(value: string) => updateConfig({ text: value }),
+	const setValue = useCallback(
+		(newValue: string) => updateConfig({ value: newValue }),
 		[updateConfig],
 	);
 
@@ -57,8 +57,8 @@ export function TextNode({ id, data, selected }: NodeProps) {
 		>
 			<div className="space-y-1 nodrag nopan">
 				<Textarea
-					value={text}
-					onChange={(e) => setText(e.target.value)}
+					value={value}
+					onChange={(e) => setValue(e.target.value)}
 					onBlur={handleBlur}
 					placeholder="Enter text…"
 					className="min-h-[60px] resize-y text-xs"

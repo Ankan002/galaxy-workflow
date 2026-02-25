@@ -69,6 +69,10 @@ interface CanvasWorkflowLayoutProps {
 	onRunSelectedNode?: () => void | Promise<void>;
 	/** Called when the user clicks "Run flow" (execute all nodes). */
 	onTriggerFlow?: () => void | Promise<void>;
+	/** True while run-selected-node request is in flight (disables Run node button). */
+	isRunNodeLoading?: boolean;
+	/** True while run-flow request is in flight (disables Run flow button). */
+	isRunFlowLoading?: boolean;
 }
 
 function CanvasWorkflowLayoutInner({
@@ -90,6 +94,8 @@ function CanvasWorkflowLayoutInner({
 	onNodeDetailsBlur,
 	onRunSelectedNode,
 	onTriggerFlow,
+	isRunNodeLoading = false,
+	isRunFlowLoading = false,
 }: CanvasWorkflowLayoutProps) {
 	const flowInstanceRef = useRef<ReactFlowInstance | null>(null);
 	const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -208,6 +214,8 @@ function CanvasWorkflowLayoutInner({
 				onRunSelectedNode={handleRunSelectedNode}
 				onTriggerFlow={handleTriggerFlow}
 				disabled={isEditorDisabled}
+				isRunNodeLoading={isRunNodeLoading}
+				isRunFlowLoading={isRunFlowLoading}
 				workflowId={workflowId}
 			/>
 		</div>

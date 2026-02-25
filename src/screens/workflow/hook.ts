@@ -1,7 +1,7 @@
 import type { Connection, Edge, Node } from "@xyflow/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
 	DASHBOARD_URL,
@@ -18,9 +18,9 @@ import {
 	useDeleteWorkflowNode,
 	useGetWorkflowNodes,
 	useUpdateWorkflowNodeMutation,
-	executeWorkflowNode,
+	executeWorkflowNode as executeWorkflowNodeApi,
 } from "@/services/client-api/workflow-nodes";
-import { executeWorkflowFlow } from "@/services/client-api/workflow-executions/execute-workflow-flow";
+import { executeWorkflowFlow as executeWorkflowFlowApi } from "@/services/client-api/workflow-executions/execute-workflow-flow";
 import {
 	useCreateWorkflowEdge,
 	useDeleteWorkflowEdge,
@@ -87,6 +87,17 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 		useDeleteWorkflowEdge(workflowId);
 	const { mutateAsync: updateWorkflowNode } =
 		useUpdateWorkflowNodeMutation(workflowId);
+
+	const { mutateAsync: executeWorkflowNode, isPending: isRunNodeLoading } =
+		useMutation({
+			mutationFn: (args: { workflowId: string; nodeId: string }) =>
+				executeWorkflowNodeApi(args),
+		});
+	const { mutateAsync: executeWorkflowFlow, isPending: isRunFlowLoading } =
+		useMutation({
+			mutationFn: (args: { workflowId: string }) =>
+				executeWorkflowFlowApi(args),
+		});
 
 	useEffect(() => {
 		if (workflowFileError) {
@@ -186,6 +197,11 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 				);
 			}
 		} catch (error) {
+			// Revert the optimistically added edge so UI stays in sync with server (e.g. duplicate edge 409)
+			const state = canvasStateRef?.current;
+			if (state) {
+				state.setEdges((prev) => prev.filter((e) => e.id !== edge.id));
+			}
 			createEdgeErrorHandler(error);
 		}
 	}
@@ -254,8 +270,8 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 		) {
 			return;
 		}
-		setNodes(mapWorkflowNodesToFlow(workflowNodes));
-		setEdges(mapWorkflowEdgesToFlow(workflowEdges));
+		setNodes(mapWorkflowNodesToFlow(workflowNodes, workflowEdges));
+		setEdges(mapWorkflowEdgesToFlow(workflowEdges, workflowNodes));
 		hydratedForWorkflowIdRef.current = workflowId;
 	}, [workflowId, workflowNodes, workflowEdges, setNodes, setEdges]);
 
@@ -320,7 +336,7 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 		} catch (error) {
 			updateNodeErrorHandler(error);
 		}
-	}, [workflowId, nodes, updateNodeErrorHandler, queryClient]);
+	}, [workflowId, nodes, executeWorkflowNode, updateNodeErrorHandler, queryClient]);
 
 	const runFlow = useCallback(async () => {
 		try {
@@ -332,7 +348,7 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 		} catch (error) {
 			updateNodeErrorHandler(error);
 		}
-	}, [workflowId, updateNodeErrorHandler, queryClient]);
+	}, [workflowId, executeWorkflowFlow, updateNodeErrorHandler, queryClient]);
 
 	return {
 		workflowSidebar: {
@@ -364,5 +380,7 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 		onNodeDetailsBlur,
 		runSelectedNode,
 		runFlow,
+		isRunNodeLoading,
+		isRunFlowLoading,
 	};
 };
