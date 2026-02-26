@@ -341,6 +341,20 @@ export const workflowOrchestrator = task({
 
 		let wave = 0;
 		while (true) {
+			// Respect user stop: if run was force-stopped via API, exit without triggering more waves.
+			const we = await prisma.workflow_execution.findFirst({
+				where: { id: workflowExecutionId, workflow_id: workflowId },
+				select: { status: true },
+			});
+			if (!we || we.status !== "running") {
+				logger.info("Orchestrator: run no longer running, exiting", {
+					workflowId,
+					workflowExecutionId,
+					status: we?.status,
+				});
+				break;
+			}
+
 			const ready = await getReadyNodeIds(
 				prisma,
 				workflowId,
@@ -441,6 +455,40 @@ export const workflowOrchestrator = task({
 				>[0],
 			);
 
+			// After waiting: if user stopped the run, exit without starting another wave.
+			const weAfter = await prisma.workflow_execution.findFirst({
+				where: { id: workflowExecutionId, workflow_id: workflowId },
+				select: { status: true },
+			});
+			if (!weAfter || weAfter.status !== "running") {
+				// Still write this wave's results so DB is consistent, then exit.
+				for (let i = 0; i < results.runs.length; i++) {
+					const run = results.runs[i];
+					const nodeExecutionId = nodeExecutionIds[i];
+					const nodeType = nodeTypes[i];
+					const hasError = !run.ok;
+					const output =
+						run.ok && run.output != null
+							? taskOutputToNodeOutput(nodeType, run.output as unknown as Record<string, unknown>)
+							: null;
+					const errorStr = hasError ? (run.error ?? "Unknown error") : null;
+					const updateData = {
+						status: (hasError ? "failed" : "completed") as "completed" | "failed",
+						...(output != null && { output: output as object }),
+						error: errorStr != null ? errorStr : Prisma.JsonNull,
+					};
+					await prisma.node_execution.updateMany({
+						where: { id: nodeExecutionId, workflow_id: workflowId },
+						data: updateData,
+					});
+				}
+				logger.info("Orchestrator: run was stopped, exiting after writing wave results", {
+					workflowId,
+					workflowExecutionId,
+				});
+				break;
+			}
+
 			for (let i = 0; i < results.runs.length; i++) {
 				const run = results.runs[i];
 				const nodeExecutionId = nodeExecutionIds[i];
@@ -486,7 +534,13 @@ export const workflowOrchestrator = task({
 			}),
 		]);
 
-		if (total > 0 && total === terminal) {
+		// Only update workflow_execution to completed/failed if still running (user may have stopped).
+		const weFinal = await prisma.workflow_execution.findFirst({
+			where: { id: workflowExecutionId, workflow_id: workflowId },
+			select: { status: true },
+		});
+
+		if (weFinal?.status === "running" && total > 0 && total === terminal) {
 			const nodeResults = await prisma.node_execution.findMany({
 				where: {
 					workflow_execution_id: workflowExecutionId,
