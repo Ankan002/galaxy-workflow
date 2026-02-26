@@ -337,10 +337,13 @@ export interface ExecuteFullFlowResult {
 	message: string;
 }
 
-export async function executeFullFlow(
+/**
+ * Creates a full-flow run (workflow_execution + source node_executions only).
+ * Caller is responsible for either triggering the Trigger orchestrator or calling triggerReadyNodes (legacy).
+ */
+export async function createFullFlowRun(
 	workflowId: string,
-	completionUrl: string,
-): Promise<ExecuteFullFlowResult> {
+): Promise<{ workflowExecutionId: string; nodeExecutionIds: string[] }> {
 	const [nodes, edges] = await Promise.all([
 		getWorkflowNodes({ workflowId }),
 		getWorkflowEdges({ workflowId }),
@@ -370,9 +373,17 @@ export async function executeFullFlow(
 			nodeExecutionIds.push(ne.id);
 		}
 	}
-	await triggerReadyNodes(workflowId, workflowExecution.id, completionUrl);
+	return { workflowExecutionId: workflowExecution.id, nodeExecutionIds };
+}
+
+export async function executeFullFlow(
+	workflowId: string,
+	completionUrl: string,
+): Promise<ExecuteFullFlowResult> {
+	const { workflowExecutionId, nodeExecutionIds } = await createFullFlowRun(workflowId);
+	await triggerReadyNodes(workflowId, workflowExecutionId, completionUrl);
 	return {
-		workflowExecutionId: workflowExecution.id,
+		workflowExecutionId,
 		nodeExecutionIds,
 		message: "Full flow execution started",
 	};

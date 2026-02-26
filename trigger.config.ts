@@ -1,5 +1,6 @@
 import { defineConfig } from "@trigger.dev/sdk";
 import { ffmpeg } from "@trigger.dev/build/extensions/core";
+import { prismaExtension } from "@trigger.dev/build/extensions/prisma";
 import "dotenv/config";
 
 export default defineConfig({
@@ -23,6 +24,9 @@ export default defineConfig({
 	maxDuration: 3600,
 
 	build: {
-		extensions: [ffmpeg()],
+		extensions: [
+			ffmpeg(),
+			prismaExtension({ mode: "modern" }),
+		],
 	},
 });

@@ -9,10 +9,8 @@ import {
 } from "@/db/actions/workflow-execution.action";
 import { getWorkflowNode } from "@/db/actions/workflow-node.action";
 import { taskOutputToNodeOutput } from "@/lib/execution/single-node-execution";
-import { triggerReadyNodes } from "@/lib/execution/full-flow-execution";
 import type { workflow_node_type } from "@/db/prisma/client";
 import { EXECUTION_COMPLETE_HEADER_KEY } from "@/trigger/execution-callback";
-import { serverEnv } from "@/config/server-env";
 import z from "zod";
 
 const { createApi, sendJsonApiResponse } = serverUtilsRegistry;
@@ -88,13 +86,7 @@ export const POST = createApi<typeof bodySchema, undefined, false>({
 				workflowExecutionId: executionId,
 				workflowId,
 			});
-			if (meta?.execution_type === "full" && meta?.status === "running") {
-				const baseUrl = serverEnv.HOST.trim().startsWith("http")
-					? serverEnv.HOST.trim()
-					: `https://${serverEnv.HOST.trim()}`;
-				const completionUrl = `${baseUrl.replace(/\/$/, "")}/api/webhooks/execution-complete`;
-				await triggerReadyNodes(workflowId, executionId, completionUrl);
-			}
+			// Full flow: do not call triggerReadyNodes – workflow-orchestrator drives waves.
 			if (meta?.execution_type === "one_node") {
 				// one_node: single node run — mark workflow complete with this node's result/error
 				await updateWorkflowExecutionResult({

@@ -291,7 +291,7 @@ export const cropImage = task({
 			}
 
 			const output = { uploaded_url };
-			if (meta) {
+			if (meta?.completionUrl) {
 				await notifyExecutionComplete(
 					meta,
 					output as unknown as Record<string, unknown>,
@@ -300,7 +300,7 @@ export const cropImage = task({
 			}
 			return output;
 		} catch (err) {
-			if (meta) {
+			if (meta?.completionUrl) {
 				await notifyExecutionComplete(
 					meta,
 					null,
