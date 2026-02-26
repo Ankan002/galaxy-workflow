@@ -37,6 +37,36 @@ function getEdgeVariantFromConnection(
 	return "default";
 }
 
+/** Connection-like shape (Connection or Edge) for validation. */
+type ConnectionLike = {
+	source: string;
+	target: string;
+	sourceHandle?: string | null;
+	targetHandle?: string | null;
+};
+
+/** Returns false if source output type and target input type are incompatible (e.g. text → crop x_percent). */
+function isConnectionAllowedByHandleTypes(
+	nodes: Node[],
+	connection: ConnectionLike | null,
+): boolean {
+	if (!connection?.source || !connection?.target || connection.sourceHandle == null || connection.sourceHandle === "" || connection.targetHandle == null || connection.targetHandle === "")
+		return true;
+	const sourceNode = nodes.find((n) => n.id === connection.source);
+	const targetNode = nodes.find((n) => n.id === connection.target);
+	if (!sourceNode?.type || !targetNode?.type) return true;
+	const sourceDef = NODE_REGISTRY[sourceNode.type as keyof typeof NODE_REGISTRY];
+	const targetDef = NODE_REGISTRY[targetNode.type as keyof typeof NODE_REGISTRY];
+	if (!sourceDef?.outputHandles || !targetDef?.inputHandles) return true;
+	const sourceHandle = sourceDef.outputHandles.find((h) => h.key === connection.sourceHandle);
+	const targetHandle = targetDef.inputHandles.find((h) => h.key === connection.targetHandle);
+	if (!sourceHandle || !targetHandle) return true;
+	const st = sourceHandle.type;
+	const tt = targetHandle.type;
+	if (tt === "any" || st === "any") return true;
+	return st === tt;
+}
+
 function snapshot(nodes: Node[], edges: Edge[]): { nodes: Node[]; edges: Edge[] } {
 	return {
 		nodes: JSON.parse(JSON.stringify(nodes)),
@@ -164,6 +194,7 @@ export function useWorkflowCanvas(options: UseWorkflowCanvasOptions = {}) {
 
 	const onConnect: OnConnect = useCallback(
 		(connection) => {
+			if (!isConnectionAllowedByHandleTypes(nodes, connection)) return;
 			const currentEdges = latestRef.current.edges;
 			const isDuplicate = currentEdges.some(
 				(e) =>
@@ -287,6 +318,11 @@ export function useWorkflowCanvas(options: UseWorkflowCanvasOptions = {}) {
 		return payload;
 	}, []);
 
+	const isValidConnection = useCallback(
+		(connection: Connection | Edge) => isConnectionAllowedByHandleTypes(nodes, connection as ConnectionLike),
+		[nodes],
+	);
+
 	return {
 		nodes,
 		edges,
@@ -295,6 +331,7 @@ export function useWorkflowCanvas(options: UseWorkflowCanvasOptions = {}) {
 		onNodesChange: wrappedOnNodesChange,
 		onEdgesChange: wrappedOnEdgesChange,
 		onConnect,
+		isValidConnection,
 		handleDeleteEdge,
 		addNode,
 		removeNode,

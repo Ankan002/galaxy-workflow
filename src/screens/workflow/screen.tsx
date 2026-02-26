@@ -20,6 +20,7 @@ const WorkflowScreen = ({ workflowId }: WorkflowScreenProps) => {
 				onNodesChange={workflow.onNodesChange}
 				onEdgesChange={workflow.onEdgesChange}
 				onConnect={workflow.onConnect}
+				isValidConnection={workflow.isValidConnection}
 				setNodes={workflow.setNodes}
 				undo={workflow.undo}
 				redo={workflow.redo}

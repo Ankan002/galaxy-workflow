@@ -35,7 +35,7 @@
 | **Validation**      | Zod (API body/query, env, workflow export/import)                     |
 | **Database**        | PostgreSQL, Prisma ORM                                                |
 | **Auth**            | Clerk (middleware + API `auth()`)                                     |
-| **Background jobs** | Trigger.dev (run-llm, crop-image, extract-video-frame)                |
+| **Background jobs** | Trigger.dev (workflow-orchestrator, run-llm, crop-image, extract-video-frame) |
 | **Uploads**         | TUS (tus-js-client) + Transloadit (prepare → TUS → notify → complete) |
 | **LLM / Vision**    | Google Gemini (Gemini 2.5 Flash / Pro)                                |
 | **Package manager** | Bun                                                                   |
@@ -50,13 +50,17 @@
 - **API:** Next.js Route Handlers under `/api/workflow-file/...`, `/api/webhooks/...`, etc. All workflow APIs use a shared `createApi()` factory with optional Zod body/query and `requireAuth`.
 - **Auth:** Clerk protects non-public routes via middleware (`src/proxy.ts`). API routes that need a user call `auth()` and use `requireAuth: true` in `createApi`.
 - **Database:** Prisma connects to PostgreSQL. Main entities: `user`, `workflow_file`, `workflow_node`, `workflow_edge`, `workflow_execution`, `node_execution`, `workflow_template`.
-- **Execution:** Run node or run flow → API creates `workflow_execution` and `node_execution` rows → API triggers Trigger.dev task with `_executionMeta` (workflowId, nodeId, nodeExecutionId, workflowExecutionId, completionUrl). Task runs (Gemini / FFmpeg / etc.), then calls completion webhook with result. Webhook updates `node_execution`, and for full flows may trigger the next batch of nodes or mark the workflow execution complete.
+- **Execution:**  
+  - **Full flow:** User clicks "Run flow" → API creates `workflow_execution` (type `full`) and source `node_execution` rows (text, image_upload, video_upload) → API triggers a single Trigger.dev task **workflow-orchestrator** with `{ workflowId, workflowExecutionId }`. The orchestrator runs entirely on Trigger: it loads nodes/edges from the DB (Prisma), repeatedly computes ready nodes, resolves inputs from predecessor outputs, creates `node_execution` rows, and calls **batch.triggerAndWait** for each wave (crop-image, run-llm, extract-video-frame). Child tasks are invoked **without** `completionUrl`, so they do not POST to the webhook; the orchestrator gets results from `batch.triggerAndWait` and updates `node_execution` (output/error) via Prisma. When no more ready nodes remain, the orchestrator updates `workflow_execution` (status, result, error). Orchestration thus lives inside Trigger (durability, dashboard visibility, native retry).  
+  - **Single-node run:** User runs one node → API creates `workflow_execution` (type `one_node`) and `node_execution` → API triggers the corresponding Trigger task with `_executionMeta` including `completionUrl`. The task runs, then calls `notifyExecutionComplete`, which POSTs to `/api/webhooks/execution-complete`. The webhook updates `node_execution` and `workflow_execution`.
 - **Uploads:** Image/Video node → Prepare (Transloadit assembly + TUS URL) → Client uploads via TUS → Transloadit notifies our webhook → We update node config with preview/URL and optionally call upload-complete API.
 
 ### Data Flow Summary
 
 1. **Workflow CRUD:** UI → API (Zod-validated) → Prisma → DB. React Query invalidates list/detail keys after mutations.
-2. **Execution:** UI → Execute API → DB (create execution + node executions) → `tasks.trigger(taskId, payload)` → Trigger.dev runs task → Task POSTs to `/api/webhooks/execution-complete` with output/error → Webhook updates DB and, for full flow, may trigger more nodes or mark run complete.
+2. **Execution:**  
+   - **Full flow:** UI → `POST /api/workflow-file/:workflowId/execute-flow` → DB (create `workflow_execution` + source `node_execution` rows) → `tasks.trigger("workflow-orchestrator", { workflowId, workflowExecutionId })` → Orchestrator task on Trigger loads DAG, loop: get ready nodes → resolve inputs → create `node_execution` → `batch.triggerAndWait`(crop/llm/extract) → update `node_execution` from results → repeat until done → update `workflow_execution`. No webhook involved for full-flow node completions.  
+   - **Single-node:** UI → Execute node API → DB (create `workflow_execution` + `node_execution`) → `tasks.trigger(taskId, payload)` with `completionUrl` → Task runs → Task POSTs to `/api/webhooks/execution-complete` → Webhook updates `node_execution` and `workflow_execution`.
 3. **Uploads:** UI → Prepare API → Transloadit assembly + TUS URL → Client TUS upload → Transloadit webhook → Our notify route updates node → Optional complete API for UI state.
 
 ---
@@ -72,10 +76,11 @@
 
 ## Near–Real-Time Execution Status
 
-- **Mechanism:** **Webhooks + polling**, no WebSockets.
-    - **Trigger.dev** tasks, on completion, POST to `POST /api/webhooks/execution-complete` with `execution_id`, `execution_node_id`, `node_id`, `workflow_id`, `output`, `error`. The webhook updates `node_execution` and, when applicable, the `workflow_execution` and triggers the next nodes (full flow).
+- **Mechanism:** **Orchestrator + webhooks (single-node) + polling**; no WebSockets.
+    - **Full flow:** The **workflow-orchestrator** Trigger task updates `node_execution` and `workflow_execution` directly in the DB via Prisma after each wave of `batch.triggerAndWait`. Child tasks (crop-image, run-llm, extract-video-frame) do **not** call the completion webhook when run from the orchestrator (no `completionUrl` in `_executionMeta`). So full-flow state is written only by the orchestrator.
+    - **Single-node run:** The triggered task, on completion, POSTs to `POST /api/webhooks/execution-complete` with `execution_id`, `execution_node_id`, `node_id`, `workflow_id`, `output`, `error`. The webhook updates `node_execution` and `workflow_execution`.
     - **UI:** When an execution is expanded in the right-sidebar "Execution history", `useGetWorkflowExecution` is called with `refetchInterval: 2000` (2s polling). That keeps the run detail (and node-level status) updating without WebSockets.
-- **Result:** Status is "near–real-time": as soon as the task calls the webhook, the DB is updated; the UI reflects it on the next poll (or on manual refetch after a mutation like "Stop flow").
+- **Result:** Status is "near–real-time": for full flow, the DB is updated by the orchestrator after each wave; for single-node, as soon as the task calls the webhook, the DB is updated. The UI reflects changes on the next poll (or on manual refetch after a mutation like "Stop flow").
 
 ---
 
@@ -90,13 +95,17 @@
 
 ## Trigger.dev
 
-- **Role:** All node executions (Run LLM, Crop Image, Extract Video Frame) run as Trigger.dev tasks so long-running or heavy work runs in the cloud, not in the Next.js process.
+- **Role:** All node executions (Run LLM, Crop Image, Extract Video Frame) run as Trigger.dev tasks so long-running or heavy work runs in the cloud, not in the Next.js process. **Full-flow orchestration** also runs on Trigger via a single **workflow-orchestrator** task that uses **batch.triggerAndWait** to drive the DAG.
 - **Tasks:**
-    - `run-llm` — Gemini (vision-capable) with prompt/images.
-    - `crop-image` — FFmpeg crop.
-    - `extract-video-frame` — FFmpeg frame extraction.
-      Each task receives a payload plus `_executionMeta` (workflowId, nodeId, nodeExecutionId, workflowExecutionId, completionUrl). On success/failure, the task calls `notifyExecutionComplete(meta, output, error)` which POSTs to the completion webhook with a fixed `x-complete-key` header.
-- **Flow:** Execute API creates DB execution records, then `tasks.trigger(taskId, payload)`. No polling of Trigger.dev in the app; state is updated only when the webhook is hit. The UI then refreshes execution state via the 2s polling when a run is expanded.
+    - **`workflow-orchestrator`** — Full-flow only. Payload: `{ workflowId, workflowExecutionId }`. Loads nodes/edges from the DB (Prisma in the task), then loops: (1) compute ready node ids (predecessors completed, no execution yet), (2) for each ready node resolve inputs from predecessor outputs and create `node_execution`, (3) call **batch.triggerAndWait** with crop-image, run-llm, extract-video-frame payloads (with `_executionMeta` **without** `completionUrl`), (4) update each `node_execution` from the batch results, (5) repeat until no ready nodes remain, then update `workflow_execution` (status, result, error). Ensures durability (checkpointing while waiting), full visibility in the Trigger dashboard, and native retry at the orchestration layer.
+    - **`run-llm`** — Gemini (vision-capable) with prompt/images.
+    - **`crop-image`** — FFmpeg crop.
+    - **`extract-video-frame`** — FFmpeg frame extraction.  
+      Each of these receives a payload plus optional `_executionMeta` (workflowId, nodeId, nodeExecutionId, workflowExecutionId, **completionUrl**). They call `notifyExecutionComplete(meta, output, error)` **only when** `meta.completionUrl` is set (single-node or legacy path); when run from the orchestrator, `completionUrl` is omitted so they do not POST to the webhook—the orchestrator gets the result from `batch.triggerAndWait` and writes to the DB.
+- **Flow:**  
+  - **Full flow:** Execute API creates `workflow_execution` and source `node_execution` rows, then `tasks.trigger("workflow-orchestrator", { workflowId, workflowExecutionId })`. The orchestrator runs on Trigger and updates all execution state via Prisma; the app does not poll Trigger. The UI refreshes execution state via 2s polling when a run is expanded.  
+  - **Single-node:** Execute API creates execution records, then `tasks.trigger(taskId, payload)` with `completionUrl`. The task runs and POSTs to the completion webhook; the webhook updates the DB. UI polling is unchanged.
+- **Config:** The orchestrator uses Prisma in the task (see `trigger.config.ts`: `prismaExtension({ mode: "modern" })`). Ensure **DATABASE_URL** is set in your Trigger.dev project environment so the orchestrator can connect to the same PostgreSQL database as the Next.js app.
 
 ---
 
@@ -234,7 +243,7 @@ See `.env.example` for the full list. Summary:
 - **Database:** `DATABASE_URL`, `DIRECT_URL`
 - **App:** `ENV`, `HOST` (used for webhook callback URL)
 - **Clerk:** `CLERK_SECRET_KEY`, `CLERK_WEBHOOK_SIGNING_SECRET`, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
-- **Trigger.dev:** `TRIGGER_SECRET_KEY`, `TRIGGER_PROJECT_REF`
+- **Trigger.dev:** `TRIGGER_SECRET_KEY`, `TRIGGER_PROJECT_REF`. For the workflow-orchestrator task, set **DATABASE_URL** in the Trigger.dev project environment (same DB as the app).
 - **Transloadit:** `TRANSLOADIT_PUBLIC_KEY`, `TRANSLOADIT_SECRET_KEY`, `TRANSLOADIT_IMAGE_TEMPLATE_ID`, `TRANSLOADIT_VIDEO_TEMPLATE_ID`
 - **Gemini:** `GEMINI_API_KEY`
 - **Public:** `NEXT_PUBLIC_HOST`, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`

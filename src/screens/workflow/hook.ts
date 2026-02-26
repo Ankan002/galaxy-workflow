@@ -41,6 +41,10 @@ import {
 	mapWorkflowEdgesToFlow,
 	mapWorkflowNodesToFlow,
 } from "@/utils/client/workflow-canvas-mappers";
+import {
+	isCropPercentHandle,
+	parsePercentageClient,
+} from "@/utils/client/crop-text-sync";
 
 interface UseWorkflowFileArgs {
 	workflowId: string;
@@ -241,6 +245,60 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 					),
 				);
 			}
+			// When text node is first connected to crop percent handle, set crop's config to text's value (if valid)
+			if (
+				connection.target &&
+				connection.targetHandle &&
+				isCropPercentHandle(connection.targetHandle)
+			) {
+				const sourceNode = nodes.find(
+					(n) => n.id === connection.source,
+				);
+				const targetNode = nodes.find(
+					(n) => n.id === connection.target,
+				);
+				if (
+					sourceNode?.type === "TEXT" &&
+					targetNode?.type === "CROP_IMAGE"
+				) {
+					const config = (sourceNode.data?.config ??
+						{}) as Record<string, unknown>;
+					const value = config.value ?? config.text;
+					const pct = parsePercentageClient(value);
+					if (pct !== null) {
+						const targetConfig = (targetNode.data?.config ??
+							{}) as Record<string, unknown>;
+						const newConfig = {
+							...targetConfig,
+							[connection.targetHandle]: pct,
+						};
+						try {
+							await updateWorkflowNode({
+								workflowId,
+								nodeId: connection.target,
+								config: newConfig,
+								positionX: targetNode.position.x,
+								positionY: targetNode.position.y,
+							});
+							canvasStateRef.current?.setNodes((prev: Node[]) =>
+								prev.map((n) =>
+									n.id === connection.target
+										? {
+												...n,
+												data: {
+													...n.data,
+													config: newConfig,
+												},
+											}
+										: n,
+								),
+							);
+						} catch {
+							// Non-fatal: crop config sync failed
+						}
+					}
+				}
+			}
 		} catch (error) {
 			// Revert the optimistically added edge so UI stays in sync with server (e.g. duplicate edge 409)
 			const state = canvasStateRef?.current;
@@ -328,6 +386,7 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 		onNodesChange,
 		onEdgesChange,
 		onConnect,
+		isValidConnection,
 		setNodes,
 		setEdges,
 		undo,
@@ -385,6 +444,8 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 	const isEditorDisabled =
 		isLoadingWorkflowNodes || isLoadingWorkflowEdges || isExecutionRunning;
 
+	const TEXT_NODE_DEFAULT_VALUE = "";
+
 	const onNodeDetailsBlur = useCallback(
 		async (
 			nodeId: string,
@@ -395,18 +456,126 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 			},
 		) => {
 			try {
+				const node = nodes.find((n) => n.id === nodeId);
+				let configToPersist = payload.config;
+
+				// When text node is connected to crop, value must be a number (0–100); otherwise revert to default and show message
+				if (node?.type === "TEXT") {
+					const outgoingToCrop = edges.filter(
+						(e) =>
+							e.source === nodeId &&
+							e.targetHandle &&
+							isCropPercentHandle(e.targetHandle),
+					);
+					if (outgoingToCrop.length > 0) {
+						const textValue = payload.config.value ?? payload.config.text;
+						const pct = parsePercentageClient(textValue);
+						if (pct === null) {
+							configToPersist = {
+								...payload.config,
+								value: TEXT_NODE_DEFAULT_VALUE,
+							};
+							toast.error(
+								"Value must be a number only (0–100) when connected to Crop. Reset to default.",
+							);
+							await updateWorkflowNode({
+								workflowId,
+								nodeId,
+								config: configToPersist,
+								positionX: payload.positionX,
+								positionY: payload.positionY,
+							});
+							canvasStateRef.current?.setNodes((prev: Node[]) =>
+								prev.map((n) =>
+									n.id === nodeId
+										? {
+												...n,
+												data: {
+													...n.data,
+													config: configToPersist,
+												},
+											}
+										: n,
+								),
+							);
+							return;
+						}
+					}
+				}
+
 				await updateWorkflowNode({
 					workflowId,
 					nodeId,
-					config: payload.config,
+					config: configToPersist,
 					positionX: payload.positionX,
 					positionY: payload.positionY,
 				});
+
+				// When a text node's value changes, sync to connected crop nodes (valid % only; invalid keeps old value)
+				if (node?.type !== "TEXT") return;
+				const textValue = configToPersist.value ?? configToPersist.text;
+				const outgoingToCrop = edges.filter(
+					(e) =>
+						e.source === nodeId &&
+						e.targetHandle &&
+						isCropPercentHandle(e.targetHandle),
+				);
+				const patchByTarget = new Map<
+					string,
+					Record<string, number>
+				>();
+				for (const e of outgoingToCrop) {
+					const pct = parsePercentageClient(textValue);
+					if (pct !== null && e.target && e.targetHandle) {
+						const existing = patchByTarget.get(e.target) ?? {};
+						patchByTarget.set(e.target, {
+							...existing,
+							[e.targetHandle]: pct,
+						});
+					}
+				}
+				for (const [cropId, patch] of patchByTarget) {
+					const cropNode = nodes.find((n) => n.id === cropId);
+					if (!cropNode || cropNode.type !== "CROP_IMAGE") continue;
+					const currentConfig = (cropNode.data?.config ??
+						{}) as Record<string, unknown>;
+					const newConfig = { ...currentConfig, ...patch };
+					try {
+						await updateWorkflowNode({
+							workflowId,
+							nodeId: cropId,
+							config: newConfig,
+							positionX: cropNode.position.x,
+							positionY: cropNode.position.y,
+						});
+						canvasStateRef.current?.setNodes((prev: Node[]) =>
+							prev.map((n) =>
+								n.id === cropId
+									? {
+											...n,
+											data: {
+												...n.data,
+												config: newConfig,
+											},
+										}
+									: n,
+							),
+						);
+					} catch {
+						// Non-fatal: crop sync failed
+					}
+				}
 			} catch (error) {
 				updateNodeErrorHandler(error);
 			}
 		},
-		[workflowId, updateWorkflowNode, updateNodeErrorHandler],
+		[
+			workflowId,
+			nodes,
+			edges,
+			updateWorkflowNode,
+			updateNodeErrorHandler,
+		],
 	);
 
 	const runSelectedNode = useCallback(async () => {
@@ -531,6 +700,7 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 		onNodesChange,
 		onEdgesChange,
 		onConnect,
+		isValidConnection,
 		setNodes,
 		undo,
 		redo,

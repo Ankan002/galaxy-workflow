@@ -265,7 +265,7 @@ export const extractVideoFrame = task({
 			}
 
 			const output = { output: uploaded_url };
-			if (meta) {
+			if (meta?.completionUrl) {
 				await notifyExecutionComplete(
 					meta,
 					output as unknown as Record<string, unknown>,
@@ -274,7 +274,7 @@ export const extractVideoFrame = task({
 			}
 			return output;
 		} catch (err) {
-			if (meta) {
+			if (meta?.completionUrl) {
 				await notifyExecutionComplete(
 					meta,
 					null,

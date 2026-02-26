@@ -1,7 +1,7 @@
+import { tasks } from "@trigger.dev/sdk";
 import { serverUtilsRegistry } from "@/utils/server";
 import { assertWorkflowOwnership } from "@/utils/server/workflow-validators";
-import { executeFullFlow } from "@/lib/execution/full-flow-execution";
-import { serverEnv } from "@/config/server-env";
+import { createFullFlowRun } from "@/lib/execution/full-flow-execution";
 
 const { createApi, sendJsonApiResponse } = serverUtilsRegistry;
 
@@ -18,17 +18,20 @@ export const POST = createApi<undefined, undefined, true>({
 		}
 		await assertWorkflowOwnership(workflowId, user!.id);
 
-		const baseUrl = serverEnv.HOST.trim().startsWith("http")
-			? serverEnv.HOST.trim()
-			: `https://${serverEnv.HOST.trim()}`;
-		const completionUrl = `${baseUrl.replace(/\/$/, "")}/api/webhooks/execution-complete`;
-
-		const result = await executeFullFlow(workflowId, completionUrl);
+		const { workflowExecutionId, nodeExecutionIds } = await createFullFlowRun(workflowId);
+		await tasks.trigger("workflow-orchestrator", {
+			workflowId,
+			workflowExecutionId,
+		});
 
 		return sendJsonApiResponse({
 			code: 200,
 			success: true,
-			data: result,
+			data: {
+				workflowExecutionId,
+				nodeExecutionIds,
+				message: "Full flow execution started",
+			},
 		});
 	},
 });

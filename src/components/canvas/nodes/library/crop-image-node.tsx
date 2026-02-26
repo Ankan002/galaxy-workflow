@@ -1,15 +1,11 @@
 "use client";
 
-import { useCallback } from "react";
-import { useReactFlow, type NodeProps } from "@xyflow/react";
+import { useCallback, useMemo } from "react";
+import { useReactFlow, useEdges, useStore, type NodeProps } from "@xyflow/react";
 import { NodeType } from "../registry/types";
 import { BaseNode } from "../base-node";
 import type { NodeDefinition } from "../registry/types";
-import { useUpdateNodeConfig } from "../use-update-node-config";
 import { useWorkflowNodePersistence } from "@/components/canvas/workflow-node-persistence-context";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Slider } from "@/components/ui/slider";
 
 export interface CropImageNodeConfig {
 	x_percent?: number;
@@ -18,12 +14,22 @@ export interface CropImageNodeConfig {
 	height_percent?: number;
 }
 
+const CROP_PERCENT_HANDLES = [
+	{ key: "x_percent", type: "string" as const, required: false },
+	{ key: "y_percent", type: "string" as const, required: false },
+	{ key: "width_percent", type: "string" as const, required: false },
+	{ key: "height_percent", type: "string" as const, required: false },
+];
+
 export const CROP_IMAGE_DEFINITION: Omit<NodeDefinition<CropImageNodeConfig>, "Component"> = {
 	type: NodeType.CROP_IMAGE,
 	label: "Crop Image",
 	description: "Crop an image by percentage region (jpg, jpeg, png, webp, gif)",
 	provider: "TRANSLOADIT",
-	inputHandles: [{ key: "image_url", type: "image", required: true }],
+	inputHandles: [
+		{ key: "image_url", type: "image", required: true },
+		...CROP_PERCENT_HANDLES,
+	],
 	outputHandles: [{ key: "image", type: "image" }],
 	defaultConfig: {
 		x_percent: 0,
@@ -33,37 +39,90 @@ export const CROP_IMAGE_DEFINITION: Omit<NodeDefinition<CropImageNodeConfig>, "C
 	},
 };
 
-function clampPercent(v: number): number {
-	return Math.min(100, Math.max(0, v));
+const PERCENT_HANDLE_KEYS = ["x_percent", "y_percent", "width_percent", "height_percent"] as const;
+
+function useConnectedPercentHandles(nodeId: string): Set<string> {
+	const edges = useEdges();
+	return useMemo(() => {
+		const set = new Set<string>();
+		for (const e of edges) {
+			if (e.target === nodeId && e.targetHandle && PERCENT_HANDLE_KEYS.includes(e.targetHandle as (typeof PERCENT_HANDLE_KEYS)[number])) {
+				set.add(e.targetHandle);
+			}
+		}
+		return set;
+	}, [edges, nodeId]);
+}
+
+/** Subscribe to connected source nodes' config so this node re-renders when they change (e.g. text node value). */
+function useConnectedSourceConfigDeps(nodeId: string): string {
+	return useStore((state) => {
+		const edges = state.edges ?? [];
+		const nodes = state.nodes ?? [];
+		const sourceIds = new Set(
+			edges
+				.filter(
+					(e: { target: string; targetHandle?: string | null }) =>
+						e.target === nodeId &&
+						e.targetHandle &&
+						PERCENT_HANDLE_KEYS.includes(e.targetHandle as (typeof PERCENT_HANDLE_KEYS)[number]),
+				)
+				.map((e: { source: string }) => e.source),
+		);
+		return nodes
+			.filter((n: { id: string }) => sourceIds.has(n.id))
+			.map((n: { data?: { config?: unknown } }) =>
+				n.data?.config == null ? "" : JSON.stringify(n.data.config),
+			)
+			.join("|");
+	});
+}
+
+/** For each percent handle, get the value from the connected source node (e.g. text node) for display. */
+function useLoadedValuesFromConnections(nodeId: string): Record<string, string | number> {
+	const edges = useEdges();
+	const { getNode } = useReactFlow();
+	// Subscribe to store so we re-render when connected source node data changes (e.g. text node value)
+	const sourceConfigDeps = useConnectedSourceConfigDeps(nodeId);
+	const connectedEdges = useMemo(
+		() =>
+			edges.filter(
+				(e) =>
+					e.target === nodeId &&
+					e.targetHandle &&
+					PERCENT_HANDLE_KEYS.includes(e.targetHandle as (typeof PERCENT_HANDLE_KEYS)[number]),
+			),
+		[edges, nodeId],
+	);
+	return useMemo(() => {
+		const out: Record<string, string | number> = {};
+		for (const e of connectedEdges) {
+			const sourceNode = getNode(e.source);
+			if (!sourceNode?.data?.config || !e.targetHandle) continue;
+			const config = sourceNode.data.config as Record<string, unknown>;
+			const raw = config.value ?? config.text ?? config.output;
+			if (raw !== undefined && raw !== null) {
+				const s = typeof raw === "string" ? raw : String(raw);
+				const n = Number(s);
+				out[e.targetHandle] = Number.isFinite(n) ? n : s;
+			}
+		}
+		return out;
+	}, [connectedEdges, getNode, sourceConfigDeps]);
 }
 
 export function CropImageNode({ id, data, selected }: NodeProps) {
 	const { getNode } = useReactFlow();
-	const updateConfig = useUpdateNodeConfig(id);
 	const { onNodeDetailsBlur } = useWorkflowNodePersistence();
+	const connectedPercentHandles = useConnectedPercentHandles(id);
+	const loadedValues = useLoadedValuesFromConnections(id);
 	const config = (data?.config ?? CROP_IMAGE_DEFINITION.defaultConfig) as CropImageNodeConfig;
 	const status = data?.status as "idle" | "running" | "completed" | "failed" | undefined;
-	const x = config.x_percent ?? 0;
-	const y = config.y_percent ?? 0;
-	const w = config.width_percent ?? 100;
-	const h = config.height_percent ?? 100;
-
-	const setX = useCallback(
-		(v: number) => updateConfig({ x_percent: clampPercent(v) }),
-		[updateConfig],
-	);
-	const setY = useCallback(
-		(v: number) => updateConfig({ y_percent: clampPercent(v) }),
-		[updateConfig],
-	);
-	const setW = useCallback(
-		(v: number) => updateConfig({ width_percent: clampPercent(v) }),
-		[updateConfig],
-	);
-	const setH = useCallback(
-		(v: number) => updateConfig({ height_percent: clampPercent(v) }),
-		[updateConfig],
-	);
+	// When a handle is connected, show the value loaded from that connection (e.g. text node); otherwise config/default
+	const x = loadedValues["x_percent"] ?? config.x_percent ?? 0;
+	const y = loadedValues["y_percent"] ?? config.y_percent ?? 0;
+	const w = loadedValues["width_percent"] ?? config.width_percent ?? 100;
+	const h = loadedValues["height_percent"] ?? config.height_percent ?? 100;
 
 	const handleBlur = useCallback(
 		(e: React.FocusEvent) => {
@@ -90,90 +149,45 @@ export function CropImageNode({ id, data, selected }: NodeProps) {
 			isPulsating={data?.isPulsating}
 		>
 			<div className="space-y-2 nodrag nopan" onBlur={handleBlur}>
-				<div className="grid grid-cols-2 gap-x-2 gap-y-1 text-[10px]">
-					<div className="space-y-0.5">
-						<Label className="text-[10px] text-muted-foreground">X %</Label>
-						<div className="flex items-center gap-1">
-							<Slider
-								value={[x]}
-								onValueChange={([v]) => setX(v ?? 0)}
-								min={0}
-								max={100}
-								step={1}
-								className="flex-1"
-							/>
-							<Input
-								type="number"
-								min={0}
-								max={100}
-								value={x}
-								onChange={(e) => setX(Number(e.target.value) || 0)}
-								className="h-6 w-10 shrink-0 px-1 text-center text-[10px]"
-							/>
-						</div>
+				<p className="text-[10px] text-muted-foreground">
+					X, Y, width and height are set only by connected inputs.
+				</p>
+				<div className="grid grid-cols-2 gap-x-3 gap-y-1 text-[10px]">
+					<div className="flex items-baseline justify-between gap-2">
+						<span className="text-muted-foreground">X %</span>
+						<span className="font-mono tabular-nums">
+							{x}
+							{connectedPercentHandles.has("x_percent") && (
+								<span className="ml-1 text-chart-3">(connected)</span>
+							)}
+						</span>
 					</div>
-					<div className="space-y-0.5">
-						<Label className="text-[10px] text-muted-foreground">Y %</Label>
-						<div className="flex items-center gap-1">
-							<Slider
-								value={[y]}
-								onValueChange={([v]) => setY(v ?? 0)}
-								min={0}
-								max={100}
-								step={1}
-								className="flex-1"
-							/>
-							<Input
-								type="number"
-								min={0}
-								max={100}
-								value={y}
-								onChange={(e) => setY(Number(e.target.value) || 0)}
-								className="h-6 w-10 shrink-0 px-1 text-center text-[10px]"
-							/>
-						</div>
+					<div className="flex items-baseline justify-between gap-2">
+						<span className="text-muted-foreground">Y %</span>
+						<span className="font-mono tabular-nums">
+							{y}
+							{connectedPercentHandles.has("y_percent") && (
+								<span className="ml-1 text-chart-3">(connected)</span>
+							)}
+						</span>
 					</div>
-					<div className="space-y-0.5 col-span-2">
-						<Label className="text-[10px] text-muted-foreground">Width %</Label>
-						<div className="flex items-center gap-1">
-							<Slider
-								value={[w]}
-								onValueChange={([v]) => setW(v ?? 100)}
-								min={0}
-								max={100}
-								step={1}
-								className="flex-1"
-							/>
-							<Input
-								type="number"
-								min={0}
-								max={100}
-								value={w}
-								onChange={(e) => setW(Number(e.target.value) ?? 100)}
-								className="h-6 w-10 shrink-0 px-1 text-center text-[10px]"
-							/>
-						</div>
+					<div className="flex items-baseline justify-between gap-2">
+						<span className="text-muted-foreground">Width %</span>
+						<span className="font-mono tabular-nums">
+							{w}
+							{connectedPercentHandles.has("width_percent") && (
+								<span className="ml-1 text-chart-3">(connected)</span>
+							)}
+						</span>
 					</div>
-					<div className="space-y-0.5 col-span-2">
-						<Label className="text-[10px] text-muted-foreground">Height %</Label>
-						<div className="flex items-center gap-1">
-							<Slider
-								value={[h]}
-								onValueChange={([v]) => setH(v ?? 100)}
-								min={0}
-								max={100}
-								step={1}
-								className="flex-1"
-							/>
-							<Input
-								type="number"
-								min={0}
-								max={100}
-								value={h}
-								onChange={(e) => setH(Number(e.target.value) ?? 100)}
-								className="h-6 w-10 shrink-0 px-1 text-center text-[10px]"
-							/>
-						</div>
+					<div className="flex items-baseline justify-between gap-2">
+						<span className="text-muted-foreground">Height %</span>
+						<span className="font-mono tabular-nums">
+							{h}
+							{connectedPercentHandles.has("height_percent") && (
+								<span className="ml-1 text-chart-3">(connected)</span>
+							)}
+						</span>
 					</div>
 				</div>
 				<p className="text-[10px] text-muted-foreground opacity-80">

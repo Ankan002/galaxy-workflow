@@ -19,6 +19,7 @@ export const VALID_NODE_CONNECTIONS = [
 	`${workflow_node_type.video_upload}-${workflow_node_type.extract_video_frame}`,
 	`${workflow_node_type.extract_video_frame}-${workflow_node_type.run_llm}`,
 	`${workflow_node_type.run_llm}-${workflow_node_type.run_llm}`,
+	`${workflow_node_type.text}-${workflow_node_type.crop_image}`,
 ];
 
 export const VALID_NODE_CONNECTIONS_SET = new Set(VALID_NODE_CONNECTIONS);

@@ -139,6 +139,11 @@ export async function resolveInputsForNode(
 			arr.push(value as string);
 			payload.image_urls = arr;
 		} else if (payloadKey) {
+			if (CROP_PERCENT_PAYLOAD_KEYS.includes(payloadKey as (typeof CROP_PERCENT_PAYLOAD_KEYS)[number])) {
+				const pct = parsePercentage(value);
+				if (pct !== null) payload[payloadKey] = pct;
+				continue;
+			}
 			const resolved =
 				payloadKey === "prompt" || payloadKey === "systemPrompt"
 					? extractTextFromPredecessorOutput(value)
@@ -194,13 +199,26 @@ function getRequiredInputHandles(type: workflow_node_type): string[] {
 	}
 }
 
+const CROP_PERCENT_PAYLOAD_KEYS = ["x_percent", "y_percent", "width_percent", "height_percent"] as const;
+
+/** Returns a number in [0, 100] or null if value is not a valid percentage. */
+function parsePercentage(value: unknown): number | null {
+	if (value == null) return null;
+	const n = typeof value === "number" ? value : Number(value);
+	if (!Number.isFinite(n)) return null;
+	return Math.min(100, Math.max(0, n));
+}
+
 function mapTargetHandleToPayloadKey(
 	type: workflow_node_type,
 	targetHandle: string,
 ): string | null {
 	switch (type) {
 		case "crop_image":
-			return targetHandle === "image_url" ? "picture_url" : null;
+			if (targetHandle === "image_url") return "picture_url";
+			if (CROP_PERCENT_PAYLOAD_KEYS.includes(targetHandle as (typeof CROP_PERCENT_PAYLOAD_KEYS)[number]))
+				return targetHandle;
+			return null;
 		case "extract_video_frame":
 			return targetHandle === "video_url"
 				? "video_url"
@@ -223,15 +241,18 @@ function mergeNodeConfigIntoPayload(
 ): void {
 	const config = node.config ?? {};
 	switch (node.type) {
-		case "crop_image":
-			if (payload.picture_url && typeof config.x_percent === "number")
-				payload.x_percent = config.x_percent;
-			if (typeof config.y_percent === "number") payload.y_percent = config.y_percent;
-			if (typeof config.width_percent === "number")
-				payload.width_percent = config.width_percent;
-			if (typeof config.height_percent === "number")
-				payload.height_percent = config.height_percent;
+		case "crop_image": {
+			const defaults = { x_percent: 0, y_percent: 0, width_percent: 100, height_percent: 100 };
+			for (const key of CROP_PERCENT_PAYLOAD_KEYS) {
+				if (payload[key] !== undefined && typeof payload[key] === "number") continue;
+				const fromConfig = config[key];
+				payload[key] =
+					typeof fromConfig === "number" && fromConfig >= 0 && fromConfig <= 100
+						? fromConfig
+						: defaults[key];
+			}
 			break;
+		}
 		case "extract_video_frame":
 			if (config.timestamp !== undefined) payload.timestamp = config.timestamp;
 			break;

@@ -3,7 +3,8 @@ export interface ExecutionMeta {
 	nodeId: string;
 	nodeExecutionId: string;
 	workflowExecutionId: string;
-	completionUrl: string;
+	/** When set, task will POST completion to this URL (single-node or legacy full flow). Omitted when run from workflow-orchestrator. */
+	completionUrl?: string;
 }
 
 export function stripExecutionMeta<T>(
@@ -26,6 +27,7 @@ export async function notifyExecutionComplete(
 	output: Record<string, unknown> | null,
 	error: string | null,
 ): Promise<void> {
+	if (!meta.completionUrl) return;
 	const res = await fetch(meta.completionUrl, {
 		method: "POST",
 		headers: {

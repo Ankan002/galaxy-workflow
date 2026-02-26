@@ -85,16 +85,12 @@ export const runLLM = task({
 				},
 			);
 			const output = { text: result.text };
-			if (meta) {
+			if (meta?.completionUrl) {
 				await notifyExecutionComplete(meta, output, null);
 			}
 			return output;
 		} catch (err) {
-			if (meta) {
-				console.log("notifyExecutionComplete error", {
-					meta,
-					err,
-				});
+			if (meta?.completionUrl) {
 				await notifyExecutionComplete(
 					meta,
 					null,

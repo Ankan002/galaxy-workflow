@@ -11,7 +11,7 @@ function getEdgeVariantForWorkflowEdge(
 	sourceHandle: string,
 ): EdgeVariant {
 	const t = sourceNodeType.toLowerCase();
-	// Output handle types by node: text->value(string), image_upload->image, video_upload->url, run_llm->response(string), crop_image->image, extract_video_frame->output(string), extract_video->url
+	// Output handle types by node: text->value(string), image_upload->image, video_upload->url, run_llm->response(string), crop_image->image, extract_video_frame->output(string), extract_video->url; number outputs use "number" variant
 	if (t === "text" && sourceHandle === "value") return "prompt";
 	if (t === "image_upload" && sourceHandle === "image") return "image";
 	if (t === "video_upload" && sourceHandle === "url") return "video";
@@ -19,6 +19,7 @@ function getEdgeVariantForWorkflowEdge(
 	if (t === "crop_image" && sourceHandle === "image") return "image";
 	if (t === "extract_video_frame" && sourceHandle === "output") return "prompt";
 	if (t === "extract_video" && sourceHandle === "url") return "video";
+	// Any future node that outputs number (e.g. number/slider node) can be added here; for now number edges from such nodes get "number"
 	return "default";
 }
 
