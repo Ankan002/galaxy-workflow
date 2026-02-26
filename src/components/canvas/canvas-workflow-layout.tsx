@@ -52,6 +52,8 @@ interface CanvasWorkflowLayoutProps {
 	onNodesChange: ReturnType<typeof import("@xyflow/react").useNodesState>[2];
 	onEdgesChange: ReturnType<typeof import("@xyflow/react").useEdgesState>[2];
 	onConnect: (connection: import("@xyflow/react").Connection) => void;
+	/** When provided, React Flow uses this to reject invalid connections (e.g. text → number handle). */
+	isValidConnection?: (connection: import("@xyflow/react").Connection | import("@xyflow/react").Edge) => boolean;
 	setNodes: React.Dispatch<React.SetStateAction<Node[]>>;
 	undo: () => void;
 	redo: () => void;
@@ -93,6 +95,7 @@ function CanvasWorkflowLayoutInner({
 	onNodesChange,
 	onEdgesChange,
 	onConnect,
+	isValidConnection,
 	setNodes,
 	undo,
 	redo,
@@ -205,6 +208,7 @@ function CanvasWorkflowLayoutInner({
 					onNodesChange={onNodesChange}
 					onEdgesChange={onEdgesChange}
 					onConnect={onConnect}
+					isValidConnection={isValidConnection}
 					onDrop={onDrop}
 					onDragOver={onDragOver}
 					onInit={onInit}
