@@ -1,7 +1,7 @@
 import { task, retry } from "@trigger.dev/sdk";
 import {
 	stripExecutionMeta,
-	notifyExecutionComplete,
+	handleExecutionComplete,
 	type ExecutionMeta,
 } from "./execution-callback";
 import { spawn } from "node:child_process";
@@ -166,10 +166,27 @@ export const extractVideoFrame = task({
 		maxTimeoutInMs: 30_000,
 		randomize: true,
 	},
+	onSuccess: async ({ payload, output }) => {
+		const { meta } = stripExecutionMeta(payload);
+		if (meta) {
+			await handleExecutionComplete(
+				meta,
+				output as unknown as Record<string, unknown>,
+				null,
+			);
+		}
+	},
+	onFailure: async ({ payload, error }) => {
+		const { meta } = stripExecutionMeta(payload);
+		if (meta) {
+			const errMsg = error instanceof Error ? error.message : String(error);
+			await handleExecutionComplete(meta, null, errMsg);
+		}
+	},
 	run: async (
 		payload: ExtractVideoFramePayload & { _executionMeta?: ExecutionMeta },
 	): Promise<ExtractVideoFrameOutput> => {
-		const { payload: rawPayload, meta } = stripExecutionMeta(payload);
+		const { payload: rawPayload } = stripExecutionMeta(payload);
 		const cleanPayload = rawPayload as ExtractVideoFramePayload;
 		const { video_url, timestamp = 0 } = cleanPayload;
 
@@ -265,23 +282,7 @@ export const extractVideoFrame = task({
 			}
 
 			const output = { output: uploaded_url };
-			if (meta?.completionUrl) {
-				await notifyExecutionComplete(
-					meta,
-					output as unknown as Record<string, unknown>,
-					null,
-				);
-			}
 			return output;
-		} catch (err) {
-			if (meta?.completionUrl) {
-				await notifyExecutionComplete(
-					meta,
-					null,
-					err instanceof Error ? err.message : String(err),
-				);
-			}
-			throw err;
 		} finally {
 			await fs.unlink(inputPath).catch(() => {});
 			await fs.unlink(outputPath).catch(() => {});

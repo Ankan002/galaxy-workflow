@@ -59,7 +59,7 @@
 
 1. **Workflow CRUD:** UI → API (Zod-validated) → Prisma → DB. React Query invalidates list/detail keys after mutations.
 2. **Execution:**  
-   - **Full flow:** UI → `POST /api/workflow-file/:workflowId/execute-flow` → DB (create `workflow_execution` + source `node_execution` rows) → `tasks.trigger("workflow-orchestrator", { workflowId, workflowExecutionId })` → Orchestrator task on Trigger loads DAG, loop: get ready nodes → resolve inputs → create `node_execution` → `batch.triggerAndWait`(crop/llm/extract) → update `node_execution` from results → repeat until done → update `workflow_execution`. No webhook involved for full-flow node completions.  
+   - **Full flow:** UI → `POST /api/workflow-file/:workflowId/execute-flow` → DB (create `workflow_execution` + source `node_execution` rows) → `tasks.trigger("workflow-orchestrator", { workflowId, workflowExecutionId })` → Orchestrator loads DAG, `batch.triggerAndWait`(initial ready nodes) → updates DB from results. Each child task, on completion, calls `tasks.trigger("process-node-completion", ...)` → process-node-completion updates node, loops: get ready → `batch.triggerAndWait` → update DB until no more ready → updates `workflow_execution` when all terminal. Event-driven; no webhook for full flow.  
    - **Single-node:** UI → Execute node API → DB (create `workflow_execution` + `node_execution`) → `tasks.trigger(taskId, payload)` with `completionUrl` → Task runs → Task POSTs to `/api/webhooks/execution-complete` → Webhook updates `node_execution` and `workflow_execution`.
 3. **Uploads:** UI → Prepare API → Transloadit assembly + TUS URL → Client TUS upload → Transloadit webhook → Our notify route updates node → Optional complete API for UI state.
 
@@ -76,8 +76,8 @@
 
 ## Near–Real-Time Execution Status
 
-- **Mechanism:** **Orchestrator + webhooks (single-node) + polling**; no WebSockets.
-    - **Full flow:** The **workflow-orchestrator** Trigger task updates `node_execution` and `workflow_execution` directly in the DB via Prisma after each wave of `batch.triggerAndWait`. Child tasks (crop-image, run-llm, extract-video-frame) do **not** call the completion webhook when run from the orchestrator (no `completionUrl` in `_executionMeta`). So full-flow state is written only by the orchestrator.
+- **Mechanism:** **Orchestrator + process-node-completion + webhooks (single-node) + polling**; no WebSockets.
+    - **Full flow:** The **workflow-orchestrator** runs `batch.triggerAndWait`(initial batch) and updates DB from results. Each child task, on completion, triggers **process-node-completion**, which updates the node and runs `batch.triggerAndWait` in a loop for downstream nodes until none remain. Both orchestrator and process-node-completion write to the DB. Child tasks do **not** call the webhook when run from the orchestrator (no `completionUrl` in `_executionMeta`).
     - **Single-node run:** The triggered task, on completion, POSTs to `POST /api/webhooks/execution-complete` with `execution_id`, `execution_node_id`, `node_id`, `workflow_id`, `output`, `error`. The webhook updates `node_execution` and `workflow_execution`.
     - **UI:** When an execution is expanded in the right-sidebar "Execution history", `useGetWorkflowExecution` is called with `refetchInterval: 2000` (2s polling). That keeps the run detail (and node-level status) updating without WebSockets.
 - **Result:** Status is "near–real-time": for full flow, the DB is updated by the orchestrator after each wave; for single-node, as soon as the task calls the webhook, the DB is updated. The UI reflects changes on the next poll (or on manual refetch after a mutation like "Stop flow").
