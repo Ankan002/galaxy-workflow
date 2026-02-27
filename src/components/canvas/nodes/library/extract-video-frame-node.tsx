@@ -73,7 +73,7 @@ export function ExtractVideoFrameNode({ id, data, selected }: NodeProps) {
 			outputHandles={EXTRACT_VIDEO_FRAME_DEFINITION.outputHandles}
 			selected={selected}
 			icon={<Film className="size-4" />}
-			isPulsating={data?.isPulsating}
+			isPulsating={data?.isPulsating as boolean | undefined}
 		>
 			<div className="space-y-2 nodrag nopan" onBlur={handleBlur}>
 				<div className="space-y-1">

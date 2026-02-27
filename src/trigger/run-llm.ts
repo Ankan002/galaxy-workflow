@@ -1,7 +1,7 @@
 import { task, logger, retry } from "@trigger.dev/sdk";
 import {
 	stripExecutionMeta,
-	notifyExecutionComplete,
+	handleExecutionComplete,
 	type ExecutionMeta,
 } from "./execution-callback";
 import { getValidLlmModel } from "@/lib/execution/llm-models";
@@ -46,10 +46,27 @@ export const runLLM = task({
 		maxTimeoutInMs: 30_000,
 		randomize: true,
 	},
+	onSuccess: async ({ payload, output }) => {
+		const { meta } = stripExecutionMeta(payload);
+		if (meta) {
+			await handleExecutionComplete(
+				meta,
+				output as unknown as Record<string, unknown>,
+				null,
+			);
+		}
+	},
+	onFailure: async ({ payload, error }) => {
+		const { meta } = stripExecutionMeta(payload);
+		if (meta) {
+			const errMsg = error instanceof Error ? error.message : String(error);
+			await handleExecutionComplete(meta, null, errMsg);
+		}
+	},
 	run: async (
 		payload: RunLLMPayload & { _executionMeta?: ExecutionMeta },
 	): Promise<RunLLMOutput> => {
-		const { payload: rawPayload, meta } = stripExecutionMeta(payload);
+		const { payload: rawPayload } = stripExecutionMeta(payload);
 		const cleanPayload = rawPayload as RunLLMPayload;
 
 		const { prompt, image_urls, systemPrompt, model: modelFromPayload } = cleanPayload;
@@ -70,34 +87,20 @@ export const runLLM = task({
 			});
 		}
 
-		try {
-			const result = await logger.trace(
-				"gemini-generateContent",
-				async () => {
-					return await generateContentWithGemini({
-						apiKey,
-						prompt,
-						image_urls,
-						systemPrompt,
-						model, // always valid (gemini-2.5-flash | gemini-2.5-pro) from getValidLlmModel
-						fetchImageAsBase64: fetchImageAsInlineData,
-					});
-				},
-			);
-			const output = { text: result.text };
-			if (meta?.completionUrl) {
-				await notifyExecutionComplete(meta, output, null);
-			}
-			return output;
-		} catch (err) {
-			if (meta?.completionUrl) {
-				await notifyExecutionComplete(
-					meta,
-					null,
-					err instanceof Error ? err.message : String(err),
-				);
-			}
-			throw err;
-		}
+		const result = await logger.trace(
+			"gemini-generateContent",
+			async () => {
+				return await generateContentWithGemini({
+					apiKey,
+					prompt,
+					image_urls,
+					systemPrompt,
+					model, // always valid (gemini-2.5-flash | gemini-2.5-pro) from getValidLlmModel
+					fetchImageAsBase64: fetchImageAsInlineData,
+				});
+			},
+		);
+		const output = { text: result.text };
+		return output;
 	},
 });

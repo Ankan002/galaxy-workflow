@@ -11,7 +11,6 @@ import {
 } from "@/db/actions/workflow-execution.action";
 import { getWorkflowNode } from "@/db/actions/workflow-node.action";
 import { tasks } from "@trigger.dev/sdk";
-import { serverEnv } from "@/config/server-env";
 import type { workflow_node_type } from "@/db/prisma/client";
 
 const { createApi, sendJsonApiResponse } = serverUtilsRegistry;
@@ -76,11 +75,6 @@ export const POST = createApi<undefined, undefined, true>({
 			});
 		}
 
-		const baseUrl = serverEnv.HOST.trim().startsWith("http")
-			? serverEnv.HOST.trim()
-			: `https://${serverEnv.HOST.trim()}`;
-		const completionUrl = `${baseUrl.replace(/\/$/, "")}/api/webhooks/execution-complete`;
-
 		const workflowExecution = await createWorkflowExecution({
 			workflowId,
 			executionType: "one_node",
@@ -100,7 +94,6 @@ export const POST = createApi<undefined, undefined, true>({
 				nodeId,
 				nodeExecutionId: nodeExecution.id,
 				workflowExecutionId: workflowExecution.id,
-				completionUrl,
 			},
 		});
 

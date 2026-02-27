@@ -1,7 +1,7 @@
 import { task, retry } from "@trigger.dev/sdk";
 import {
 	stripExecutionMeta,
-	notifyExecutionComplete,
+	handleExecutionComplete,
 	type ExecutionMeta,
 } from "./execution-callback";
 import { spawn } from "node:child_process";
@@ -171,10 +171,27 @@ export const cropImage = task({
 		maxTimeoutInMs: 30_000,
 		randomize: true,
 	},
+	onSuccess: async ({ payload, output }) => {
+		const { meta } = stripExecutionMeta(payload);
+		if (meta) {
+			await handleExecutionComplete(
+				meta,
+				output as unknown as Record<string, unknown>,
+				null,
+			);
+		}
+	},
+	onFailure: async ({ payload, error }) => {
+		const { meta } = stripExecutionMeta(payload);
+		if (meta) {
+			const errMsg = error instanceof Error ? error.message : String(error);
+			await handleExecutionComplete(meta, null, errMsg);
+		}
+	},
 	run: async (
 		payload: CropImagePayload & { _executionMeta?: ExecutionMeta },
 	): Promise<CropImageOutput> => {
-		const { payload: rawPayload, meta } = stripExecutionMeta(payload);
+		const { payload: rawPayload } = stripExecutionMeta(payload);
 		const cleanPayload = rawPayload as CropImagePayload;
 		const {
 			picture_url,
@@ -291,23 +308,7 @@ export const cropImage = task({
 			}
 
 			const output = { uploaded_url };
-			if (meta?.completionUrl) {
-				await notifyExecutionComplete(
-					meta,
-					output as unknown as Record<string, unknown>,
-					null,
-				);
-			}
 			return output;
-		} catch (err) {
-			if (meta?.completionUrl) {
-				await notifyExecutionComplete(
-					meta,
-					null,
-					err instanceof Error ? err.message : String(err),
-				);
-			}
-			throw err;
 		} finally {
 			await fs.unlink(inputPath).catch(() => {});
 			await fs.unlink(outputPath).catch(() => {});
