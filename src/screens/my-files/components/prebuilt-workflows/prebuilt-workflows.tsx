@@ -90,11 +90,11 @@ export function PrebuiltWorkflows() {
 	return (
 		<section className="w-full">
 			<Tabs defaultValue="library" className="w-full">
-				<TabsList variant="underline" className="h-9 w-auto gap-0 bg-transparent p-0">
-					<TabsTrigger variant="underline" value="library" className="px-0 pb-2 pr-4 data-[state=active]:border-primary">
+				<TabsList variant="underline" className="w-auto gap-0 bg-transparent p-0">
+					<TabsTrigger variant="underline" value="library" className="px-0 pr-6 font-medium tracking-tight">
 						Workflow library
 					</TabsTrigger>
-					<TabsTrigger variant="underline" value="tutorials" className="px-0 pb-2 pl-4 data-[state=active]:border-primary">
+					<TabsTrigger variant="underline" value="tutorials" className="px-0 pl-6 font-medium tracking-tight">
 						Tutorials
 					</TabsTrigger>
 				</TabsList>

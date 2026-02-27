@@ -14,7 +14,7 @@ const tabsListVariants = cva(
 			variant: {
 				default: "bg-muted p-1",
 				underline:
-					"border-b border-border bg-transparent p-0 gap-6",
+					"border-b border-border bg-transparent p-0 gap-8 min-h-[2.25rem]",
 				sidebar: "flex flex-col gap-1 bg-sidebar",
 				pill: "bg-muted/50 p-1 rounded-full",
 			},
@@ -45,7 +45,7 @@ const tabsTriggerVariants = cva(
 			variant: {
 				default: "",
 				underline:
-					"rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:border-b-2 data-[state=active]:shadow-none",
+					"rounded-none border-b-2 border-transparent pb-3 pt-0.5 text-muted-foreground transition-colors duration-200 hover:text-foreground/80 data-[state=active]:border-primary data-[state=active]:text-foreground data-[state=active]:shadow-none data-[state=active]:border-b-[2px]",
 				sidebar:
 					"data-[state=active]:bg-sidebar-accent data-[state=active]:text-sidebar-accent-foreground",
 				brand:
