@@ -147,7 +147,7 @@ export function RunLlmNode({ id, data, selected }: NodeProps) {
 			inputHandles={inputHandles}
 			outputHandles={RUN_LLM_DEFINITION.outputHandles}
 			selected={selected}
-			isPulsating={data?.isPulsating}
+			isPulsating={data?.isPulsating as boolean | undefined}
 		>
 			<div
 				className="space-y-2 nodrag nopan"
