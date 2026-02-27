@@ -127,6 +127,7 @@ export function useWorkflowCanvas(options: UseWorkflowCanvasOptions = {}) {
 		onEdgeCreated: options.onEdgeCreated,
 		onEdgeDeleted: options.onEdgeDeleted,
 		onEdgeUpdated: options.onEdgeUpdated,
+		onNodePositionChange: options.onNodePositionChange,
 		onWorkflowRun: options.onWorkflowRun,
 	});
 
