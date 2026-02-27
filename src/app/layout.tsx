@@ -5,6 +5,7 @@ import "./globals.css";
 import { DesktopOnlyGate } from "@/components/elements";
 import { AuthProvider, QueryProvider } from "@/components/providers";
 import { SidebarProvider } from "@/components/ui";
+import { Analytics } from "@vercel/analytics/next";
 
 const dmSans = DM_Sans({
 	variable: "--font-dm-sans",
@@ -40,6 +41,7 @@ export default function RootLayout({
 							<Toaster />
 						</SidebarProvider>
 					</QueryProvider>
+					<Analytics />
 				</body>
 			</html>
 		</AuthProvider>
