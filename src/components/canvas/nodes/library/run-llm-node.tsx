@@ -1,7 +1,11 @@
 "use client";
 
 import { useCallback, useEffect } from "react";
-import { useReactFlow, useUpdateNodeInternals, type NodeProps } from "@xyflow/react";
+import {
+	useReactFlow,
+	useUpdateNodeInternals,
+	type NodeProps,
+} from "@xyflow/react";
 import { Plus, Minus } from "lucide-react";
 import { NodeType } from "../registry/types";
 import { BaseNode } from "../base-node";
@@ -39,20 +43,32 @@ const STATIC_INPUT_HANDLES: InputHandleDef[] = [
 	{ key: "userMessages", type: "string", required: false },
 ];
 
-export const RUN_LLM_DEFINITION: Omit<NodeDefinition<RunLlmNodeConfig>, "Component"> = {
+export const RUN_LLM_DEFINITION: Omit<
+	NodeDefinition<RunLlmNodeConfig>,
+	"Component"
+> = {
 	type: NodeType.RUN_LLM,
 	label: "Run LLM",
 	description: "Run a large language model",
 	provider: "TRIGGER_DEV",
 	inputHandles: [...STATIC_INPUT_HANDLES],
 	outputHandles: [{ key: "response", type: "string" }],
-	defaultConfig: { model: DEFAULT_LLM_MODEL, systemPrompt: "", temperature: 0.7, imageInputCount: 0 },
+	defaultConfig: {
+		model: DEFAULT_LLM_MODEL,
+		systemPrompt: "",
+		temperature: 0.7,
+		imageInputCount: 0,
+	},
 };
 
 function buildInputHandles(imageCount: number): InputHandleDef[] {
 	const imageHandles: InputHandleDef[] = Array.from(
 		{ length: imageCount },
-		(_, i) => ({ key: `image_${i}`, type: "image" as const, required: false }),
+		(_, i) => ({
+			key: `image_${i}`,
+			type: "image" as const,
+			required: false,
+		}),
 	);
 	return [...STATIC_INPUT_HANDLES, ...imageHandles];
 }
@@ -64,8 +80,14 @@ export function RunLlmNode({ id, data, selected }: NodeProps) {
 	const updateNodeInternals = useUpdateNodeInternals();
 	const updateConfig = useUpdateNodeConfig(id);
 	const { onNodeDetailsBlur } = useWorkflowNodePersistence();
-	const config = (data?.config ?? RUN_LLM_DEFINITION.defaultConfig) as RunLlmNodeConfig;
-	const status = data?.status as "idle" | "running" | "completed" | "failed" | undefined;
+	const config = (data?.config ??
+		RUN_LLM_DEFINITION.defaultConfig) as RunLlmNodeConfig;
+	const status = data?.status as
+		| "idle"
+		| "running"
+		| "completed"
+		| "failed"
+		| undefined;
 	const imageCount = clampImageCount(config.imageInputCount ?? 0);
 	const inputHandles = buildInputHandles(imageCount);
 
@@ -73,7 +95,10 @@ export function RunLlmNode({ id, data, selected }: NodeProps) {
 	useEffect(() => {
 		updateNodeInternals(id);
 	}, [id, imageCount, updateNodeInternals]);
-	const temperature = Math.min(2, Math.max(0, Number(config.temperature) ?? 0.7));
+	const temperature = Math.min(
+		2,
+		Math.max(0, Number(config.temperature) ?? 0.7),
+	);
 	const model = getValidLlmModel(config.model) as LLMModelId;
 
 	const addImageInput = useCallback(() => {
@@ -85,7 +110,8 @@ export function RunLlmNode({ id, data, selected }: NodeProps) {
 							data: {
 								...n.data,
 								config: {
-									...(typeof n.data?.config === "object" && n.data.config != null
+									...(typeof n.data?.config === "object" &&
+									n.data.config != null
 										? n.data.config
 										: {}),
 									imageInputCount: imageCount + 1,
@@ -113,7 +139,8 @@ export function RunLlmNode({ id, data, selected }: NodeProps) {
 							data: {
 								...n.data,
 								config: {
-									...(typeof n.data?.config === "object" && n.data.config != null
+									...(typeof n.data?.config === "object" &&
+									n.data.config != null
 										? n.data.config
 										: {}),
 									imageInputCount: imageCount - 1,
@@ -127,7 +154,11 @@ export function RunLlmNode({ id, data, selected }: NodeProps) {
 
 	const handleBlur = useCallback(
 		(e: React.FocusEvent) => {
-			if (e.relatedTarget != null && e.currentTarget.contains(e.relatedTarget as HTMLElement)) return;
+			if (
+				e.relatedTarget != null &&
+				e.currentTarget.contains(e.relatedTarget as HTMLElement)
+			)
+				return;
 			const node = getNode(id);
 			if (!node) return;
 			onNodeDetailsBlur(id, {
@@ -141,6 +172,7 @@ export function RunLlmNode({ id, data, selected }: NodeProps) {
 
 	return (
 		<BaseNode
+			id={id}
 			label={RUN_LLM_DEFINITION.label}
 			description={RUN_LLM_DEFINITION.description}
 			status={status}
@@ -149,12 +181,11 @@ export function RunLlmNode({ id, data, selected }: NodeProps) {
 			selected={selected}
 			isPulsating={data?.isPulsating as boolean | undefined}
 		>
-			<div
-				className="space-y-2 nodrag nopan"
-				onBlur={handleBlur}
-			>
+			<div className="space-y-2 nodrag nopan" onBlur={handleBlur}>
 				<div className="space-y-1">
-					<Label className="text-[10px] text-muted-foreground">Model</Label>
+					<Label className="text-[10px] text-muted-foreground">
+						Model
+					</Label>
 					<Select
 						value={model}
 						onValueChange={(v) => {
@@ -163,8 +194,13 @@ export function RunLlmNode({ id, data, selected }: NodeProps) {
 							if (node) {
 								onNodeDetailsBlur(id, {
 									config: {
-										...(typeof node.data?.config === "object" && node.data?.config != null
-											? (node.data.config as Record<string, unknown>)
+										...(typeof node.data?.config ===
+											"object" &&
+										node.data?.config != null
+											? (node.data.config as Record<
+													string,
+													unknown
+												>)
 											: {}),
 										model: v,
 									},
@@ -179,7 +215,11 @@ export function RunLlmNode({ id, data, selected }: NodeProps) {
 						</SelectTrigger>
 						<SelectContent>
 							{LLM_MODELS.map((m) => (
-								<SelectItem key={m} value={m} className="text-xs">
+								<SelectItem
+									key={m}
+									value={m}
+									className="text-xs"
+								>
 									{m}
 								</SelectItem>
 							))}
@@ -193,7 +233,9 @@ export function RunLlmNode({ id, data, selected }: NodeProps) {
 					<Slider
 						value={[temperature]}
 						onValueChange={([v]) =>
-							updateConfig({ temperature: Math.min(2, Math.max(0, v ?? 0.7)) })
+							updateConfig({
+								temperature: Math.min(2, Math.max(0, v ?? 0.7)),
+							})
 						}
 						min={0}
 						max={2}

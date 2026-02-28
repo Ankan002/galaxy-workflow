@@ -1,7 +1,12 @@
 "use client";
 
 import { useCallback, useMemo } from "react";
-import { useReactFlow, useEdges, useStore, type NodeProps } from "@xyflow/react";
+import {
+	useReactFlow,
+	useEdges,
+	useStore,
+	type NodeProps,
+} from "@xyflow/react";
 import { NodeType } from "../registry/types";
 import { BaseNode } from "../base-node";
 import type { NodeDefinition } from "../registry/types";
@@ -21,10 +26,14 @@ const CROP_PERCENT_HANDLES = [
 	{ key: "height_percent", type: "string" as const, required: false },
 ];
 
-export const CROP_IMAGE_DEFINITION: Omit<NodeDefinition<CropImageNodeConfig>, "Component"> = {
+export const CROP_IMAGE_DEFINITION: Omit<
+	NodeDefinition<CropImageNodeConfig>,
+	"Component"
+> = {
 	type: NodeType.CROP_IMAGE,
 	label: "Crop Image",
-	description: "Crop an image by percentage region (jpg, jpeg, png, webp, gif)",
+	description:
+		"Crop an image by percentage region (jpg, jpeg, png, webp, gif)",
 	provider: "TRANSLOADIT",
 	inputHandles: [
 		{ key: "image_url", type: "image", required: true },
@@ -39,14 +48,25 @@ export const CROP_IMAGE_DEFINITION: Omit<NodeDefinition<CropImageNodeConfig>, "C
 	},
 };
 
-const PERCENT_HANDLE_KEYS = ["x_percent", "y_percent", "width_percent", "height_percent"] as const;
+const PERCENT_HANDLE_KEYS = [
+	"x_percent",
+	"y_percent",
+	"width_percent",
+	"height_percent",
+] as const;
 
 function useConnectedPercentHandles(nodeId: string): Set<string> {
 	const edges = useEdges();
 	return useMemo(() => {
 		const set = new Set<string>();
 		for (const e of edges) {
-			if (e.target === nodeId && e.targetHandle && PERCENT_HANDLE_KEYS.includes(e.targetHandle as (typeof PERCENT_HANDLE_KEYS)[number])) {
+			if (
+				e.target === nodeId &&
+				e.targetHandle &&
+				PERCENT_HANDLE_KEYS.includes(
+					e.targetHandle as (typeof PERCENT_HANDLE_KEYS)[number],
+				)
+			) {
 				set.add(e.targetHandle);
 			}
 		}
@@ -65,7 +85,9 @@ function useConnectedSourceConfigDeps(nodeId: string): string {
 					(e: { target: string; targetHandle?: string | null }) =>
 						e.target === nodeId &&
 						e.targetHandle &&
-						PERCENT_HANDLE_KEYS.includes(e.targetHandle as (typeof PERCENT_HANDLE_KEYS)[number]),
+						PERCENT_HANDLE_KEYS.includes(
+							e.targetHandle as (typeof PERCENT_HANDLE_KEYS)[number],
+						),
 				)
 				.map((e: { source: string }) => e.source),
 		);
@@ -79,7 +101,9 @@ function useConnectedSourceConfigDeps(nodeId: string): string {
 }
 
 /** For each percent handle, get the value from the connected source node (e.g. text node) for display. */
-function useLoadedValuesFromConnections(nodeId: string): Record<string, string | number> {
+function useLoadedValuesFromConnections(
+	nodeId: string,
+): Record<string, string | number> {
 	const edges = useEdges();
 	const { getNode } = useReactFlow();
 	// Subscribe to store so we re-render when connected source node data changes (e.g. text node value)
@@ -90,7 +114,9 @@ function useLoadedValuesFromConnections(nodeId: string): Record<string, string |
 				(e) =>
 					e.target === nodeId &&
 					e.targetHandle &&
-					PERCENT_HANDLE_KEYS.includes(e.targetHandle as (typeof PERCENT_HANDLE_KEYS)[number]),
+					PERCENT_HANDLE_KEYS.includes(
+						e.targetHandle as (typeof PERCENT_HANDLE_KEYS)[number],
+					),
 			),
 		[edges, nodeId],
 	);
@@ -116,8 +142,14 @@ export function CropImageNode({ id, data, selected }: NodeProps) {
 	const { onNodeDetailsBlur } = useWorkflowNodePersistence();
 	const connectedPercentHandles = useConnectedPercentHandles(id);
 	const loadedValues = useLoadedValuesFromConnections(id);
-	const config = (data?.config ?? CROP_IMAGE_DEFINITION.defaultConfig) as CropImageNodeConfig;
-	const status = data?.status as "idle" | "running" | "completed" | "failed" | undefined;
+	const config = (data?.config ??
+		CROP_IMAGE_DEFINITION.defaultConfig) as CropImageNodeConfig;
+	const status = data?.status as
+		| "idle"
+		| "running"
+		| "completed"
+		| "failed"
+		| undefined;
 	// When a handle is connected, show the value loaded from that connection (e.g. text node); otherwise config/default
 	const x = loadedValues["x_percent"] ?? config.x_percent ?? 0;
 	const y = loadedValues["y_percent"] ?? config.y_percent ?? 0;
@@ -126,7 +158,11 @@ export function CropImageNode({ id, data, selected }: NodeProps) {
 
 	const handleBlur = useCallback(
 		(e: React.FocusEvent) => {
-			if (e.relatedTarget != null && e.currentTarget.contains(e.relatedTarget as HTMLElement)) return;
+			if (
+				e.relatedTarget != null &&
+				e.currentTarget.contains(e.relatedTarget as HTMLElement)
+			)
+				return;
 			const node = getNode(id);
 			if (!node) return;
 			onNodeDetailsBlur(id, {
@@ -140,6 +176,7 @@ export function CropImageNode({ id, data, selected }: NodeProps) {
 
 	return (
 		<BaseNode
+			id={id}
 			label={CROP_IMAGE_DEFINITION.label}
 			description={CROP_IMAGE_DEFINITION.description}
 			status={status}
@@ -158,7 +195,9 @@ export function CropImageNode({ id, data, selected }: NodeProps) {
 						<span className="font-mono tabular-nums">
 							{x}
 							{connectedPercentHandles.has("x_percent") && (
-								<span className="ml-1 text-chart-3">(connected)</span>
+								<span className="ml-1 text-chart-3">
+									(connected)
+								</span>
 							)}
 						</span>
 					</div>
@@ -167,7 +206,9 @@ export function CropImageNode({ id, data, selected }: NodeProps) {
 						<span className="font-mono tabular-nums">
 							{y}
 							{connectedPercentHandles.has("y_percent") && (
-								<span className="ml-1 text-chart-3">(connected)</span>
+								<span className="ml-1 text-chart-3">
+									(connected)
+								</span>
 							)}
 						</span>
 					</div>
@@ -176,7 +217,9 @@ export function CropImageNode({ id, data, selected }: NodeProps) {
 						<span className="font-mono tabular-nums">
 							{w}
 							{connectedPercentHandles.has("width_percent") && (
-								<span className="ml-1 text-chart-3">(connected)</span>
+								<span className="ml-1 text-chart-3">
+									(connected)
+								</span>
 							)}
 						</span>
 					</div>
@@ -185,7 +228,9 @@ export function CropImageNode({ id, data, selected }: NodeProps) {
 						<span className="font-mono tabular-nums">
 							{h}
 							{connectedPercentHandles.has("height_percent") && (
-								<span className="ml-1 text-chart-3">(connected)</span>
+								<span className="ml-1 text-chart-3">
+									(connected)
+								</span>
 							)}
 						</span>
 					</div>

@@ -3,7 +3,14 @@ import type { workflow_edge } from "@/db/prisma/browser";
 import type { workflow_node } from "@/db/prisma/browser";
 
 /** Variant for edge styling (used by WorkflowEdge and minimap). */
-type EdgeVariant = "default" | "prompt" | "image" | "video" | "number" | "json" | "file";
+type EdgeVariant =
+	| "default"
+	| "prompt"
+	| "image"
+	| "video"
+	| "number"
+	| "json"
+	| "file";
 
 /** Map (source node type, source handle) to edge variant for colorful edges in canvas and minimap. */
 function getEdgeVariantForWorkflowEdge(
@@ -17,7 +24,8 @@ function getEdgeVariantForWorkflowEdge(
 	if (t === "video_upload" && sourceHandle === "url") return "video";
 	if (t === "run_llm" && sourceHandle === "response") return "prompt";
 	if (t === "crop_image" && sourceHandle === "image") return "image";
-	if (t === "extract_video_frame" && sourceHandle === "output") return "prompt";
+	if (t === "extract_video_frame" && sourceHandle === "output")
+		return "prompt";
 	if (t === "extract_video" && sourceHandle === "url") return "video";
 	// Any future node that outputs number (e.g. number/slider node) can be added here; for now number edges from such nodes get "number"
 	return "default";
@@ -51,7 +59,8 @@ export function mapWorkflowNodesToFlow(
 	nodes: workflow_node[],
 	edges?: workflow_edge[],
 ): Node[] {
-	const minImageByTarget = edges != null ? getMinImageInputCountByTarget(edges) : null;
+	const minImageByTarget =
+		edges != null ? getMinImageInputCountByTarget(edges) : null;
 	return nodes.map((n) => {
 		const registryType = workflowNodeTypeToRegistryType(n.type);
 		let config: Record<string, unknown> = {};
@@ -60,29 +69,46 @@ export function mapWorkflowNodesToFlow(
 		} else if (typeof n.config === "string") {
 			try {
 				const parsed = JSON.parse(n.config) as Record<string, unknown>;
-				config = typeof parsed === "object" && parsed !== null ? parsed : {};
-		} catch {
-			config = {};
-		}
-	}
-	// Ensure RUN_LLM nodes have enough image slots for existing edges (dynamic handles image_0, image_1, ...)
-	if (minImageByTarget && n.type === "run_llm") {
-		const minSlots = minImageByTarget.get(n.id);
-		if (minSlots != null) {
-			const required = minSlots + 1;
-			const current = Math.max(0, Math.floor(Number((config as Record<string, unknown>).imageInputCount) ?? 0));
-			if (required > current) {
-				config = { ...config, imageInputCount: required } as Record<string, unknown>;
+				config =
+					typeof parsed === "object" && parsed !== null ? parsed : {};
+			} catch {
+				config = {};
 			}
 		}
-	}
-	let metadata: Record<string, unknown> | undefined;
+		// Ensure RUN_LLM nodes have enough image slots for existing edges (dynamic handles image_0, image_1, ...)
+		if (minImageByTarget && n.type === "run_llm") {
+			const minSlots = minImageByTarget.get(n.id);
+			if (minSlots != null) {
+				const required = minSlots + 1;
+				const current = Math.max(
+					0,
+					Math.floor(
+						Number(
+							(config as Record<string, unknown>).imageInputCount,
+						) ?? 0,
+					),
+				);
+				if (required > current) {
+					config = { ...config, imageInputCount: required } as Record<
+						string,
+						unknown
+					>;
+				}
+			}
+		}
+		let metadata: Record<string, unknown> | undefined;
 		if (typeof n.metadata === "object" && n.metadata !== null) {
 			metadata = n.metadata as Record<string, unknown>;
 		} else if (typeof n.metadata === "string") {
 			try {
-				const parsed = JSON.parse(n.metadata) as Record<string, unknown>;
-				metadata = typeof parsed === "object" && parsed !== null ? parsed : undefined;
+				const parsed = JSON.parse(n.metadata) as Record<
+					string,
+					unknown
+				>;
+				metadata =
+					typeof parsed === "object" && parsed !== null
+						? parsed
+						: undefined;
 			} catch {
 				metadata = undefined;
 			}
@@ -92,6 +118,7 @@ export function mapWorkflowNodesToFlow(
 			type: registryType,
 			position: { x: n.position_x, y: n.position_y },
 			data: {
+				id: n.id,
 				type: registryType,
 				config,
 				...(metadata && { metadata }),
@@ -113,7 +140,10 @@ export function mapWorkflowEdgesToFlow(
 		const sourceNode = nodeMap.get(e.source_node_id);
 		const variant =
 			sourceNode != null
-				? getEdgeVariantForWorkflowEdge(sourceNode.type, e.source_handle)
+				? getEdgeVariantForWorkflowEdge(
+						sourceNode.type,
+						e.source_handle,
+					)
 				: "default";
 		return {
 			id: e.id,

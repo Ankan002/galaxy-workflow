@@ -33,7 +33,8 @@ export const VIDEO_UPLOAD_DEFINITION: Omit<
 > = {
 	type: NodeType.VIDEO_UPLOAD,
 	label: "Upload Video",
-	description: "Upload via Transloadit. Accepted: mp4, mov, webm, m4v. Output: video URL.",
+	description:
+		"Upload via Transloadit. Accepted: mp4, mov, webm, m4v. Output: video URL.",
 	provider: "TRANSLOADIT",
 	inputHandles: [],
 	outputHandles: [{ key: "url", type: "string" }],
@@ -47,16 +48,23 @@ export function VideoUploadNode({ id, data, selected }: NodeProps) {
 	const { onNodeDetailsBlur } = useWorkflowNodePersistence();
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const [isDragOver, setIsDragOver] = useState(false);
-	const config = (data?.config ?? VIDEO_UPLOAD_DEFINITION.defaultConfig) as VideoUploadNodeConfig;
-	const status = data?.status as "idle" | "running" | "completed" | "failed" | undefined;
+	const config = (data?.config ??
+		VIDEO_UPLOAD_DEFINITION.defaultConfig) as VideoUploadNodeConfig;
+	const status = data?.status as
+		| "idle"
+		| "running"
+		| "completed"
+		| "failed"
+		| undefined;
 	const previewUrl = config.previewUrl ?? "";
 
-	const { uploadFile, isUploading, progressPercent, error } = useTransloaditUpload({
-		workflowId: workflowId ?? "",
-		nodeId: id,
-		type: "video",
-		onSuccess: (url) => updateConfig({ previewUrl: url }),
-	});
+	const { uploadFile, isUploading, progressPercent, error } =
+		useTransloaditUpload({
+			workflowId: workflowId ?? "",
+			nodeId: id,
+			type: "video",
+			onSuccess: (url) => updateConfig({ previewUrl: url }),
+		});
 
 	const setPreviewUrl = useCallback(
 		(v: string) => updateConfig({ previewUrl: v }),
@@ -106,7 +114,11 @@ export function VideoUploadNode({ id, data, selected }: NodeProps) {
 
 	const handleBlur = useCallback(
 		(e: React.FocusEvent) => {
-			if (e.relatedTarget != null && e.currentTarget.contains(e.relatedTarget as HTMLElement)) return;
+			if (
+				e.relatedTarget != null &&
+				e.currentTarget.contains(e.relatedTarget as HTMLElement)
+			)
+				return;
 			const node = getNode(id);
 			if (!node) return;
 			onNodeDetailsBlur(id, {
@@ -120,6 +132,7 @@ export function VideoUploadNode({ id, data, selected }: NodeProps) {
 
 	return (
 		<BaseNode
+			id={id}
 			label={VIDEO_UPLOAD_DEFINITION.label}
 			description={VIDEO_UPLOAD_DEFINITION.description}
 			status={status}
@@ -143,9 +156,17 @@ export function VideoUploadNode({ id, data, selected }: NodeProps) {
 					<div
 						role="button"
 						tabIndex={0}
-						onClick={() => workflowId && !isUploading && fileInputRef.current?.click()}
+						onClick={() =>
+							workflowId &&
+							!isUploading &&
+							fileInputRef.current?.click()
+						}
 						onKeyDown={(e) => {
-							if ((e.key === "Enter" || e.key === " ") && workflowId && !isUploading) {
+							if (
+								(e.key === "Enter" || e.key === " ") &&
+								workflowId &&
+								!isUploading
+							) {
 								e.preventDefault();
 								fileInputRef.current?.click();
 							}
@@ -155,15 +176,21 @@ export function VideoUploadNode({ id, data, selected }: NodeProps) {
 						onDragLeave={onDragLeave}
 						className={cn(
 							"relative aspect-video min-h-[120px] flex items-center justify-center overflow-hidden cursor-pointer transition-all duration-200 rounded-xl border border-border/80 bg-neutral-950 shadow-inner",
-							workflowId && !isUploading && "hover:border-primary/40 hover:shadow-md hover:shadow-primary/5",
-							isDragOver && "ring-2 ring-primary ring-offset-2 ring-offset-background border-primary/60 scale-[1.01]",
+							workflowId &&
+								!isUploading &&
+								"hover:border-primary/40 hover:shadow-md hover:shadow-primary/5",
+							isDragOver &&
+								"ring-2 ring-primary ring-offset-2 ring-offset-background border-primary/60 scale-[1.01]",
 							previewUrl && "shadow-lg",
 						)}
 						aria-label="Click or drop video to upload"
 					>
 						{previewUrl ? (
 							<>
-								<div className="absolute inset-0 bg-neutral-950" aria-hidden />
+								<div
+									className="absolute inset-0 bg-neutral-950"
+									aria-hidden
+								/>
 								<video
 									src={previewUrl}
 									controls
@@ -195,7 +222,9 @@ export function VideoUploadNode({ id, data, selected }: NodeProps) {
 									<VideoIcon className="size-7 text-neutral-400" />
 								</div>
 								<span className="text-[11px] font-medium text-neutral-400">
-									{isDragOver ? "Drop video here" : "Click or drop video"}
+									{isDragOver
+										? "Drop video here"
+										: "Click or drop video"}
 								</span>
 							</div>
 						)}
@@ -204,7 +233,9 @@ export function VideoUploadNode({ id, data, selected }: NodeProps) {
 						<Progress value={progressPercent} className="h-1.5" />
 					)}
 					{error && (
-						<p className="text-[10px] text-destructive">{error.message}</p>
+						<p className="text-[10px] text-destructive">
+							{error.message}
+						</p>
 					)}
 					<Input
 						value={previewUrl}
@@ -213,7 +244,9 @@ export function VideoUploadNode({ id, data, selected }: NodeProps) {
 						className="h-7 text-xs"
 					/>
 				</div>
-				<p className="text-[10px] text-muted-foreground">Output: video URL</p>
+				<p className="text-[10px] text-muted-foreground">
+					Output: video URL
+				</p>
 			</div>
 		</BaseNode>
 	);

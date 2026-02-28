@@ -53,7 +53,11 @@ interface CanvasWorkflowLayoutProps {
 	onEdgesChange: ReturnType<typeof import("@xyflow/react").useEdgesState>[2];
 	onConnect: (connection: import("@xyflow/react").Connection) => void;
 	/** When provided, React Flow uses this to reject invalid connections (e.g. text → number handle). */
-	isValidConnection?: (connection: import("@xyflow/react").Connection | import("@xyflow/react").Edge) => boolean;
+	isValidConnection?: (
+		connection:
+			| import("@xyflow/react").Connection
+			| import("@xyflow/react").Edge,
+	) => boolean;
 	setNodes: React.Dispatch<React.SetStateAction<Node[]>>;
 	undo: () => void;
 	redo: () => void;
@@ -64,7 +68,7 @@ interface CanvasWorkflowLayoutProps {
 	onNodeCreated?: (node: Node) => void;
 	/** When true, disables node/edge editing, connecting, and dropping new nodes. */
 	isEditorDisabled?: boolean;
-	/** Called when a node’s config/position should be persisted (e.g. on blur). */
+	/** Called when a node's config/position should be persisted (e.g. on blur). */
 	onNodeDetailsBlur?: (
 		nodeId: string,
 		payload: {
@@ -73,6 +77,8 @@ interface CanvasWorkflowLayoutProps {
 			positionY: number;
 		},
 	) => void | Promise<void>;
+	/** Called when the user clicks Duplicate on a node's context menu. */
+	onDuplicate?: (nodeId: string) => void | Promise<void>;
 	/** Called when the user clicks "Run selected node". */
 	onRunSelectedNode?: () => void | Promise<void>;
 	/** Called when the user clicks "Run flow" (execute all nodes). */
@@ -105,6 +111,7 @@ function CanvasWorkflowLayoutInner({
 	onNodeCreated,
 	isEditorDisabled = false,
 	onNodeDetailsBlur,
+	onDuplicate,
 	onRunSelectedNode,
 	onTriggerFlow,
 	isRunNodeLoading = false,
@@ -179,65 +186,72 @@ function CanvasWorkflowLayoutInner({
 
 	return (
 		<WorkflowIdProvider workflowId={workflowId}>
-		<WorkflowNodePersistenceProvider onNodeDetailsBlur={onNodeDetailsBlur ?? (() => {})}>
-		<div className="flex h-full w-full">
-			<CanvasNodeSidebar
-				workflowSidebar={workflowSidebar}
-				collapsed={sidebarCollapsed}
-			/>
-			{/* Canvas column: trigger lives here so it stays on top of React Flow and is clearly outside the sidebar */}
-			<div className="relative h-full flex-1">
-				<Button
-					variant="outline"
-					size="icon"
-					className="absolute bottom-4 left-0 z-20 size-9 shrink-0 -translate-x-1/2 rounded-full border-border bg-background shadow-md hover:bg-accent"
-					onClick={() => setSidebarCollapsed((c) => !c)}
-					title={
-						sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"
-					}
-				>
-					{sidebarCollapsed ? (
-						<PanelLeft className="size-4" />
-					) : (
-						<PanelLeftClose className="size-4" />
-					)}
-				</Button>
-				<WorkflowCanvas
-					nodes={nodes}
-					edges={edges}
-					onNodesChange={onNodesChange}
-					onEdgesChange={onEdgesChange}
-					onConnect={onConnect}
-					isValidConnection={isValidConnection}
-					onDrop={onDrop}
-					onDragOver={onDragOver}
-					onInit={onInit}
-					readOnly={isEditorDisabled}
-					bottomIsland={{
-						interactionMode,
-						onInteractionModeChange: setInteractionMode,
-						onUndo: undo,
-						onRedo: redo,
-						canUndo,
-						canRedo,
-					}}
-				/>
-			</div>
-			<CanvasRightSidebar
-				collapsed={rightSidebarCollapsed}
-				onToggleCollapsed={() => setRightSidebarCollapsed((c) => !c)}
-				hasSelectedNode={hasSelectedNode}
-				onRunSelectedNode={handleRunSelectedNode}
-				onTriggerFlow={handleTriggerFlow}
-				onStopFlow={onStopFlow}
-				disabled={isEditorDisabled}
-				isRunNodeLoading={isRunNodeLoading}
-				isRunFlowLoading={isRunFlowLoading}
-				isStopFlowLoading={isStopFlowLoading}
-				workflowId={workflowId}
-			/>
-		</div>
-		</WorkflowNodePersistenceProvider>
+			<WorkflowNodePersistenceProvider
+				onNodeDetailsBlur={onNodeDetailsBlur ?? (() => {})}
+				onDuplicate={onDuplicate ?? (() => {})}
+			>
+				<div className="flex h-full w-full">
+					<CanvasNodeSidebar
+						workflowSidebar={workflowSidebar}
+						collapsed={sidebarCollapsed}
+					/>
+					{/* Canvas column: trigger lives here so it stays on top of React Flow and is clearly outside the sidebar */}
+					<div className="relative h-full flex-1">
+						<Button
+							variant="outline"
+							size="icon"
+							className="absolute bottom-4 left-0 z-20 size-9 shrink-0 -translate-x-1/2 rounded-full border-border bg-background shadow-md hover:bg-accent"
+							onClick={() => setSidebarCollapsed((c) => !c)}
+							title={
+								sidebarCollapsed
+									? "Expand sidebar"
+									: "Collapse sidebar"
+							}
+						>
+							{sidebarCollapsed ? (
+								<PanelLeft className="size-4" />
+							) : (
+								<PanelLeftClose className="size-4" />
+							)}
+						</Button>
+						<WorkflowCanvas
+							nodes={nodes}
+							edges={edges}
+							onNodesChange={onNodesChange}
+							onEdgesChange={onEdgesChange}
+							onConnect={onConnect}
+							isValidConnection={isValidConnection}
+							onDrop={onDrop}
+							onDragOver={onDragOver}
+							onInit={onInit}
+							readOnly={isEditorDisabled}
+							bottomIsland={{
+								interactionMode,
+								onInteractionModeChange: setInteractionMode,
+								onUndo: undo,
+								onRedo: redo,
+								canUndo,
+								canRedo,
+							}}
+						/>
+					</div>
+					<CanvasRightSidebar
+						collapsed={rightSidebarCollapsed}
+						onToggleCollapsed={() =>
+							setRightSidebarCollapsed((c) => !c)
+						}
+						hasSelectedNode={hasSelectedNode}
+						onRunSelectedNode={handleRunSelectedNode}
+						onTriggerFlow={handleTriggerFlow}
+						onStopFlow={onStopFlow}
+						disabled={isEditorDisabled}
+						isRunNodeLoading={isRunNodeLoading}
+						isRunFlowLoading={isRunFlowLoading}
+						isStopFlowLoading={isStopFlowLoading}
+						workflowId={workflowId}
+					/>
+				</div>
+			</WorkflowNodePersistenceProvider>
 		</WorkflowIdProvider>
 	);
 }

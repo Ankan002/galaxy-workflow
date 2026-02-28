@@ -25,12 +25,12 @@ import {
 	CanvasBottomIsland,
 	type InteractionMode,
 } from "./canvas-bottom-island";
+import { useNodeClipboardStore } from "@/store";
 
-interface WorkflowCanvasProps
-	extends Omit<
-		ReactFlowProps,
-		"nodes" | "edges" | "onNodesChange" | "onEdgesChange" | "onConnect"
-	> {
+interface WorkflowCanvasProps extends Omit<
+	ReactFlowProps,
+	"nodes" | "edges" | "onNodesChange" | "onEdgesChange" | "onConnect"
+> {
 	nodes: Node[];
 	edges: Edge[];
 	onNodesChange: OnNodesChange;
@@ -84,6 +84,9 @@ export function WorkflowCanvas({
 		[extraNodeTypes],
 	);
 
+	const { nodeId: copiedNodeId, setNodeId: setCopiedNodeId } =
+		useNodeClipboardStore();
+
 	const edgeTypes: EdgeTypes = useMemo(
 		() => ({
 			workflow: WorkflowEdge,
@@ -102,6 +105,12 @@ export function WorkflowCanvas({
 				edges={edges}
 				onNodesChange={onNodesChange}
 				onEdgesChange={onEdgesChange}
+				onCopy={(e) => {
+					e.preventDefault();
+				}}
+				onCopyCapture={(e) => {
+					e.preventDefault();
+				}}
 				onConnect={onConnect}
 				nodeTypes={nodeTypes}
 				edgeTypes={edgeTypes}
@@ -126,7 +135,9 @@ export function WorkflowCanvas({
 				{useBottomIsland && bottomIsland && (
 					<CanvasBottomIsland
 						interactionMode={bottomIsland.interactionMode}
-						onInteractionModeChange={bottomIsland.onInteractionModeChange}
+						onInteractionModeChange={
+							bottomIsland.onInteractionModeChange
+						}
 						onUndo={bottomIsland.onUndo}
 						onRedo={bottomIsland.onRedo}
 						canUndo={bottomIsland.canUndo}

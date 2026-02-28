@@ -13,12 +13,14 @@ export interface WorkflowNodePersistenceContextValue {
 		nodeId: string,
 		payload: NodeDetailsBlurPayload,
 	) => void | Promise<void>;
+	onDuplicate: (nodeId: string) => void | Promise<void>;
 }
 
 const noop = () => {};
 
 const defaultValue: WorkflowNodePersistenceContextValue = {
 	onNodeDetailsBlur: noop,
+	onDuplicate: noop,
 };
 
 const WorkflowNodePersistenceContext =
@@ -30,16 +32,19 @@ export function useWorkflowNodePersistence() {
 
 export function WorkflowNodePersistenceProvider({
 	onNodeDetailsBlur,
+	onDuplicate,
 	children,
 }: {
 	onNodeDetailsBlur: WorkflowNodePersistenceContextValue["onNodeDetailsBlur"];
+	onDuplicate: WorkflowNodePersistenceContextValue["onDuplicate"];
 	children: React.ReactNode;
 }) {
 	const value = useMemo<WorkflowNodePersistenceContextValue>(
 		() => ({
 			onNodeDetailsBlur: onNodeDetailsBlur ?? noop,
+			onDuplicate: onDuplicate ?? noop,
 		}),
-		[onNodeDetailsBlur],
+		[onNodeDetailsBlur, onDuplicate],
 	);
 
 	return (

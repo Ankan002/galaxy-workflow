@@ -21,9 +21,12 @@ import type {
 } from "./registry/types";
 import type { HandleDataType } from "./registry/types";
 import { Copy, Trash2 } from "lucide-react";
+import { useWorkflowNodePersistence } from "@/components/canvas/workflow-node-persistence-context";
 
 /** Legacy shape for nodes that use "base" type (e.g. canvas-demo) */
 export interface BaseNodeData extends Record<string, unknown> {
+	/** The node's ID on the server */
+	id?: string;
 	label: string;
 	description?: string;
 	icon?: ReactNode;
@@ -48,6 +51,7 @@ export interface BaseNodeData extends Record<string, unknown> {
 		position?: Position;
 		style?: React.CSSProperties;
 	}>;
+	onDuplicate?: (id: string) => Promise<void>;
 }
 
 const statusToNodeStatus = (
@@ -82,6 +86,7 @@ function legacyDataToBaseNodeProps(
 		{ id: "source", position: Position.Bottom },
 	];
 	return {
+		id: data.id,
 		label: data.label,
 		description: data.description,
 		status: statusToNodeStatus(data.status),
@@ -257,6 +262,7 @@ function renderHandles(
 
 /** Reusable base node: title, dynamic input/output handles, status badge. Used by registry nodes or legacy "base" type. */
 export function BaseNode(props: BaseNodeProps | NodeProps) {
+	const { onDuplicate } = useWorkflowNodePersistence();
 	const resolved: BaseNodeProps = isNodeProps(props)
 		? legacyDataToBaseNodeProps(
 				props.data as BaseNodeData,
@@ -265,6 +271,7 @@ export function BaseNode(props: BaseNodeProps | NodeProps) {
 		: (props as BaseNodeProps);
 
 	const {
+		id,
 		label,
 		description,
 		status,
@@ -286,6 +293,7 @@ export function BaseNode(props: BaseNodeProps | NodeProps) {
 					<Card
 						variant={selected ? "selected" : "node"}
 						padding="none"
+						data-node-id={id}
 						className={cn(
 							"min-w-[200px] max-w-[280px] transition-shadow",
 							selected && "shadow-lg",
@@ -337,7 +345,7 @@ export function BaseNode(props: BaseNodeProps | NodeProps) {
 				</ContextMenuTrigger>
 				<ContextMenuContent className="w-56">
 					<ContextMenuGroup>
-						<ContextMenuItem>
+						<ContextMenuItem onClick={() => id && onDuplicate(id)}>
 							<Copy /> Duplicate
 						</ContextMenuItem>
 					</ContextMenuGroup>
