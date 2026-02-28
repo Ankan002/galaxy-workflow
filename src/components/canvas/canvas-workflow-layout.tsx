@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
 	ReactFlowProvider,
 	type Node,
@@ -11,10 +11,9 @@ import { Button } from "@/components/ui/button";
 import { WorkflowCanvas } from "./workflow-canvas";
 import { CanvasNodeSidebar } from "./canvas-node-sidebar";
 import { CanvasRightSidebar } from "./canvas-right-sidebar";
-import { WorkflowNodePersistenceProvider } from "./workflow-node-persistence-context";
-import { WorkflowIdProvider } from "./workflow-id-context";
 import { NODE_REGISTRY, NodeType } from "./nodes/registry";
 import type { InteractionMode } from "./canvas-bottom-island";
+import { useWorkflowCanvasStore } from "@/store";
 
 const DRAG_TYPE = "application/reactflow";
 
@@ -53,7 +52,11 @@ interface CanvasWorkflowLayoutProps {
 	onEdgesChange: ReturnType<typeof import("@xyflow/react").useEdgesState>[2];
 	onConnect: (connection: import("@xyflow/react").Connection) => void;
 	/** When provided, React Flow uses this to reject invalid connections (e.g. text → number handle). */
-	isValidConnection?: (connection: import("@xyflow/react").Connection | import("@xyflow/react").Edge) => boolean;
+	isValidConnection?: (
+		connection:
+			| import("@xyflow/react").Connection
+			| import("@xyflow/react").Edge,
+	) => boolean;
 	setNodes: React.Dispatch<React.SetStateAction<Node[]>>;
 	undo: () => void;
 	redo: () => void;
@@ -64,7 +67,7 @@ interface CanvasWorkflowLayoutProps {
 	onNodeCreated?: (node: Node) => void;
 	/** When true, disables node/edge editing, connecting, and dropping new nodes. */
 	isEditorDisabled?: boolean;
-	/** Called when a node’s config/position should be persisted (e.g. on blur). */
+	/** Called when a node's config/position should be persisted (e.g. on blur). */
 	onNodeDetailsBlur?: (
 		nodeId: string,
 		payload: {
@@ -73,6 +76,10 @@ interface CanvasWorkflowLayoutProps {
 			positionY: number;
 		},
 	) => void | Promise<void>;
+	/** Called when the user clicks Duplicate on a node's context menu. */
+	onDuplicate?: (nodeId: string) => void | Promise<void>;
+	/** Called when the user clicks Delete on a node's context menu. */
+	onDelete?: (nodeId: string) => void;
 	/** Called when the user clicks "Run selected node". */
 	onRunSelectedNode?: () => void | Promise<void>;
 	/** Called when the user clicks "Run flow" (execute all nodes). */
@@ -86,6 +93,8 @@ interface CanvasWorkflowLayoutProps {
 	/** True while stop-flow request is in flight. */
 	isStopFlowLoading?: boolean;
 }
+
+const noop = () => {};
 
 function CanvasWorkflowLayoutInner({
 	workflowId,
@@ -105,6 +114,8 @@ function CanvasWorkflowLayoutInner({
 	onNodeCreated,
 	isEditorDisabled = false,
 	onNodeDetailsBlur,
+	onDuplicate,
+	onDelete,
 	onRunSelectedNode,
 	onTriggerFlow,
 	isRunNodeLoading = false,
@@ -118,6 +129,30 @@ function CanvasWorkflowLayoutInner({
 	const [interactionMode, setInteractionMode] =
 		useState<InteractionMode>("select");
 
+	const { setWorkflowId, setOnNodeDetailsBlur, setOnDuplicate, setOnDelete } =
+		useWorkflowCanvasStore();
+
+	// Register workflowId into the store whenever it changes
+	useEffect(() => {
+		setWorkflowId(workflowId);
+		return () => setWorkflowId(null);
+	}, [workflowId, setWorkflowId]);
+
+	// Register onNodeDetailsBlur into the store whenever it changes
+	useEffect(() => {
+		setOnNodeDetailsBlur(onNodeDetailsBlur ?? noop);
+	}, [onNodeDetailsBlur, setOnNodeDetailsBlur]);
+
+	// Register onDuplicate into the store whenever it changes
+	useEffect(() => {
+		setOnDuplicate(onDuplicate ?? noop);
+	}, [onDuplicate, setOnDuplicate]);
+
+	// Register onDelete into the store whenever it changes
+	useEffect(() => {
+		setOnDelete(onDelete ?? noop);
+	}, [onDelete, setOnDelete]);
+
 	const hasSelectedNode = useMemo(
 		() => nodes.some((n) => n.selected),
 		[nodes],
@@ -126,6 +161,7 @@ function CanvasWorkflowLayoutInner({
 	const handleRunSelectedNode = useCallback(() => {
 		onRunSelectedNode?.();
 	}, [onRunSelectedNode]);
+
 	const handleTriggerFlow = useCallback(() => {
 		onTriggerFlow?.();
 	}, [onTriggerFlow]);
@@ -178,8 +214,6 @@ function CanvasWorkflowLayoutInner({
 	}, []);
 
 	return (
-		<WorkflowIdProvider workflowId={workflowId}>
-		<WorkflowNodePersistenceProvider onNodeDetailsBlur={onNodeDetailsBlur ?? (() => {})}>
 		<div className="flex h-full w-full">
 			<CanvasNodeSidebar
 				workflowSidebar={workflowSidebar}
@@ -237,8 +271,6 @@ function CanvasWorkflowLayoutInner({
 				workflowId={workflowId}
 			/>
 		</div>
-		</WorkflowNodePersistenceProvider>
-		</WorkflowIdProvider>
 	);
 }
 

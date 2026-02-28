@@ -16,16 +16,20 @@ import {
 } from "@xyflow/react";
 import { NODE_REGISTRY } from "./nodes/registry";
 import type { BaseEdgeData } from "./edges";
+import { useNodeClipboardStore } from "@/store";
 
 function getEdgeVariantFromConnection(
 	nodes: Node[],
 	connection: Connection,
 ): BaseEdgeData["variant"] {
 	const sourceNode = nodes.find((n) => n.id === connection.source);
-	if (!sourceNode?.type || typeof sourceNode.type !== "string") return "default";
+	if (!sourceNode?.type || typeof sourceNode.type !== "string")
+		return "default";
 	const def = NODE_REGISTRY[sourceNode.type as keyof typeof NODE_REGISTRY];
 	if (!def?.outputHandles) return "default";
-	const handle = def.outputHandles.find((h) => h.key === connection.sourceHandle);
+	const handle = def.outputHandles.find(
+		(h) => h.key === connection.sourceHandle,
+	);
 	if (!handle) return "default";
 	const t = handle.type;
 	if (t === "string") return "prompt";
@@ -50,16 +54,29 @@ function isConnectionAllowedByHandleTypes(
 	nodes: Node[],
 	connection: ConnectionLike | null,
 ): boolean {
-	if (!connection?.source || !connection?.target || connection.sourceHandle == null || connection.sourceHandle === "" || connection.targetHandle == null || connection.targetHandle === "")
+	if (
+		!connection?.source ||
+		!connection?.target ||
+		connection.sourceHandle == null ||
+		connection.sourceHandle === "" ||
+		connection.targetHandle == null ||
+		connection.targetHandle === ""
+	)
 		return true;
 	const sourceNode = nodes.find((n) => n.id === connection.source);
 	const targetNode = nodes.find((n) => n.id === connection.target);
 	if (!sourceNode?.type || !targetNode?.type) return true;
-	const sourceDef = NODE_REGISTRY[sourceNode.type as keyof typeof NODE_REGISTRY];
-	const targetDef = NODE_REGISTRY[targetNode.type as keyof typeof NODE_REGISTRY];
+	const sourceDef =
+		NODE_REGISTRY[sourceNode.type as keyof typeof NODE_REGISTRY];
+	const targetDef =
+		NODE_REGISTRY[targetNode.type as keyof typeof NODE_REGISTRY];
 	if (!sourceDef?.outputHandles || !targetDef?.inputHandles) return true;
-	const sourceHandle = sourceDef.outputHandles.find((h) => h.key === connection.sourceHandle);
-	const targetHandle = targetDef.inputHandles.find((h) => h.key === connection.targetHandle);
+	const sourceHandle = sourceDef.outputHandles.find(
+		(h) => h.key === connection.sourceHandle,
+	);
+	const targetHandle = targetDef.inputHandles.find(
+		(h) => h.key === connection.targetHandle,
+	);
 	if (!sourceHandle || !targetHandle) return true;
 	const st = sourceHandle.type;
 	const tt = targetHandle.type;
@@ -67,7 +84,10 @@ function isConnectionAllowedByHandleTypes(
 	return st === tt;
 }
 
-function snapshot(nodes: Node[], edges: Edge[]): { nodes: Node[]; edges: Edge[] } {
+function snapshot(
+	nodes: Node[],
+	edges: Edge[],
+): { nodes: Node[]; edges: Edge[] } {
 	return {
 		nodes: JSON.parse(JSON.stringify(nodes)),
 		edges: JSON.parse(JSON.stringify(edges)),
@@ -127,8 +147,10 @@ export function useWorkflowCanvas(options: UseWorkflowCanvasOptions = {}) {
 		onEdgeCreated: options.onEdgeCreated,
 		onEdgeDeleted: options.onEdgeDeleted,
 		onEdgeUpdated: options.onEdgeUpdated,
+		onNodePositionChange: options.onNodePositionChange,
 		onWorkflowRun: options.onWorkflowRun,
 	});
+	const { nodeId, setNodeId } = useNodeClipboardStore();
 
 	const [historyLength, setHistoryLength] = useState(0);
 	const [futureLength, setFutureLength] = useState(0);
@@ -148,7 +170,16 @@ export function useWorkflowCanvas(options: UseWorkflowCanvasOptions = {}) {
 			onNodePositionChange: options.onNodePositionChange,
 			onWorkflowRun: options.onWorkflowRun,
 		};
-	}, [options.onWorkflowChange, options.onNodeCreated, options.onNodeDeleted, options.onEdgeCreated, options.onEdgeDeleted, options.onEdgeUpdated, options.onNodePositionChange, options.onWorkflowRun]);
+	}, [
+		options.onWorkflowChange,
+		options.onNodeCreated,
+		options.onNodeDeleted,
+		options.onEdgeCreated,
+		options.onEdgeDeleted,
+		options.onEdgeUpdated,
+		options.onNodePositionChange,
+		options.onWorkflowRun,
+	]);
 
 	useEffect(() => {
 		const fn = onWorkflowChangeRef.current;
@@ -168,7 +199,9 @@ export function useWorkflowCanvas(options: UseWorkflowCanvasOptions = {}) {
 	const undo = useCallback(() => {
 		if (historyRef.current.length === 0) return;
 		const prev = historyRef.current.pop()!;
-		futureRef.current.push(snapshot(latestRef.current.nodes, latestRef.current.edges));
+		futureRef.current.push(
+			snapshot(latestRef.current.nodes, latestRef.current.edges),
+		);
 		isUndoRedoRef.current = true;
 		setNodes(prev.nodes);
 		setEdges(prev.edges);
@@ -180,7 +213,9 @@ export function useWorkflowCanvas(options: UseWorkflowCanvasOptions = {}) {
 	const redo = useCallback(() => {
 		if (futureRef.current.length === 0) return;
 		const next = futureRef.current.pop()!;
-		historyRef.current.push(snapshot(latestRef.current.nodes, latestRef.current.edges));
+		historyRef.current.push(
+			snapshot(latestRef.current.nodes, latestRef.current.edges),
+		);
 		isUndoRedoRef.current = true;
 		setNodes(next.nodes);
 		setEdges(next.edges);
@@ -219,7 +254,8 @@ export function useWorkflowCanvas(options: UseWorkflowCanvasOptions = {}) {
 					e.sourceHandle === connection.sourceHandle &&
 					e.targetHandle === connection.targetHandle,
 			);
-			if (newEdge) triggersRef.current.onEdgeCreated?.(connection, newEdge);
+			if (newEdge)
+				triggersRef.current.onEdgeCreated?.(connection, newEdge);
 		},
 		[nodes, setEdges, pushHistoryBeforeChange],
 	);
@@ -232,20 +268,30 @@ export function useWorkflowCanvas(options: UseWorkflowCanvasOptions = {}) {
 				const { nodes: currentNodes } = latestRef.current;
 				for (const c of removeChanges) {
 					if (c.type === "remove") {
-						const node = currentNodes.find((n) => n.id === c.id) ?? null;
+						const node =
+							currentNodes.find((n) => n.id === c.id) ?? null;
 						triggersRef.current.onNodeDeleted?.(c.id, node);
 					}
 				}
 			}
 			const positionChanges = changes.filter(
-				(c): c is NodeChange & { type: "position"; id: string; position: { x: number; y: number } } =>
+				(
+					c,
+				): c is NodeChange & {
+					type: "position";
+					id: string;
+					position: { x: number; y: number };
+				} =>
 					c.type === "position" &&
 					"position" in c &&
-					typeof (c as { position?: { x: number; y: number } }).position?.x === "number" &&
-					typeof (c as { position?: { x: number; y: number } }).position?.y === "number",
+					typeof (c as { position?: { x: number; y: number } })
+						.position?.x === "number" &&
+					typeof (c as { position?: { x: number; y: number } })
+						.position?.y === "number",
 			);
 			for (const c of positionChanges) {
-				const pos = (c as { position: { x: number; y: number } }).position;
+				const pos = (c as { position: { x: number; y: number } })
+					.position;
 				if (pos) {
 					triggersRef.current.onNodePositionChange?.(c.id, pos);
 				}
@@ -300,7 +346,8 @@ export function useWorkflowCanvas(options: UseWorkflowCanvasOptions = {}) {
 
 	const removeNode = useCallback(
 		(nodeId: string) => {
-			const node = latestRef.current.nodes.find((n) => n.id === nodeId) ?? null;
+			const node =
+				latestRef.current.nodes.find((n) => n.id === nodeId) ?? null;
 			pushHistoryBeforeChange();
 			setNodes((nds) => nds.filter((n) => n.id !== nodeId));
 			setEdges((eds) =>
@@ -313,13 +360,20 @@ export function useWorkflowCanvas(options: UseWorkflowCanvasOptions = {}) {
 
 	/** Call this when the user triggers a workflow run (e.g. Run button). Fires onWorkflowRun and returns current nodes/edges. */
 	const triggerWorkflowRun = useCallback(() => {
-		const payload = { nodes: latestRef.current.nodes, edges: latestRef.current.edges };
+		const payload = {
+			nodes: latestRef.current.nodes,
+			edges: latestRef.current.edges,
+		};
 		triggersRef.current.onWorkflowRun?.(payload);
 		return payload;
 	}, []);
 
 	const isValidConnection = useCallback(
-		(connection: Connection | Edge) => isConnectionAllowedByHandleTypes(nodes, connection as ConnectionLike),
+		(connection: Connection | Edge) =>
+			isConnectionAllowedByHandleTypes(
+				nodes,
+				connection as ConnectionLike,
+			),
 		[nodes],
 	);
 
@@ -343,5 +397,7 @@ export function useWorkflowCanvas(options: UseWorkflowCanvasOptions = {}) {
 		triggerWorkflowRun,
 		/** Pass to layout so it can fire onNodeCreated when a node is dropped from the sidebar. */
 		onNodeCreated: options.onNodeCreated,
+		copiedNode: nodeId,
+		onCopyNode: (nodeId: string | null) => setNodeId(nodeId),
 	};
 }

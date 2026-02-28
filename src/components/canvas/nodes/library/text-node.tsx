@@ -6,7 +6,7 @@ import { NodeType } from "../registry/types";
 import { BaseNode } from "../base-node";
 import type { NodeDefinition } from "../registry/types";
 import { useUpdateNodeConfig } from "../use-update-node-config";
-import { useWorkflowNodePersistence } from "@/components/canvas/workflow-node-persistence-context";
+import { useWorkflowCanvasStore } from "@/store";
 import { Textarea } from "@/components/ui/textarea";
 import { isCropPercentHandle } from "@/utils/client/crop-text-sync";
 
@@ -28,7 +28,7 @@ export function TextNode({ id, data, selected }: NodeProps) {
 	const { getNode } = useReactFlow();
 	const edges = useEdges();
 	const updateConfig = useUpdateNodeConfig(id);
-	const { onNodeDetailsBlur } = useWorkflowNodePersistence();
+	const { onNodeDetailsBlur } = useWorkflowCanvasStore();
 	const config = (data?.config ?? TEXT_DEFINITION.defaultConfig) as TextNodeConfig;
 	const status = data?.status as "idle" | "running" | "completed" | "failed" | undefined;
 	const value = config.value ?? "";
@@ -61,6 +61,7 @@ export function TextNode({ id, data, selected }: NodeProps) {
 
 	return (
 		<BaseNode
+			id={id}
 			label={TEXT_DEFINITION.label}
 			description={TEXT_DEFINITION.description}
 			status={status}

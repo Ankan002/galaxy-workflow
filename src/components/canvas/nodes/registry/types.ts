@@ -41,6 +41,8 @@ export interface OutputHandleDef {
 
 /** Base data present on every workflow node */
 export interface WorkflowNodeDataBase {
+	/** The node's ID on the server */
+	id?: string;
 	/** Node type (must match React Flow node.type) */
 	type: NodeType;
 	/** Override label from definition (optional) */
@@ -67,6 +69,8 @@ export interface NodeDefinition<TConfig = Record<string, unknown>> {
 
 /** Props passed to BaseNode by specific node components */
 export interface BaseNodeProps {
+	/** The node's ID on the server */
+	id?: string;
 	label: string;
 	description?: string;
 	status?: NodeStatus;

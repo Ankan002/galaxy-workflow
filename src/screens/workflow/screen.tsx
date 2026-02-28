@@ -30,6 +30,8 @@ const WorkflowScreen = ({ workflowId }: WorkflowScreenProps) => {
 				onNodeCreated={workflow.onNodeCreated}
 				isEditorDisabled={workflow.isEditorDisabled}
 				onNodeDetailsBlur={workflow.onNodeDetailsBlur}
+				onDuplicate={workflow.onDuplicate}
+				onDelete={workflow.onDelete}
 				onRunSelectedNode={workflow.runSelectedNode}
 				onTriggerFlow={workflow.runFlow}
 				onStopFlow={workflow.runStopFlow}

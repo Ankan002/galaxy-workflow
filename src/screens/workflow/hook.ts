@@ -4,10 +4,7 @@ import { useDebouncedCallback } from "use-debounce";
 import { useRouter } from "next/navigation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import {
-	DASHBOARD_URL,
-	API_ROUTES,
-} from "@/config/client-constants";
+import { DASHBOARD_URL, API_ROUTES } from "@/config/client-constants";
 import { useAPIErrorHandler } from "@/hooks/use-error-handler";
 import {
 	exportWorkflow,
@@ -56,6 +53,7 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 		setNodes: React.Dispatch<React.SetStateAction<Node[]>>;
 		setEdges: React.Dispatch<React.SetStateAction<Edge[]>>;
 	} | null>(null);
+	const nodesRef = useRef<Node[]>([]);
 	const router = useRouter();
 	const [renameDialogOpen, setRenameDialogOpen] = useState(false);
 	const [renameValue, setRenameValue] = useState("");
@@ -117,8 +115,8 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 		limit: 5,
 		// Poll list while a run is in progress (use function so we read query data, not workflowExecutions)
 		refetchInterval: (query) =>
-			(query.state.data as { status: string }[] | undefined)?.[0]?.status ===
-			"running"
+			(query.state.data as { status: string }[] | undefined)?.[0]
+				?.status === "running"
 				? 1500
 				: false,
 	});
@@ -205,7 +203,13 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 			if (state) {
 				state.setNodes((prev) =>
 					prev.map((n) =>
-						n.id === node.id ? { ...n, id: serverNode.id } : n,
+						n.id === node.id
+							? {
+									...n,
+									id: serverNode.id,
+									data: { ...n.data, id: serverNode.id },
+								}
+							: n,
 					),
 				);
 				state.setEdges((prev) =>
@@ -227,6 +231,26 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 		} catch (error) {
 			deleteNodeErrorHandler(error);
 		}
+	}
+
+	async function onDuplicate(nodeId: string) {
+		const state = canvasStateRef?.current;
+		if (!state) return;
+		const original = nodesRef.current.find((n) => n.id === nodeId) ?? null;
+		if (!original) return;
+		const duplicate: Node = {
+			...original,
+			id: `node-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+			position: {
+				x: original.position.x + 40,
+				y: original.position.y + 40,
+			},
+			data: { ...original.data, id: undefined },
+			selected: false,
+		};
+		pushHistoryBeforeChange();
+		state.setNodes((prev) => [...prev, duplicate]);
+		await onNodeCreated(duplicate);
 	}
 
 	async function onEdgeCreated(connection: Connection, edge: Edge) {
@@ -261,8 +285,10 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 					sourceNode?.type === "TEXT" &&
 					targetNode?.type === "CROP_IMAGE"
 				) {
-					const config = (sourceNode.data?.config ??
-						{}) as Record<string, unknown>;
+					const config = (sourceNode.data?.config ?? {}) as Record<
+						string,
+						unknown
+					>;
 					const value = config.value ?? config.text;
 					const pct = parsePercentageClient(value);
 					if (pct !== null) {
@@ -364,7 +390,10 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 		{ leading: false, trailing: true },
 	);
 
-	function onNodePositionChange(nodeId: string, position: { x: number; y: number }) {
+	function onNodePositionChange(
+		nodeId: string,
+		position: { x: number; y: number },
+	) {
 		flushPositionUpdate.current = { nodeId, x: position.x, y: position.y };
 		debouncedPersistPosition();
 	}
@@ -377,6 +406,12 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 		onEdgeUpdated,
 		onNodePositionChange,
 	};
+
+	const onDuplicateCallback = useCallback(
+		(nodeId: string) => onDuplicate(nodeId),
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[workflowId],
+	);
 
 	const hydratedForWorkflowIdRef = useRef<string | null>(null);
 
@@ -395,7 +430,13 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 		canRedo,
 		pushHistoryBeforeChange,
 		onNodeCreated: onNodeCreatedPassThrough,
+		removeNode,
 	} = useWorkflowCanvas(workflowCanvasEvents);
+
+	const onDeleteCallback = useCallback(
+		(nodeId: string) => removeNode(nodeId),
+		[removeNode],
+	);
 
 	useEffect(() => {
 		if (
@@ -416,6 +457,10 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 			canvasStateRef.current = null;
 		};
 	}, [setNodes, setEdges]);
+
+	useEffect(() => {
+		nodesRef.current = nodes;
+	}, [nodes]);
 
 	useEffect(() => {
 		setNodes((prev) =>
@@ -468,7 +513,8 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 							isCropPercentHandle(e.targetHandle),
 					);
 					if (outgoingToCrop.length > 0) {
-						const textValue = payload.config.value ?? payload.config.text;
+						const textValue =
+							payload.config.value ?? payload.config.text;
 						const pct = parsePercentageClient(textValue);
 						if (pct === null) {
 							configToPersist = {
@@ -520,10 +566,7 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 						e.targetHandle &&
 						isCropPercentHandle(e.targetHandle),
 				);
-				const patchByTarget = new Map<
-					string,
-					Record<string, number>
-				>();
+				const patchByTarget = new Map<string, Record<string, number>>();
 				for (const e of outgoingToCrop) {
 					const pct = parsePercentageClient(textValue);
 					if (pct !== null && e.target && e.targetHandle) {
@@ -569,13 +612,7 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 				updateNodeErrorHandler(error);
 			}
 		},
-		[
-			workflowId,
-			nodes,
-			edges,
-			updateWorkflowNode,
-			updateNodeErrorHandler,
-		],
+		[workflowId, nodes, edges, updateWorkflowNode, updateNodeErrorHandler],
 	);
 
 	const runSelectedNode = useCallback(async () => {
@@ -593,7 +630,13 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 		} catch (error) {
 			updateNodeErrorHandler(error);
 		}
-	}, [workflowId, nodes, executeWorkflowNode, updateNodeErrorHandler, queryClient]);
+	}, [
+		workflowId,
+		nodes,
+		executeWorkflowNode,
+		updateNodeErrorHandler,
+		queryClient,
+	]);
 
 	const runFlow = useCallback(async () => {
 		try {
@@ -657,13 +700,18 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 					typeof (raw as { success?: boolean }).success === "boolean"
 						? (raw as { data: unknown }).data
 						: raw;
-				const parsed = workflowExportPayloadSchema.safeParse(payloadCandidate);
+				const parsed =
+					workflowExportPayloadSchema.safeParse(payloadCandidate);
 				if (!parsed.success) {
-					const msg = parsed.error.issues.map((e) => e.message).join("; ");
+					const msg = parsed.error.issues
+						.map((e) => e.message)
+						.join("; ");
 					toast.error(`Invalid workflow file: ${msg}`);
 					return;
 				}
-				const result = await importWorkflowMutation({ payload: parsed.data });
+				const result = await importWorkflowMutation({
+					payload: parsed.data,
+				});
 				toast.success(`Workflow "${result.workflow_name}" imported`);
 				router.push(`/workflow/${result.workflow_id}`);
 			} catch (err) {
@@ -708,6 +756,8 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 		canRedo,
 		pushHistoryBeforeChange,
 		onNodeCreated: onNodeCreatedPassThrough,
+		onDuplicate: onDuplicateCallback,
+		onDelete: onDeleteCallback,
 		isEditorDisabled,
 		onNodeDetailsBlur,
 		runSelectedNode,

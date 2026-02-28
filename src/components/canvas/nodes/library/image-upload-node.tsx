@@ -6,8 +6,8 @@ import { NodeType } from "../registry/types";
 import { BaseNode } from "../base-node";
 import type { NodeDefinition } from "../registry/types";
 import { useUpdateNodeConfig } from "../use-update-node-config";
-import { useWorkflowNodePersistence } from "@/components/canvas/workflow-node-persistence-context";
-import { useWorkflowId } from "@/components/canvas/workflow-id-context";
+
+import { useWorkflowCanvasStore } from "@/store";
 import { useTransloaditUpload } from "@/hooks/use-transloadit-upload";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
@@ -32,7 +32,8 @@ export const IMAGE_UPLOAD_DEFINITION: Omit<
 > = {
 	type: NodeType.IMAGE_UPLOAD,
 	label: "Upload Image",
-	description: "Upload via Transloadit. Accepted: jpg, png, webp, gif. Output: image URL.",
+	description:
+		"Upload via Transloadit. Accepted: jpg, png, webp, gif. Output: image URL.",
 	provider: "TRANSLOADIT",
 	inputHandles: [],
 	outputHandles: [{ key: "image", type: "image" }],
@@ -41,21 +42,28 @@ export const IMAGE_UPLOAD_DEFINITION: Omit<
 
 export function ImageUploadNode({ id, data, selected }: NodeProps) {
 	const { getNode } = useReactFlow();
-	const workflowId = useWorkflowId();
+	const { workflowId, onNodeDetailsBlur } = useWorkflowCanvasStore();
 	const updateConfig = useUpdateNodeConfig(id);
-	const { onNodeDetailsBlur } = useWorkflowNodePersistence();
+	
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const [isDragOver, setIsDragOver] = useState(false);
-	const config = (data?.config ?? IMAGE_UPLOAD_DEFINITION.defaultConfig) as ImageUploadNodeConfig;
-	const status = data?.status as "idle" | "running" | "completed" | "failed" | undefined;
+	const config = (data?.config ??
+		IMAGE_UPLOAD_DEFINITION.defaultConfig) as ImageUploadNodeConfig;
+	const status = data?.status as
+		| "idle"
+		| "running"
+		| "completed"
+		| "failed"
+		| undefined;
 	const previewUrl = config.previewUrl ?? "";
 
-	const { uploadFile, isUploading, progressPercent, error } = useTransloaditUpload({
-		workflowId: workflowId ?? "",
-		nodeId: id,
-		type: "image",
-		onSuccess: (url) => updateConfig({ previewUrl: url }),
-	});
+	const { uploadFile, isUploading, progressPercent, error } =
+		useTransloaditUpload({
+			workflowId: workflowId ?? "",
+			nodeId: id,
+			type: "image",
+			onSuccess: (url) => updateConfig({ previewUrl: url }),
+		});
 
 	const setPreviewUrl = useCallback(
 		(v: string) => updateConfig({ previewUrl: v }),
@@ -105,7 +113,11 @@ export function ImageUploadNode({ id, data, selected }: NodeProps) {
 
 	const handleBlur = useCallback(
 		(e: React.FocusEvent) => {
-			if (e.relatedTarget != null && e.currentTarget.contains(e.relatedTarget as HTMLElement)) return;
+			if (
+				e.relatedTarget != null &&
+				e.currentTarget.contains(e.relatedTarget as HTMLElement)
+			)
+				return;
 			const node = getNode(id);
 			if (!node) return;
 			onNodeDetailsBlur(id, {
@@ -119,6 +131,7 @@ export function ImageUploadNode({ id, data, selected }: NodeProps) {
 
 	return (
 		<BaseNode
+			id={id}
 			label={IMAGE_UPLOAD_DEFINITION.label}
 			description={IMAGE_UPLOAD_DEFINITION.description}
 			status={status}
@@ -142,9 +155,17 @@ export function ImageUploadNode({ id, data, selected }: NodeProps) {
 					<div
 						role="button"
 						tabIndex={0}
-						onClick={() => workflowId && !isUploading && fileInputRef.current?.click()}
+						onClick={() =>
+							workflowId &&
+							!isUploading &&
+							fileInputRef.current?.click()
+						}
 						onKeyDown={(e) => {
-							if ((e.key === "Enter" || e.key === " ") && workflowId && !isUploading) {
+							if (
+								(e.key === "Enter" || e.key === " ") &&
+								workflowId &&
+								!isUploading
+							) {
 								e.preventDefault();
 								fileInputRef.current?.click();
 							}
@@ -170,7 +191,9 @@ export function ImageUploadNode({ id, data, selected }: NodeProps) {
 							<div className="flex flex-col items-center gap-1 text-muted-foreground pointer-events-none">
 								<ImageIcon className="size-8" />
 								<span className="text-[10px]">
-									{isDragOver ? "Drop image here" : "Click or drop image"}
+									{isDragOver
+										? "Drop image here"
+										: "Click or drop image"}
 								</span>
 							</div>
 						)}
@@ -179,7 +202,9 @@ export function ImageUploadNode({ id, data, selected }: NodeProps) {
 						<Progress value={progressPercent} className="h-1.5" />
 					)}
 					{error && (
-						<p className="text-[10px] text-destructive">{error.message}</p>
+						<p className="text-[10px] text-destructive">
+							{error.message}
+						</p>
 					)}
 					<Input
 						value={previewUrl}
@@ -188,7 +213,9 @@ export function ImageUploadNode({ id, data, selected }: NodeProps) {
 						className="h-7 text-xs"
 					/>
 				</div>
-				<p className="text-[10px] text-muted-foreground">Output: image (URL)</p>
+				<p className="text-[10px] text-muted-foreground">
+					Output: image (URL)
+				</p>
 			</div>
 		</BaseNode>
 	);

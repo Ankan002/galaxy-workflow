@@ -7,7 +7,7 @@ import { NodeType } from "../registry/types";
 import { BaseNode } from "../base-node";
 import type { NodeDefinition } from "../registry/types";
 import { useUpdateNodeConfig } from "../use-update-node-config";
-import { useWorkflowNodePersistence } from "@/components/canvas/workflow-node-persistence-context";
+import { useWorkflowCanvasStore } from "@/store";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
@@ -36,10 +36,15 @@ export const EXTRACT_VIDEO_FRAME_DEFINITION: Omit<
 export function ExtractVideoFrameNode({ id, data, selected }: NodeProps) {
 	const { getNode } = useReactFlow();
 	const updateConfig = useUpdateNodeConfig(id);
-	const { onNodeDetailsBlur } = useWorkflowNodePersistence();
-	const config =
-		(data?.config ?? EXTRACT_VIDEO_FRAME_DEFINITION.defaultConfig) as ExtractVideoFrameNodeConfig;
-	const status = data?.status as "idle" | "running" | "completed" | "failed" | undefined;
+	const { onNodeDetailsBlur } = useWorkflowCanvasStore();
+	const config = (data?.config ??
+		EXTRACT_VIDEO_FRAME_DEFINITION.defaultConfig) as ExtractVideoFrameNodeConfig;
+	const status = data?.status as
+		| "idle"
+		| "running"
+		| "completed"
+		| "failed"
+		| undefined;
 	const timestamp = config.timestamp ?? 0;
 
 	const setTimestamp = useCallback(
@@ -49,7 +54,11 @@ export function ExtractVideoFrameNode({ id, data, selected }: NodeProps) {
 
 	const handleBlur = useCallback(
 		(e: React.FocusEvent) => {
-			if (e.relatedTarget != null && e.currentTarget.contains(e.relatedTarget as HTMLElement)) return;
+			if (
+				e.relatedTarget != null &&
+				e.currentTarget.contains(e.relatedTarget as HTMLElement)
+			)
+				return;
 			const node = getNode(id);
 			if (!node) return;
 			onNodeDetailsBlur(id, {
@@ -66,6 +75,7 @@ export function ExtractVideoFrameNode({ id, data, selected }: NodeProps) {
 
 	return (
 		<BaseNode
+			id={id}
 			label={EXTRACT_VIDEO_FRAME_DEFINITION.label}
 			description={EXTRACT_VIDEO_FRAME_DEFINITION.description}
 			status={status}
@@ -96,7 +106,8 @@ export function ExtractVideoFrameNode({ id, data, selected }: NodeProps) {
 					/>
 				</div>
 				<p className="text-[10px] text-muted-foreground">
-					Output: extracted frame image URL (jpg or png, via Transloadit)
+					Output: extracted frame image URL (jpg or png, via
+					Transloadit)
 				</p>
 			</div>
 		</BaseNode>
