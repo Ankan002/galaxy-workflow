@@ -25,6 +25,7 @@ const AppSidebar = () => {
 		<Sidebar
 			side="left"
 			collapsible="none"
+			variant="sidebar"
 			className="pl-2 pr-2 py-1 font-sans"
 		>
 			<SidebarHeader className="mt-1">
