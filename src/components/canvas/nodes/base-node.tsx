@@ -262,7 +262,7 @@ function renderHandles(
 
 /** Reusable base node: title, dynamic input/output handles, status badge. Used by registry nodes or legacy "base" type. */
 export function BaseNode(props: BaseNodeProps | NodeProps) {
-	const { onDuplicate } = useWorkflowNodePersistence();
+	const { onDuplicate, onDelete } = useWorkflowNodePersistence();
 	const resolved: BaseNodeProps = isNodeProps(props)
 		? legacyDataToBaseNodeProps(
 				props.data as BaseNodeData,
@@ -351,7 +351,10 @@ export function BaseNode(props: BaseNodeProps | NodeProps) {
 					</ContextMenuGroup>
 					<ContextMenuSeparator />
 					<ContextMenuGroup>
-						<ContextMenuItem className="text-destructive hover:bg-destructive/40 hover:text-destructive">
+						<ContextMenuItem
+							className="text-destructive hover:bg-destructive/40 hover:text-destructive"
+							onClick={() => id && onDelete(id)}
+						>
 							<Trash2 /> Delete
 						</ContextMenuItem>
 					</ContextMenuGroup>

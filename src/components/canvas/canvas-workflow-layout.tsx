@@ -79,6 +79,8 @@ interface CanvasWorkflowLayoutProps {
 	) => void | Promise<void>;
 	/** Called when the user clicks Duplicate on a node's context menu. */
 	onDuplicate?: (nodeId: string) => void | Promise<void>;
+	/** Called when the user clicks Delete on a node's context menu. */
+	onDelete?: (nodeId: string) => void;
 	/** Called when the user clicks "Run selected node". */
 	onRunSelectedNode?: () => void | Promise<void>;
 	/** Called when the user clicks "Run flow" (execute all nodes). */
@@ -112,6 +114,7 @@ function CanvasWorkflowLayoutInner({
 	isEditorDisabled = false,
 	onNodeDetailsBlur,
 	onDuplicate,
+	onDelete,
 	onRunSelectedNode,
 	onTriggerFlow,
 	isRunNodeLoading = false,
@@ -189,6 +192,7 @@ function CanvasWorkflowLayoutInner({
 			<WorkflowNodePersistenceProvider
 				onNodeDetailsBlur={onNodeDetailsBlur ?? (() => {})}
 				onDuplicate={onDuplicate ?? (() => {})}
+				onDelete={onDelete ?? (() => {})}
 			>
 				<div className="flex h-full w-full">
 					<CanvasNodeSidebar

@@ -1,7 +1,7 @@
 import { API_ROUTES } from "@/config/client-constants";
 import { JsonApiResponse } from "@/types/api";
 import { useAuth } from "@clerk/nextjs";
-import type { Query } from "@tanstack/react-query";
+import type { Query, QueryKey } from "@tanstack/react-query";
 import {
 	keepPreviousData,
 	QueryFunctionContext,
@@ -28,14 +28,27 @@ interface GetWorkflowExecutionsArgs {
 	limit?: number;
 	execution_type?: "full" | "one_node";
 	/** Poll interval in ms, or function (use to avoid circular ref: read from query.state.data). */
-	refetchInterval?: number | false | ((query: Query) => number | false | undefined);
+	refetchInterval?:
+		| number
+		| false
+		| ((
+				query: Query<
+					WorkflowExecutionListItem[],
+					Error,
+					WorkflowExecutionListItem[],
+					QueryKey
+				>,
+		  ) => number | false | undefined);
 }
 
-const getWorkflowExecutions = async (
-	args: QueryFunctionContext<[string, string, number?, string?]>,
-) => {
+const getWorkflowExecutions = async (args: QueryFunctionContext) => {
 	const { queryKey } = args;
-	const [_, workflowId, limit, executionType] = queryKey;
+	const [_, workflowId, limit, executionType] = queryKey as [
+		string,
+		string,
+		number?,
+		string?,
+	];
 	const params = new URLSearchParams();
 	if (limit != null) params.set("limit", String(limit));
 	if (executionType) params.set("execution_type", executionType);
@@ -47,7 +60,9 @@ const getWorkflowExecutions = async (
 	});
 
 	if (!response.ok) {
-		throw new Error(`Failed to get workflow executions: ${response.statusText}`);
+		throw new Error(
+			`Failed to get workflow executions: ${response.statusText}`,
+		);
 	}
 
 	const responseData =

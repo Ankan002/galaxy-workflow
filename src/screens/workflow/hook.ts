@@ -430,7 +430,13 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 		canRedo,
 		pushHistoryBeforeChange,
 		onNodeCreated: onNodeCreatedPassThrough,
+		removeNode,
 	} = useWorkflowCanvas(workflowCanvasEvents);
+
+	const onDeleteCallback = useCallback(
+		(nodeId: string) => removeNode(nodeId),
+		[removeNode],
+	);
 
 	useEffect(() => {
 		if (
@@ -751,6 +757,7 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 		pushHistoryBeforeChange,
 		onNodeCreated: onNodeCreatedPassThrough,
 		onDuplicate: onDuplicateCallback,
+		onDelete: onDeleteCallback,
 		isEditorDisabled,
 		onNodeDetailsBlur,
 		runSelectedNode,
