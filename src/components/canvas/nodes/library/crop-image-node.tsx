@@ -10,7 +10,7 @@ import {
 import { NodeType } from "../registry/types";
 import { BaseNode } from "../base-node";
 import type { NodeDefinition } from "../registry/types";
-import { useWorkflowNodePersistence } from "@/components/canvas/workflow-node-persistence-context";
+import { useWorkflowCanvasStore } from "@/store";
 
 export interface CropImageNodeConfig {
 	x_percent?: number;
@@ -139,7 +139,7 @@ function useLoadedValuesFromConnections(
 
 export function CropImageNode({ id, data, selected }: NodeProps) {
 	const { getNode } = useReactFlow();
-	const { onNodeDetailsBlur } = useWorkflowNodePersistence();
+	const { onNodeDetailsBlur } = useWorkflowCanvasStore();
 	const connectedPercentHandles = useConnectedPercentHandles(id);
 	const loadedValues = useLoadedValuesFromConnections(id);
 	const config = (data?.config ??

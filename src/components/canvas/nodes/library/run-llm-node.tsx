@@ -11,7 +11,7 @@ import { NodeType } from "../registry/types";
 import { BaseNode } from "../base-node";
 import type { NodeDefinition, InputHandleDef } from "../registry/types";
 import { useUpdateNodeConfig } from "../use-update-node-config";
-import { useWorkflowNodePersistence } from "@/components/canvas/workflow-node-persistence-context";
+import { useWorkflowCanvasStore } from "@/store";
 import { Button } from "@/components/ui";
 import { Label } from "@/components/ui/label";
 import {
@@ -79,7 +79,7 @@ export function RunLlmNode({ id, data, selected }: NodeProps) {
 	const { setNodes, setEdges, getNode } = useReactFlow();
 	const updateNodeInternals = useUpdateNodeInternals();
 	const updateConfig = useUpdateNodeConfig(id);
-	const { onNodeDetailsBlur } = useWorkflowNodePersistence();
+	const { onNodeDetailsBlur } = useWorkflowCanvasStore();
 	const config = (data?.config ??
 		RUN_LLM_DEFINITION.defaultConfig) as RunLlmNodeConfig;
 	const status = data?.status as

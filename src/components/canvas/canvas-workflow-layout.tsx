@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
 	ReactFlowProvider,
 	type Node,
@@ -11,10 +11,9 @@ import { Button } from "@/components/ui/button";
 import { WorkflowCanvas } from "./workflow-canvas";
 import { CanvasNodeSidebar } from "./canvas-node-sidebar";
 import { CanvasRightSidebar } from "./canvas-right-sidebar";
-import { WorkflowNodePersistenceProvider } from "./workflow-node-persistence-context";
-import { WorkflowIdProvider } from "./workflow-id-context";
 import { NODE_REGISTRY, NodeType } from "./nodes/registry";
 import type { InteractionMode } from "./canvas-bottom-island";
+import { useWorkflowCanvasStore } from "@/store";
 
 const DRAG_TYPE = "application/reactflow";
 
@@ -95,6 +94,8 @@ interface CanvasWorkflowLayoutProps {
 	isStopFlowLoading?: boolean;
 }
 
+const noop = () => {};
+
 function CanvasWorkflowLayoutInner({
 	workflowId,
 	workflowSidebar,
@@ -128,6 +129,30 @@ function CanvasWorkflowLayoutInner({
 	const [interactionMode, setInteractionMode] =
 		useState<InteractionMode>("select");
 
+	const { setWorkflowId, setOnNodeDetailsBlur, setOnDuplicate, setOnDelete } =
+		useWorkflowCanvasStore();
+
+	// Register workflowId into the store whenever it changes
+	useEffect(() => {
+		setWorkflowId(workflowId);
+		return () => setWorkflowId(null);
+	}, [workflowId, setWorkflowId]);
+
+	// Register onNodeDetailsBlur into the store whenever it changes
+	useEffect(() => {
+		setOnNodeDetailsBlur(onNodeDetailsBlur ?? noop);
+	}, [onNodeDetailsBlur, setOnNodeDetailsBlur]);
+
+	// Register onDuplicate into the store whenever it changes
+	useEffect(() => {
+		setOnDuplicate(onDuplicate ?? noop);
+	}, [onDuplicate, setOnDuplicate]);
+
+	// Register onDelete into the store whenever it changes
+	useEffect(() => {
+		setOnDelete(onDelete ?? noop);
+	}, [onDelete, setOnDelete]);
+
 	const hasSelectedNode = useMemo(
 		() => nodes.some((n) => n.selected),
 		[nodes],
@@ -136,6 +161,7 @@ function CanvasWorkflowLayoutInner({
 	const handleRunSelectedNode = useCallback(() => {
 		onRunSelectedNode?.();
 	}, [onRunSelectedNode]);
+
 	const handleTriggerFlow = useCallback(() => {
 		onTriggerFlow?.();
 	}, [onTriggerFlow]);
@@ -188,75 +214,63 @@ function CanvasWorkflowLayoutInner({
 	}, []);
 
 	return (
-		<WorkflowIdProvider workflowId={workflowId}>
-			<WorkflowNodePersistenceProvider
-				onNodeDetailsBlur={onNodeDetailsBlur ?? (() => {})}
-				onDuplicate={onDuplicate ?? (() => {})}
-				onDelete={onDelete ?? (() => {})}
-			>
-				<div className="flex h-full w-full">
-					<CanvasNodeSidebar
-						workflowSidebar={workflowSidebar}
-						collapsed={sidebarCollapsed}
-					/>
-					{/* Canvas column: trigger lives here so it stays on top of React Flow and is clearly outside the sidebar */}
-					<div className="relative h-full flex-1">
-						<Button
-							variant="outline"
-							size="icon"
-							className="absolute bottom-4 left-0 z-20 size-9 shrink-0 -translate-x-1/2 rounded-full border-border bg-background shadow-md hover:bg-accent"
-							onClick={() => setSidebarCollapsed((c) => !c)}
-							title={
-								sidebarCollapsed
-									? "Expand sidebar"
-									: "Collapse sidebar"
-							}
-						>
-							{sidebarCollapsed ? (
-								<PanelLeft className="size-4" />
-							) : (
-								<PanelLeftClose className="size-4" />
-							)}
-						</Button>
-						<WorkflowCanvas
-							nodes={nodes}
-							edges={edges}
-							onNodesChange={onNodesChange}
-							onEdgesChange={onEdgesChange}
-							onConnect={onConnect}
-							isValidConnection={isValidConnection}
-							onDrop={onDrop}
-							onDragOver={onDragOver}
-							onInit={onInit}
-							readOnly={isEditorDisabled}
-							bottomIsland={{
-								interactionMode,
-								onInteractionModeChange: setInteractionMode,
-								onUndo: undo,
-								onRedo: redo,
-								canUndo,
-								canRedo,
-							}}
-						/>
-					</div>
-					<CanvasRightSidebar
-						collapsed={rightSidebarCollapsed}
-						onToggleCollapsed={() =>
-							setRightSidebarCollapsed((c) => !c)
-						}
-						hasSelectedNode={hasSelectedNode}
-						onRunSelectedNode={handleRunSelectedNode}
-						onTriggerFlow={handleTriggerFlow}
-						onStopFlow={onStopFlow}
-						disabled={isEditorDisabled}
-						isRunNodeLoading={isRunNodeLoading}
-						isRunFlowLoading={isRunFlowLoading}
-						isStopFlowLoading={isStopFlowLoading}
-						workflowId={workflowId}
-					/>
-				</div>
-			</WorkflowNodePersistenceProvider>
-		</WorkflowIdProvider>
+		<div className="flex h-full w-full">
+			<CanvasNodeSidebar
+				workflowSidebar={workflowSidebar}
+				collapsed={sidebarCollapsed}
+			/>
+			{/* Canvas column: trigger lives here so it stays on top of React Flow and is clearly outside the sidebar */}
+			<div className="relative h-full flex-1">
+				<Button
+					variant="outline"
+					size="icon"
+					className="absolute bottom-4 left-0 z-20 size-9 shrink-0 -translate-x-1/2 rounded-full border-border bg-background shadow-md hover:bg-accent"
+					onClick={() => setSidebarCollapsed((c) => !c)}
+					title={
+						sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"
+					}
+				>
+					{sidebarCollapsed ? (
+						<PanelLeft className="size-4" />
+					) : (
+						<PanelLeftClose className="size-4" />
+					)}
+				</Button>
+				<WorkflowCanvas
+					nodes={nodes}
+					edges={edges}
+					onNodesChange={onNodesChange}
+					onEdgesChange={onEdgesChange}
+					onConnect={onConnect}
+					isValidConnection={isValidConnection}
+					onDrop={onDrop}
+					onDragOver={onDragOver}
+					onInit={onInit}
+					readOnly={isEditorDisabled}
+					bottomIsland={{
+						interactionMode,
+						onInteractionModeChange: setInteractionMode,
+						onUndo: undo,
+						onRedo: redo,
+						canUndo,
+						canRedo,
+					}}
+				/>
+			</div>
+			<CanvasRightSidebar
+				collapsed={rightSidebarCollapsed}
+				onToggleCollapsed={() => setRightSidebarCollapsed((c) => !c)}
+				hasSelectedNode={hasSelectedNode}
+				onRunSelectedNode={handleRunSelectedNode}
+				onTriggerFlow={handleTriggerFlow}
+				onStopFlow={onStopFlow}
+				disabled={isEditorDisabled}
+				isRunNodeLoading={isRunNodeLoading}
+				isRunFlowLoading={isRunFlowLoading}
+				isStopFlowLoading={isStopFlowLoading}
+				workflowId={workflowId}
+			/>
+		</div>
 	);
 }
 

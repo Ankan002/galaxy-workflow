@@ -6,8 +6,8 @@ import { NodeType } from "../registry/types";
 import { BaseNode } from "../base-node";
 import type { NodeDefinition } from "../registry/types";
 import { useUpdateNodeConfig } from "../use-update-node-config";
-import { useWorkflowNodePersistence } from "@/components/canvas/workflow-node-persistence-context";
-import { useWorkflowId } from "@/components/canvas/workflow-id-context";
+
+import { useWorkflowCanvasStore } from "@/store";
 import { useTransloaditUpload } from "@/hooks/use-transloadit-upload";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -43,9 +43,9 @@ export const VIDEO_UPLOAD_DEFINITION: Omit<
 
 export function VideoUploadNode({ id, data, selected }: NodeProps) {
 	const { getNode } = useReactFlow();
-	const workflowId = useWorkflowId();
+	const { workflowId, onNodeDetailsBlur } = useWorkflowCanvasStore();
 	const updateConfig = useUpdateNodeConfig(id);
-	const { onNodeDetailsBlur } = useWorkflowNodePersistence();
+	
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const [isDragOver, setIsDragOver] = useState(false);
 	const config = (data?.config ??

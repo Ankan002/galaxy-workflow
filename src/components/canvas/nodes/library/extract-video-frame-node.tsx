@@ -7,7 +7,7 @@ import { NodeType } from "../registry/types";
 import { BaseNode } from "../base-node";
 import type { NodeDefinition } from "../registry/types";
 import { useUpdateNodeConfig } from "../use-update-node-config";
-import { useWorkflowNodePersistence } from "@/components/canvas/workflow-node-persistence-context";
+import { useWorkflowCanvasStore } from "@/store";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
@@ -36,7 +36,7 @@ export const EXTRACT_VIDEO_FRAME_DEFINITION: Omit<
 export function ExtractVideoFrameNode({ id, data, selected }: NodeProps) {
 	const { getNode } = useReactFlow();
 	const updateConfig = useUpdateNodeConfig(id);
-	const { onNodeDetailsBlur } = useWorkflowNodePersistence();
+	const { onNodeDetailsBlur } = useWorkflowCanvasStore();
 	const config = (data?.config ??
 		EXTRACT_VIDEO_FRAME_DEFINITION.defaultConfig) as ExtractVideoFrameNodeConfig;
 	const status = data?.status as

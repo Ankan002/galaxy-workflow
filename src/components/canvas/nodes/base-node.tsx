@@ -21,7 +21,7 @@ import type {
 } from "./registry/types";
 import type { HandleDataType } from "./registry/types";
 import { Copy, Trash2 } from "lucide-react";
-import { useWorkflowNodePersistence } from "@/components/canvas/workflow-node-persistence-context";
+import { useWorkflowCanvasStore } from "@/store";
 
 /** Legacy shape for nodes that use "base" type (e.g. canvas-demo) */
 export interface BaseNodeData extends Record<string, unknown> {
@@ -262,7 +262,7 @@ function renderHandles(
 
 /** Reusable base node: title, dynamic input/output handles, status badge. Used by registry nodes or legacy "base" type. */
 export function BaseNode(props: BaseNodeProps | NodeProps) {
-	const { onDuplicate, onDelete } = useWorkflowNodePersistence();
+	const { onDuplicate, onDelete } = useWorkflowCanvasStore();
 	const resolved: BaseNodeProps = isNodeProps(props)
 		? legacyDataToBaseNodeProps(
 				props.data as BaseNodeData,
