@@ -53,7 +53,9 @@ export function PrebuiltWorkflows() {
 
 	const handleUseTemplate = async (template: WorkflowTemplateListItem) => {
 		if (!isSignedIn) {
-			toast.error("Sign in to use a template", { position: TOAST_POSITION });
+			toast.error("Sign in to use a template", {
+				position: TOAST_POSITION,
+			});
 			return;
 		}
 		const toastId = toast.loading("Creating workflow…", {
@@ -82,7 +84,8 @@ export function PrebuiltWorkflows() {
 			toast.dismiss(toastId);
 			toast.error("Could not create workflow", {
 				position: TOAST_POSITION,
-				description: err instanceof Error ? err.message : "Please try again.",
+				description:
+					err instanceof Error ? err.message : "Please try again.",
 			});
 		}
 	};
@@ -90,11 +93,20 @@ export function PrebuiltWorkflows() {
 	return (
 		<section className="w-full">
 			<Tabs defaultValue="library" className="w-full">
-				<TabsList variant="underline" className="w-auto gap-0 bg-transparent p-0">
-					<TabsTrigger variant="underline" value="library" className="px-0 pr-6 font-medium tracking-tight">
+				<TabsList
+					variant="line"
+					className="w-fit gap-0 bg-transparent p-0"
+				>
+					<TabsTrigger
+						value="library"
+						className="px-4 font-medium tracking-tight"
+					>
 						Workflow library
 					</TabsTrigger>
-					<TabsTrigger variant="underline" value="tutorials" className="px-0 pl-6 font-medium tracking-tight">
+					<TabsTrigger
+						value="tutorials"
+						className="px-4 font-medium tracking-tight"
+					>
 						Tutorials
 					</TabsTrigger>
 				</TabsList>
