@@ -17,7 +17,7 @@ import {
 	Skeleton,
 } from "@/components/ui";
 import { useSidebarUser } from "./hook";
-import { ChevronDown, CreditCard, LogOut, Settings } from "lucide-react";
+import { ChevronDown, CreditCard, LogOut, Settings, User } from "lucide-react";
 
 const SidebarUser = () => {
 	const { isLoaded, user, signOut } = useSidebarUser();
@@ -111,7 +111,12 @@ const SidebarUser = () => {
 
 							<DropdownMenuSeparator className="mt-2" />
 
-							<DropdownMenuItem className="cursor-pointer">
+							<DropdownMenuItem className="cursor-pointer mt-1">
+								<User className="size-4" />
+								<span className="text-xs">Profile</span>
+							</DropdownMenuItem>
+
+							<DropdownMenuItem className="cursor-pointer mt-1">
 								<Settings className="size-4" />
 								<span className="text-xs">Settings</span>
 							</DropdownMenuItem>
