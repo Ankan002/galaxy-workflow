@@ -27,7 +27,7 @@ export type WorkflowFileCardProps = {
 };
 
 const cardClassName =
-	"flex min-h-[180px] w-full flex-col overflow-hidden rounded-lg border border-zinc-700 bg-zinc-800 p-4 shadow transition-colors hover:border-zinc-600 hover:bg-zinc-800/90";
+	"flex min-h-[180px] w-full flex-col overflow-hidden p-4 shadow-sm transition-colors hover:border-accent/60 hover:bg-accent/40";
 
 export const WorkflowFileCard = ({
 	file,
@@ -40,8 +40,8 @@ export const WorkflowFileCard = ({
 	const lastEdited = formatRelativeTime(new Date(file.updated_at));
 
 	const cardContent = (
-		<div className="flex min-h-[180px] flex-col items-center justify-center">
-			<WorkflowIcon className="size-16 text-white" />
+		<div className="flex min-h-[180px] w-full items-center justify-center rounded-md bg-muted/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.35)] transition-colors group-hover:bg-muted/45 dark:bg-accent/10 dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+			<WorkflowIcon className="size-12 text-muted-foreground transition group-hover:text-foreground" />
 		</div>
 	);
 
@@ -82,7 +82,7 @@ export const WorkflowFileCard = ({
 
 	if (href) {
 		return wrapWithContextMenu(
-			<Link href={href} className={cn("block", className)}>
+			<Link href={href} className={cn("block group", className)}>
 				<Card
 					variant="file-item"
 					padding="none"
@@ -96,7 +96,7 @@ export const WorkflowFileCard = ({
 	}
 
 	return wrapWithContextMenu(
-		<div className={className}>
+		<div className={cn("group", className)}>
 			<Card
 				variant="file-item"
 				padding="none"

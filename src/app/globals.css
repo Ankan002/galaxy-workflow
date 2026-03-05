@@ -259,48 +259,49 @@
 	--curve: cubic-bezier(0.65, 0, 0.45, 1);
 
 	/* ════════════════════════════════════
-     Shadcn semantic tokens (dark-only)
+     Shadcn semantic tokens – Vercel (light)
+     Monochrome, minimal, high-contrast
      ════════════════════════════════════ */
 	--radius: 0.625rem;
-	--background: rgba(14, 14, 19, 1);
-	--foreground: #f0f0e5;
-	--card: rgba(33, 33, 38, 1);
-	--card-foreground: #f0f0e5;
-	--popover: rgba(33, 33, 38, 1);
-	--popover-foreground: #f0f0e5;
-	--primary: rgba(247, 255, 168, 1);
-	--primary-foreground: rgba(14, 14, 19, 1);
-	--secondary: rgba(53, 53, 57, 1);
-	--secondary-foreground: #f0f0e5;
-	--muted: rgba(33, 33, 38, 1);
-	--muted-foreground: #a19aaf;
-	--accent: rgba(255, 255, 255, 0.08);
-	--accent-foreground: #f0f0e5;
-	--destructive: rgba(232, 85, 85, 1);
-	--border: rgba(240, 240, 229, 0.08);
-	--input: rgba(255, 255, 255, 0.16);
-	--ring: rgba(247, 255, 168, 1);
-	--chart-1: rgba(247, 255, 168, 1);
-	--chart-2: #cc9de4;
-	--chart-3: #5a82e8;
-	--chart-4: #45a08a;
-	--chart-5: #ea8362;
-	--sidebar: rgba(14, 14, 19, 1);
-	--sidebar-foreground: #f0f0e5;
-	--sidebar-primary: rgba(247, 255, 168, 1);
-	--sidebar-primary-foreground: rgba(14, 14, 19, 1);
-	--sidebar-accent: rgba(255, 255, 255, 0.08);
-	--sidebar-accent-foreground: #f0f0e5;
-	--sidebar-border: rgba(240, 240, 229, 0.08);
-	--sidebar-ring: rgba(247, 255, 168, 1);
+	--background: #ffffff;
+	--foreground: #020202;
+	--card: #f5f5f5;
+	--card-foreground: #020202;
+	--popover: #ffffff;
+	--popover-foreground: #020202;
+	--primary: #000000;
+	--primary-foreground: #ffffff;
+	--secondary: #f5f5f5;
+	--secondary-foreground: #020202;
+	--muted: #f4f4f5;
+	--muted-foreground: #71717a;
+	--accent: #f4f4f5;
+	--accent-foreground: #020202;
+	--destructive: #ef4444;
+	--destructive-foreground: #ffffff;
+	--border: #e4e4e7;
+	--input: #e4e4e7;
+	--ring: #020202;
+	--chart-1: #020202;
+	--chart-2: #52525b;
+	--chart-3: #a1a1aa;
+	--chart-4: #d4d4d8;
+	--chart-5: #f4f4f5;
+	--sidebar: #ffffff;
+	--sidebar-foreground: #020202;
+	--sidebar-primary: #000000;
+	--sidebar-primary-foreground: #ffffff;
+	--sidebar-accent: #f4f4f5;
+	--sidebar-accent-foreground: #020202;
+	--sidebar-border: #e4e4e7;
+	--sidebar-ring: #020202;
 
-	/* Brand (yellow CTA) & workflow connection colors */
-	--destructive-foreground: rgba(255, 255, 255, 1);
-	--brand: var(--w-yellow);
-	--brand-foreground: rgba(14, 14, 19, 1);
-	--connection-prompt: var(--purple-100);
-	--connection-image: var(--w-green);
-	--tool-active: var(--w-yellow);
+	/* Brand / workflow accents – stay monochrome by default */
+	--brand: #000000;
+	--brand-foreground: #ffffff;
+	--connection-prompt: #000000;
+	--connection-image: #000000;
+	--tool-active: #000000;
 }
 
 @layer base {
@@ -313,14 +314,45 @@
 }
 
 .dark {
-	--sidebar: hsl(240 5.9% 10%);
-	--sidebar-foreground: hsl(240 4.8% 95.9%);
-	--sidebar-primary: hsl(224.3 76.3% 48%);
-	--sidebar-primary-foreground: hsl(0 0% 100%);
-	--sidebar-accent: hsl(240 3.7% 15.9%);
-	--sidebar-accent-foreground: hsl(240 4.8% 95.9%);
-	--sidebar-border: hsl(240 3.7% 15.9%);
-	--sidebar-ring: hsl(217.2 91.2% 59.8%);
+	/* Dark mode – Vercel */
+	--background: #000000;
+	--foreground: #f9fafb;
+	--card: #020202;
+	--card-foreground: #f9fafb;
+	--popover: #020202;
+	--popover-foreground: #f9fafb;
+	--primary: #ffffff;
+	--primary-foreground: #000000;
+	--secondary: #09090b;
+	--secondary-foreground: #e4e4e7;
+	--muted: #09090b;
+	--muted-foreground: #a1a1aa;
+	--accent: #18181b;
+	--accent-foreground: #fafafa;
+	--destructive: #ef4444;
+	--destructive-foreground: #fef2f2;
+	--border: #27272a;
+	--input: #27272a;
+	--ring: #ffffff;
+	--chart-1: #e5e5e5;
+	--chart-2: #a3a3a3;
+	--chart-3: #737373;
+	--chart-4: #404040;
+	--chart-5: #171717;
+	--sidebar: #020202;
+	--sidebar-foreground: #f9fafb;
+	--sidebar-primary: #ffffff;
+	--sidebar-primary-foreground: #000000;
+	--sidebar-accent: #18181b;
+	--sidebar-accent-foreground: #ffffff;
+	--sidebar-border: #27272a;
+	--sidebar-ring: #ffffff;
+
+	--brand: #ffffff;
+	--brand-foreground: #000000;
+	--connection-prompt: #ffffff;
+	--connection-image: #ffffff;
+	--tool-active: #ffffff;
 }
 
 /* ════════════════════════════════════════

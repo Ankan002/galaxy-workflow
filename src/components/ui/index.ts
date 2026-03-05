@@ -161,3 +161,4 @@ export {
 	TooltipContent,
 	TooltipProvider,
 } from "./tooltip";
+export { ThemeToggle } from "./theme-toggle";

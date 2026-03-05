@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card } from "@/components/ui/card";
 import { useGetWorkflowTemplates } from "@/services/client-api/workflow-template";
 import { useImportWorkflow } from "@/services/client-api/workflow-file";
 import { API_ROUTES } from "@/config/client-constants";
@@ -28,16 +29,22 @@ function TemplateCard({
 			type="button"
 			onClick={() => onUse(template)}
 			disabled={isLoading}
-			className="group shrink-0 w-[200px] overflow-hidden rounded-lg border border-zinc-700 bg-zinc-800 shadow transition hover:border-zinc-600 hover:bg-zinc-800/90 focus-visible:outline focus-visible:ring-2 focus-visible:ring-ring"
+			className="group shrink-0 w-[200px] text-left"
 		>
-			<div className="relative flex h-[120px] items-center justify-center bg-linear-to-br from-zinc-700 to-zinc-800">
-				<WorkflowIcon className="size-12 text-zinc-400 transition group-hover:text-white" />
-			</div>
-			<div className="border-t border-zinc-700/80 bg-zinc-800/95 px-3 py-2.5">
-				<p className="truncate text-left text-sm font-medium text-foreground">
-					{template.name}
-				</p>
-			</div>
+			<Card
+				variant="file-item"
+				padding="none"
+				className="flex h-full flex-col overflow-hidden border border-border bg-card shadow-sm transition-colors hover:border-accent/60 hover:bg-accent/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+			>
+				<div className="relative flex h-[120px] items-center justify-center bg-muted/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.35)] transition-colors group-hover:bg-muted/45 dark:bg-accent/10 dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+					<WorkflowIcon className="size-12 text-muted-foreground transition group-hover:text-foreground" />
+				</div>
+				<div className="bg-card/95 px-3 py-2.5">
+					<p className="truncate text-left text-sm font-medium text-foreground">
+						{template.name}
+					</p>
+				</div>
+			</Card>
 		</button>
 	);
 }
@@ -119,7 +126,7 @@ export function PrebuiltWorkflows() {
 							{Array.from({ length: 4 }).map((_, i) => (
 								<div
 									key={i}
-									className="flex h-[120px] w-[200px] shrink-0 animate-pulse rounded-lg bg-zinc-800"
+									className="flex h-[120px] w-[200px] shrink-0 animate-pulse rounded-lg bg-muted"
 								/>
 							))}
 						</div>

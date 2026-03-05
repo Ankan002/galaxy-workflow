@@ -3,7 +3,7 @@ import { DM_Sans, DM_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 import { DesktopOnlyGate } from "@/components/elements";
-import { AuthProvider, QueryProvider } from "@/components/providers";
+import { AuthProvider, QueryProvider, ThemeProvider } from "@/components/providers";
 import { SidebarProvider } from "@/components/ui";
 
 const dmSans = DM_Sans({
@@ -34,12 +34,14 @@ export default function RootLayout({
 				<body
 					className={`${dmSans.variable} ${dmMono.variable} antialiased`}
 				>
-					<QueryProvider>
-						<SidebarProvider>
-							<DesktopOnlyGate>{children}</DesktopOnlyGate>
-							<Toaster />
-						</SidebarProvider>
-					</QueryProvider>
+					<ThemeProvider>
+						<QueryProvider>
+							<SidebarProvider>
+								<DesktopOnlyGate>{children}</DesktopOnlyGate>
+								<Toaster />
+							</SidebarProvider>
+						</QueryProvider>
+					</ThemeProvider>
 				</body>
 			</html>
 		</AuthProvider>

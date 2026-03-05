@@ -1,7 +1,7 @@
 "use client";
 
 import { AppSidebar } from "../common";
-import { SidebarInset, Skeleton } from "../ui";
+import { SidebarInset, Skeleton, ThemeToggle } from "../ui";
 
 interface Props {
 	children: React.ReactNode;
@@ -22,7 +22,8 @@ export const DashboardProvider: React.FC<Props> = ({
 			<SidebarInset>
 				<div className="w-full min-h-screen flex flex-col font-primary">
 					<div className="w-full flex justify-between items-center my-8 px-8 min-h-10">
-						<div className="flex items-center">
+						<div className="flex items-center gap-3">
+							<ThemeToggle />
 							{isHeadingLoading ? (
 								<Skeleton className="h-5 w-24" />
 							) : (
