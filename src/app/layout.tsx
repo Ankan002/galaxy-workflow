@@ -3,8 +3,13 @@ import { DM_Sans, DM_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 import { DesktopOnlyGate } from "@/components/elements";
-import { AuthProvider, QueryProvider, ThemeProvider } from "@/components/providers";
+import {
+	AuthProvider,
+	QueryProvider,
+	ThemeProvider,
+} from "@/components/providers";
 import { SidebarProvider } from "@/components/ui";
+import { Analytics } from "@vercel/analytics/next";
 
 const dmSans = DM_Sans({
 	variable: "--font-dm-sans",
@@ -42,6 +47,7 @@ export default function RootLayout({
 							</SidebarProvider>
 						</QueryProvider>
 					</ThemeProvider>
+					<Analytics />
 				</body>
 			</html>
 		</AuthProvider>
