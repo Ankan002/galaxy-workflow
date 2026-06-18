@@ -1,3 +1,5 @@
+import { tasks } from "@trigger.dev/sdk";
+
 export interface ExecutionMeta {
 	workflowId: string;
 	nodeId: string;
@@ -16,11 +18,6 @@ export function stripExecutionMeta<T>(
 		meta: _executionMeta ?? null,
 	};
 }
-
-/** Header sent to the complete hook; server must accept this. */
-export const EXECUTION_COMPLETE_HEADER_KEY = "abc";
-
-import { tasks } from "@trigger.dev/sdk";
 
 /** On task completion: triggers process-node-completion which updates the node and runs batch.triggerAndWait for next nodes. No webhook. */
 export async function handleExecutionComplete(

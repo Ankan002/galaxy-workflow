@@ -5,6 +5,7 @@ import "./globals.css";
 import { DesktopOnlyGate } from "@/components/elements";
 import {
 	AuthProvider,
+	MotionProvider,
 	QueryProvider,
 	ThemeProvider,
 } from "@/components/providers";
@@ -39,14 +40,16 @@ export default function RootLayout({
 				<body
 					className={`${dmSans.variable} ${dmMono.variable} antialiased`}
 				>
-					<ThemeProvider>
-						<QueryProvider>
-							<SidebarProvider>
-								<DesktopOnlyGate>{children}</DesktopOnlyGate>
-								<Toaster />
-							</SidebarProvider>
-						</QueryProvider>
-					</ThemeProvider>
+					<MotionProvider>
+						<ThemeProvider>
+							<QueryProvider>
+								<SidebarProvider>
+									<DesktopOnlyGate>{children}</DesktopOnlyGate>
+									<Toaster />
+								</SidebarProvider>
+							</QueryProvider>
+						</ThemeProvider>
+					</MotionProvider>
 					<Analytics />
 				</body>
 			</html>
