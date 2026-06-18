@@ -152,7 +152,6 @@ export {
 	TabsTrigger,
 	TabsContent,
 	tabsListVariants,
-	tabsTriggerVariants,
 } from "./tabs";
 export { Textarea, textareaVariants } from "./textarea";
 export {

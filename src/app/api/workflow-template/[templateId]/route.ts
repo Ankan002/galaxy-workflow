@@ -38,7 +38,7 @@ const updateTemplateBodySchema = z.object({
 	json: z.record(z.string(), z.unknown()).optional(),
 });
 
-type UpdateTemplateBody = z.infer<typeof updateTemplateBodySchema>;
+type UpdateTemplateBody = typeof updateTemplateBodySchema;
 
 interface UpdateWorkflowTemplateResponseData {
 	workflow_template: workflow_template;

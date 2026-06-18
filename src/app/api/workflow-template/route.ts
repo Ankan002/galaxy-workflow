@@ -12,7 +12,7 @@ const getTemplatesQuerySchema = z.object({
 	search: z.string().trim().optional(),
 });
 
-type GetTemplatesQuery = z.infer<typeof getTemplatesQuerySchema>;
+type GetTemplatesQuery = typeof getTemplatesQuerySchema;
 
 interface GetWorkflowTemplatesResponseData {
 	workflow_templates: workflow_template[];
@@ -38,7 +38,7 @@ const createTemplateBodySchema = z.object({
 	json: z.record(z.string(), z.unknown()),
 });
 
-type CreateTemplateBody = z.infer<typeof createTemplateBodySchema>;
+type CreateTemplateBody = typeof createTemplateBodySchema;
 
 interface CreateWorkflowTemplateResponseData {
 	workflow_template: workflow_template;
