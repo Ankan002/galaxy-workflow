@@ -1,5 +1,10 @@
 import type { Metadata } from "next";
-import { DM_Sans, DM_Mono } from "next/font/google";
+import {
+	Archivo_Black,
+	Space_Grotesk,
+	Space_Mono,
+	Tiro_Devanagari_Hindi,
+} from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 import { DesktopOnlyGate } from "@/components/elements";
@@ -12,21 +17,63 @@ import {
 import { SidebarProvider } from "@/components/ui";
 import { Analytics } from "@vercel/analytics/next";
 
-const dmSans = DM_Sans({
-	variable: "--font-dm-sans",
+const archivoBlack = Archivo_Black({
+	variable: "--font-archivo-black",
 	subsets: ["latin"],
+	weight: "400",
 });
 
-const dmMono = DM_Mono({
-	variable: "--font-dm-mono",
+const spaceGrotesk = Space_Grotesk({
+	variable: "--font-space-grotesk",
 	subsets: ["latin"],
-	weight: ["300", "400", "500"],
+	weight: ["400", "500", "600", "700"],
+});
+
+const spaceMono = Space_Mono({
+	variable: "--font-space-mono",
+	subsets: ["latin"],
+	weight: ["400", "700"],
+});
+
+const tiroDevanagari = Tiro_Devanagari_Hindi({
+	variable: "--font-tiro-devanagari",
+	subsets: ["latin", "devanagari"],
+	weight: "400",
 });
 
 export const metadata: Metadata = {
-	title: "Galaxy AI x Weavy",
+	metadataBase: new URL("https://aakriti.app"),
+	title: {
+		default: "aakriti — weave AI workflows",
+		template: "%s · aakriti",
+	},
 	description:
-		"Weavy's functionality clone for simple Artistic AI workflow! This project is primarily built for interview assignment operations for Galaxy AI",
+		"aakriti (आकृति) is a visual AI workflow builder. Drag nodes onto an infinite canvas, wire them together, and run text, image, video, and LLM pipelines in the cloud.",
+	applicationName: "aakriti",
+	authors: [{ name: "Ankan Bhattacharya" }],
+	keywords: [
+		"aakriti",
+		"AI workflow builder",
+		"visual workflow",
+		"node editor",
+		"LLM pipelines",
+		"generative AI",
+		"React Flow",
+	],
+	openGraph: {
+		type: "website",
+		url: "https://aakriti.app",
+		siteName: "aakriti",
+		title: "aakriti — weave AI workflows",
+		description:
+			"A visual AI workflow builder. Drag nodes onto an infinite canvas, wire them together, and run AI pipelines in the cloud.",
+	},
+	twitter: {
+		card: "summary_large_image",
+		title: "aakriti — weave AI workflows",
+		description:
+			"A visual AI workflow builder. Wire nodes on an infinite canvas and run AI pipelines in the cloud.",
+	},
 };
 
 export default function RootLayout({
@@ -38,7 +85,7 @@ export default function RootLayout({
 		<AuthProvider>
 			<html lang="en" suppressHydrationWarning>
 				<body
-					className={`${dmSans.variable} ${dmMono.variable} antialiased`}
+					className={`${archivoBlack.variable} ${spaceGrotesk.variable} ${spaceMono.variable} ${tiroDevanagari.variable} antialiased`}
 				>
 					<MotionProvider>
 						<ThemeProvider>

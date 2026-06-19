@@ -3,31 +3,32 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const badgeVariants = cva(
-	"inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+	"inline-flex items-center gap-1 rounded-sm border-2 border-border px-2 py-0.5 text-xs font-bold leading-none whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
 	{
 		variants: {
 			variant: {
-				default:
-					"border-transparent bg-primary text-primary-foreground shadow",
-				secondary:
-					"border-transparent bg-secondary text-secondary-foreground",
-				destructive:
-					"border-transparent bg-destructive text-destructive-foreground",
-				outline: "text-foreground border-border",
-				brand:
-					"border-transparent bg-brand text-brand-foreground shadow",
+				default: "bg-primary text-primary-foreground",
+				secondary: "bg-secondary text-secondary-foreground",
+				destructive: "bg-destructive text-destructive-foreground",
+				outline: "bg-transparent text-foreground",
+				muted: "border-muted-foreground bg-muted text-muted-foreground",
+				brand: "bg-primary text-primary-foreground",
+				/* Canvas / connection accents */
 				"connection-prompt":
-					"border-connection-prompt/50 bg-connection-prompt/20 text-connection-prompt",
+					"border-data-string bg-data-string/15 text-data-string",
 				"connection-image":
-					"border-connection-image/50 bg-connection-image/20 text-connection-image",
-				success:
-					"border-transparent bg-chart-4/20 text-chart-4",
-				warning:
-					"border-transparent bg-chart-3 text-primary-foreground",
+					"border-data-image bg-data-image/15 text-data-image",
+				success: "bg-status-completed text-white",
+				warning: "bg-primary text-primary-foreground",
+			},
+			size: {
+				default: "",
+				lg: "px-3 py-1 text-sm",
 			},
 		},
 		defaultVariants: {
 			variant: "default",
+			size: "default",
 		},
 	}
 )
@@ -36,9 +37,9 @@ export interface BadgeProps
 	extends React.HTMLAttributes<HTMLDivElement>,
 		VariantProps<typeof badgeVariants> {}
 
-function Badge({ className, variant, ...props }: BadgeProps) {
+function Badge({ className, variant, size, ...props }: BadgeProps) {
 	return (
-		<div className={cn(badgeVariants({ variant }), className)} {...props} />
+		<div className={cn(badgeVariants({ variant, size }), className)} {...props} />
 	)
 }
 

@@ -34,13 +34,13 @@ function TemplateCard({
 			<Card
 				variant="file-item"
 				padding="none"
-				className="flex h-full flex-col overflow-hidden border border-border bg-card shadow-sm transition-colors hover:border-accent/60 hover:bg-accent/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+				className="flex h-full flex-col overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
 			>
-				<div className="relative flex h-[120px] items-center justify-center bg-muted/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.35)] transition-colors group-hover:bg-muted/45 dark:bg-accent/10 dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+				<div className="relative flex h-[120px] items-center justify-center border-b-2 border-border bg-muted/40 transition-colors group-hover:bg-accent/30">
 					<WorkflowIcon className="size-12 text-muted-foreground transition group-hover:text-foreground" />
 				</div>
-				<div className="bg-card/95 px-3 py-2.5">
-					<p className="truncate text-left text-sm font-medium text-foreground">
+				<div className="px-3 py-2.5">
+					<p className="truncate text-left font-display text-sm text-foreground">
 						{template.name}
 					</p>
 				</div>
@@ -106,19 +106,19 @@ export function PrebuiltWorkflows() {
 				>
 					<TabsTrigger
 						value="library"
-						className="px-4 font-medium tracking-tight"
+						className="px-4"
 					>
 						Workflow library
 					</TabsTrigger>
 					<TabsTrigger
 						value="tutorials"
-						className="px-4 font-medium tracking-tight"
+						className="px-4"
 					>
 						Tutorials
 					</TabsTrigger>
 				</TabsList>
 				<TabsContent value="library" className="mt-4">
-					<p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+					<p className="ak-eyebrow">
 						Prebuilt workflows
 					</p>
 					{isLoadingTemplates ? (
@@ -126,7 +126,7 @@ export function PrebuiltWorkflows() {
 							{Array.from({ length: 4 }).map((_, i) => (
 								<div
 									key={i}
-									className="flex h-[120px] w-[200px] shrink-0 animate-pulse rounded-lg bg-muted"
+									className="flex h-[120px] w-[200px] shrink-0 animate-pulse rounded-sm border-2 border-border/60 bg-muted"
 								/>
 							))}
 						</div>
@@ -148,7 +148,7 @@ export function PrebuiltWorkflows() {
 					)}
 				</TabsContent>
 				<TabsContent value="tutorials" className="mt-4">
-					<p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+					<p className="ak-eyebrow">
 						Tutorials
 					</p>
 					<p className="mt-3 text-sm text-muted-foreground">

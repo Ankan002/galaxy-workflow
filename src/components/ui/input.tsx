@@ -3,21 +3,20 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const inputVariants = cva(
-	"flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-[color,box-shadow] file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+	"flex h-9 w-full rounded-[var(--radius)] border-2 border-input bg-card px-3 py-1 text-sm shadow-xs transition-[box-shadow,border-color] duration-150 [transition-timing-function:var(--ease-snap)] file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:border-ring focus-visible:shadow-sm disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:text-destructive",
 	{
 		variants: {
 			variant: {
 				default: "",
-				search:
-					"bg-input/80 placeholder:text-muted-foreground",
-				sidebar: "border-sidebar-border bg-sidebar/80 text-sidebar-foreground",
-				ghost: "border-0 bg-transparent shadow-none focus-visible:ring-0 focus-visible:ring-offset-0",
-				error: "border-destructive focus-visible:ring-destructive",
+				search: "bg-card placeholder:text-muted-foreground",
+				sidebar: "border-sidebar-border bg-sidebar text-sidebar-foreground",
+				ghost: "border-transparent bg-transparent shadow-none focus-visible:shadow-none focus-visible:border-transparent",
+				error: "border-destructive text-destructive focus-visible:border-destructive",
 			},
 			inputSize: {
 				default: "h-9",
-				sm: "h-8 text-sm",
-				lg: "h-10 text-base",
+				sm: "h-8 px-2.5 text-xs",
+				lg: "h-11 px-3.5 text-base",
 			},
 		},
 		defaultVariants: {

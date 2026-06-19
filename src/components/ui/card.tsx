@@ -3,23 +3,30 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const cardVariants = cva(
-	"rounded-lg border border-border bg-card text-card-foreground shadow",
+	// Neobrutalist surface: 2px ink border, subtle hard offset shadow, tight radius.
+	"rounded-md border-2 border-border bg-card text-card-foreground shadow-sm",
 	{
 		variants: {
 			variant: {
 				default: "",
+				flat: "shadow-none",
+				/* Pressable file/template card — presses into its shadow on hover */
+				pressable:
+					"cursor-pointer transition-[transform,box-shadow] duration-150 [transition-timing-function:var(--ease-snap)] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-sm",
 				/* Image thumbnail (workflow library cards) */
 				"image-thumbnail":
-					"overflow-hidden border-border/80 hover:border-accent",
+					"overflow-hidden cursor-pointer transition-[transform,box-shadow] duration-150 [transition-timing-function:var(--ease-snap)] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-sm",
 				/* File/item card (My files) */
 				"file-item":
-					"hover:bg-card/80 hover:border-accent/50 transition-colors",
-				/* Workflow node card */
-				node: "border-border/80 bg-card shadow-md",
-				/* Selected / active state */
-				selected: "border-primary ring-2 ring-primary/20",
-				outline: "border-input bg-transparent shadow-none",
-				elevated: "border-border shadow-lg",
+					"cursor-pointer transition-[transform,box-shadow] duration-150 [transition-timing-function:var(--ease-snap)] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-sm",
+				/* Workflow node card — tempered shadow so the dense canvas stays legible */
+				node: "shadow-sm",
+				/* Selected / active node */
+				selected: "shadow-sm ring-2 ring-primary",
+				/* Hero / featured surface — colored marigold shadow */
+				brand: "shadow-brand",
+				outline: "shadow-none",
+				elevated: "shadow-lg",
 			},
 			padding: {
 				none: "p-0",
@@ -65,7 +72,7 @@ const CardTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
 	<h3
 		ref={ref}
-		className={cn("font-semibold leading-none tracking-tight", className)}
+		className={cn("font-display text-lg leading-none tracking-tight", className)}
 		{...props}
 	/>
 ))

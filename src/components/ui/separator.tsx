@@ -8,8 +8,8 @@ import { cn } from "@/lib/utils"
 const separatorVariants = cva("shrink-0 bg-border", {
 	variants: {
 		orientation: {
-			vertical: "h-full w-px",
-			horizontal: "h-px w-full",
+			vertical: "h-full w-0.5",
+			horizontal: "h-0.5 w-full",
 		},
 		decorative: {
 			true: "pointer-events-none",

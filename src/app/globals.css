@@ -1,23 +1,28 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@import "shadcn/tailwind.css";
-@import "@clerk/themes/shadcn.css";
 
 @custom-variant dark (&:is(.dark *));
 
+/* ════════════════════════════════════════════════════════════
+   aakriti — neobrutalist design tokens
+   Warm, Indian-art-inspired. Marigold primary · ink 2px borders ·
+   paper ground · HARD offset shadows (zero blur) · tight radii ·
+   tactile press. Light + dark are both first-class.
+   ════════════════════════════════════════════════════════════ */
+
 @theme inline {
+	/* ── Semantic color aliases (drive Tailwind utilities) ── */
 	--color-background: var(--background);
 	--color-foreground: var(--foreground);
-	--font-sans: var(--font-dm-sans);
-	--font-mono: var(--font-dm-mono);
-
 	--color-card: var(--card);
 	--color-card-foreground: var(--card-foreground);
 	--color-popover: var(--popover);
 	--color-popover-foreground: var(--popover-foreground);
 	--color-primary: var(--primary);
+	--color-primary-hover: var(--primary-hover);
 	--color-primary-foreground: var(--primary-foreground);
 	--color-secondary: var(--secondary);
+	--color-secondary-hover: var(--secondary-hover);
 	--color-secondary-foreground: var(--secondary-foreground);
 	--color-muted: var(--muted);
 	--color-muted-foreground: var(--muted-foreground);
@@ -28,11 +33,13 @@
 	--color-border: var(--border);
 	--color-input: var(--input);
 	--color-ring: var(--ring);
+
 	--color-chart-1: var(--chart-1);
 	--color-chart-2: var(--chart-2);
 	--color-chart-3: var(--chart-3);
 	--color-chart-4: var(--chart-4);
 	--color-chart-5: var(--chart-5);
+
 	--color-sidebar: var(--sidebar);
 	--color-sidebar-foreground: var(--sidebar-foreground);
 	--color-sidebar-primary: var(--sidebar-primary);
@@ -42,266 +49,218 @@
 	--color-sidebar-border: var(--sidebar-border);
 	--color-sidebar-ring: var(--sidebar-ring);
 
-	/* Brand & workflow variants (screenshots: yellow CTA, purple/green connections) */
-	--color-brand: var(--brand);
-	--color-brand-foreground: var(--brand-foreground);
-	--color-connection-prompt: var(--connection-prompt);
-	--color-connection-image: var(--connection-image);
-	--color-tool-active: var(--tool-active);
+	/* ── Raw brand hues (callouts / illustration) ── */
+	--color-ink: var(--ak-ink);
+	--color-paper: var(--ak-paper);
+	--color-marigold: var(--ak-marigold);
+	--color-vermilion: var(--ak-vermilion);
+	--color-rani: var(--ak-rani);
+	--color-indigo: var(--ak-indigo);
+	--color-peacock: var(--ak-peacock);
+	--color-leaf: var(--ak-leaf);
+	--color-sky: var(--ak-sky);
 
-	--radius-sm: calc(var(--radius) - 4px);
-	--radius-md: calc(var(--radius) - 2px);
-	--radius-lg: var(--radius);
-	--radius-xl: calc(var(--radius) + 4px);
-	--radius-2xl: calc(var(--radius) + 8px);
-	--radius-3xl: calc(var(--radius) + 12px);
-	--radius-4xl: calc(var(--radius) + 16px);
+	/* ── Canvas data-type / connection accents ── */
+	--color-data-string: var(--data-string);
+	--color-data-image: var(--data-image);
+	--color-data-video: var(--data-video);
+	--color-data-number: var(--data-number);
+	--color-data-boolean: var(--data-boolean);
+	--color-data-json: var(--data-json);
+	--color-data-file: var(--data-file);
+	--color-data-any: var(--data-any);
 
-	/* ── Brand primary palette ── */
-	--color-w-red: var(--w-red);
-	--color-w-purple: var(--w-purple);
-	--color-w-dark-purple: var(--w-dark-purple);
-	--color-w-blue: var(--w-blue);
-	--color-w-azul: var(--w-azul);
-	--color-w-green: var(--w-green);
-	--color-w-yellow: var(--w-yellow);
-	--color-w-orange: var(--w-orange);
-	--color-w-gray: var(--w-gray);
-	--color-w-light-green: var(--w-light-green);
+	/* ── Run / execution status ── */
+	--color-status-idle: var(--status-idle);
+	--color-status-running: var(--status-running);
+	--color-status-completed: var(--status-completed);
+	--color-status-failed: var(--status-failed);
 
-	/* ── Yambo palette ── */
-	--color-yambo-green: var(--yambo-green);
-	--color-yambo-green-dark: var(--yambo-green-dark);
-	--color-yambo-green-stroke: var(--yambo-green-stroke);
-	--color-yambo-purple: var(--yambo-purple);
-	--color-yambo-purple-dark: var(--yambo-purple-dark);
-	--color-yambo-purple-stroke: var(--yambo-purple-stroke);
-	--color-yambo-blue: var(--yambo-blue);
-	--color-yambo-blue-dark: var(--yambo-blue-dark);
-	--color-yambo-blue-stroke: var(--yambo-blue-stroke);
-	--color-yambo-orange: var(--yambo-orange);
-	--color-yambo-orange-dark: var(--yambo-orange-dark);
-	--color-yambo-orange-stroke: var(--yambo-orange-stroke);
-	--color-yambo-black: var(--yambo-black);
-	--color-yambo-black-dark: var(--yambo-black-dark);
-	--color-yambo-black-stroke: var(--yambo-black-stroke);
-	--color-yambo-cta-bg: var(--yambo-cta-bg);
-	--color-yambo-text-on-white: var(--yambo-text-on-white);
-	--color-yambo-idle-icon: var(--yambo-idle-icon);
-	--color-yambo-white-bg: var(--yambo-white-bg);
+	/* ── Type families (next/font vars) ── */
+	--font-display: var(--font-archivo-black), "Space Grotesk", system-ui, sans-serif;
+	--font-sans: var(--font-space-grotesk), system-ui, -apple-system, sans-serif;
+	--font-mono: var(--font-space-mono), ui-monospace, "SF Mono", Menlo, monospace;
+	--font-devanagari: var(--font-tiro-devanagari), "Space Grotesk", serif;
+}
 
-	/* ── Pink palette ── */
-	--color-pink-main: var(--pink-main);
-	--color-pink-dark: var(--pink-dark);
-	--color-pink-stroke: var(--pink-stroke);
+@theme {
+	/* ── Radii (deliberately tight) — emitted so utilities + var() both work ── */
+	--radius-sm: 3px;
+	--radius: 5px;
+	--radius-md: 7px;
+	--radius-lg: 10px;
+	--radius-xl: 14px;
+	--radius-2xl: 18px;
+	--radius-3xl: 24px;
 
-	/* ── Yellow alt palette ── */
-	--color-yellow-main: var(--yellow-main);
-	--color-yellow-dark: var(--yellow-dark);
-	--color-yellow-stroke: var(--yellow-stroke);
-
-	/* ── Black scale (solid) ── */
-	--color-black-100: var(--black-100);
-	--color-black-92: var(--black-92);
-	--color-black-84: var(--black-84);
-	--color-black-64: var(--black-64);
-	--color-black-40: var(--black-40);
-	--color-black-16: var(--black-16);
-	--color-black-08: var(--black-08);
-	--color-black-04: var(--black-04);
-
-	/* ── Black scale (transparent) ── */
-	--color-black-92t: var(--black-92t);
-	--color-black-84t: var(--black-84t);
-	--color-black-64t: var(--black-64t);
-	--color-black-40t: var(--black-40t);
-	--color-black-16t: var(--black-16t);
-	--color-black-08t: var(--black-08t);
-	--color-black-04t: var(--black-04t);
-
-	/* ── White scale ── */
-	--color-white-100: var(--white-100);
-	--color-white-80t: var(--white-80t);
-	--color-white-64t: var(--white-64t);
-	--color-white-40t: var(--white-40t);
-	--color-white-16t: var(--white-16t);
-	--color-white-08t: var(--white-08t);
-	--color-white-04t: var(--white-04t);
-
-	/* ── Yellow scale ── */
-	--color-yellow-100: var(--yellow-100);
-	--color-yellow-64: var(--yellow-64);
-	--color-yellow-40: var(--yellow-40);
-	--color-yellow-16: var(--yellow-16);
-	--color-yellow-secondary: var(--yellow-secondary);
-	--color-yellow-08t: var(--yellow-08t);
-	--color-yellow-16t: var(--yellow-16t);
-
-	/* ── Purple scale ── */
-	--color-purple-lilac: var(--purple-lilac);
-	--color-purple-100: var(--purple-100);
-	--color-purple-80t: var(--purple-80t);
-	--color-purple-24t: var(--purple-24t);
-	--color-purple-16t: var(--purple-16t);
-
-	/* ── Error states ── */
-	--color-weavy-error: var(--weavy-error);
-	--color-weavy-error-64t: var(--weavy-error-64t);
-	--color-weavy-error-08t: var(--weavy-error-08t);
-
-	/* ── Misc ── */
-	--color-weavy-menu-border: var(--weavy-menu-border);
-	--color-light-menu-bg: var(--light-menu-bg);
-	--color-super-light-transparent: var(--super-light-transparent);
-	--color-icon-button-active: var(--icon-button-active);
-	--color-icon-button-hover: var(--icon-button-hover);
+	/* ── HARD offset shadows (zero blur). Subtle by default — small offsets
+	     keep the neobrutalist language without shouting. Reference --border
+	     so they flip automatically between light and dark themes. ── */
+	--shadow-xs: 1px 1px 0 0 var(--border);
+	--shadow-sm: 2px 2px 0 0 var(--border);
+	--shadow-md: 3px 3px 0 0 var(--border);
+	--shadow-lg: 4px 4px 0 0 var(--border);
+	--shadow-xl: 6px 6px 0 0 var(--border);
+	--shadow-2xl: 8px 8px 0 0 var(--border);
+	--shadow-brand: 4px 4px 0 0 var(--primary);
 }
 
 :root {
-	/* ── Brand primary palette ── */
-	--w-red: #fc0455;
-	--w-purple: #a91bb3;
-	--w-dark-purple: #901799;
-	--w-blue: #3352bb;
-	--w-azul: #06a6ed;
-	--w-green: #05b246;
-	--w-yellow: #fcbf00;
-	--w-orange: #ff3905;
-	--w-gray: #557f8c;
-	--w-light-green: #86c28d;
-	--light-menu-bg: #253042;
-	--super-light-transparent: #ddf2;
+	/* ── Base palette (raw brand hues) ── */
+	--ak-ink: #161310; /* warm near-black — borders & text */
+	--ak-paper: #fbf3e4; /* warm cream — page ground */
+	--ak-paper-2: #f4e8d1; /* deeper cream */
+	--ak-white: #ffffff;
 
-	/* ── Yambo palette ── */
-	--yambo-green: #16745d;
-	--yambo-green-dark: #0b4836;
-	--yambo-green-stroke: #45a08a;
-	--yambo-purple: #653fe1;
-	--yambo-purple-dark: #352074;
-	--yambo-purple-stroke: #8c6def;
-	--yambo-blue: #2c57f0;
-	--yambo-blue-dark: #183c9b;
-	--yambo-blue-stroke: #5a82e8;
-	--yambo-orange: #e54a19;
-	--yambo-orange-dark: #c53111;
-	--yambo-orange-stroke: #ea8362;
-	--yambo-black: #312f37;
-	--yambo-black-dark: #222127;
-	--yambo-black-stroke: #65616b;
-	--yambo-cta-bg: #f2f0f8;
-	--yambo-text-on-white: #1c1b1f;
-	--yambo-idle-icon: #a19aaf;
-	--yambo-white-bg: #e5e3eb;
-	--icon-button-active: #653fe1;
-	--icon-button-hover: #000000;
+	--ak-marigold: #ffb200; /* primary — saffron/marigold */
+	--ak-marigold-deep: #f0a300;
+	--ak-marigold-soft: #ffe08a;
 
-	/* ── Pink palette ── */
-	--pink-main: hsl(325, 50%, 56%);
-	--pink-dark: #74204f;
-	--pink-stroke: #ef6cbd;
+	--ak-vermilion: #ff5a1f; /* sindoor / vermilion */
+	--ak-rani: #e5147a; /* rani pink (traditional magenta) */
+	--ak-indigo: #3a36e0; /* neel / indigo */
+	--ak-peacock: #0c9c9c; /* peacock teal */
+	--ak-leaf: #1e9e57; /* mehndi / leaf green */
+	--ak-sky: #2ba3e0; /* sky blue */
+	--ak-red: #e5443b; /* error / destructive */
 
-	/* ── Yellow alt palette ── */
-	--yellow-main: #e1b03f;
-	--yellow-dark: #745920;
-	--yellow-stroke: #efcf6c;
+	/* ── Border weights & motion (used via var() in custom CSS / cva) ── */
+	--border-1: 1.5px;
+	--border-2: 2px; /* the neobrutalist standard */
+	--border-3: 3px;
+	--ease-snap: cubic-bezier(0.2, 0, 0, 1);
+	--ease-out: cubic-bezier(0.33, 1, 0.68, 1);
+	--dur-fast: 90ms;
+	--dur: 150ms;
+	--dur-slow: 240ms;
+	--press-travel: 2px;
+	--tracking-tight: -0.015em;
+	--tracking-widest: 0.18em;
 
-	/* ── Menu / Error ── */
-	--weavy-menu-border: rgba(240, 240, 229, 0.08);
-	--weavy-error: rgba(232, 85, 85, 1);
-	--weavy-error-64t: rgba(232, 85, 85, 0.64);
-	--weavy-error-08t: rgba(232, 85, 85, 0.08);
+	/* ════════ Semantic — LIGHT ════════ */
+	--background: var(--ak-paper);
+	--foreground: var(--ak-ink);
 
-	/* ── Black scale (solid) ── */
-	--black-100: rgba(14, 14, 19, 1);
-	--black-92: rgba(33, 33, 38, 1);
-	--black-84: rgba(53, 53, 57, 1);
-	--black-64: rgba(101, 101, 104, 1);
-	--black-40: rgba(159, 159, 161, 1);
-	--black-16: rgba(216, 216, 217, 1);
-	--black-08: rgba(236, 236, 236, 1);
-	--black-04: rgba(245, 245, 246, 1);
+	--card: var(--ak-white);
+	--card-foreground: var(--ak-ink);
+	--popover: var(--ak-white);
+	--popover-foreground: var(--ak-ink);
 
-	/* ── Black scale (transparent) ── */
-	--black-92t: rgba(14, 14, 19, 0.92);
-	--black-84t: rgba(14, 14, 19, 0.84);
-	--black-64t: rgba(14, 14, 19, 0.64);
-	--black-40t: rgba(14, 14, 19, 0.4);
-	--black-16t: rgba(14, 14, 19, 0.16);
-	--black-08t: rgba(14, 14, 19, 0.08);
-	--black-04t: rgba(14, 14, 19, 0.04);
+	--primary: var(--ak-marigold);
+	--primary-hover: var(--ak-marigold-deep);
+	--primary-foreground: var(--ak-ink);
 
-	/* ── White scale ── */
-	--white-100: rgba(255, 255, 255, 1);
-	--white-80t: rgba(255, 255, 255, 0.8);
-	--white-64t: rgba(255, 255, 255, 0.64);
-	--white-40t: rgba(255, 255, 255, 0.4);
-	--white-16t: rgba(255, 255, 255, 0.16);
-	--white-08t: rgba(255, 255, 255, 0.08);
-	--white-04t: rgba(255, 255, 255, 0.04);
+	--secondary: var(--ak-ink);
+	--secondary-hover: #2c2620;
+	--secondary-foreground: var(--ak-paper);
 
-	/* ── Yellow scale ── */
-	--yellow-100: rgba(247, 255, 168, 1);
-	--yellow-64: rgba(250, 255, 199, 1);
-	--yellow-40: rgba(252, 255, 220, 1);
-	--yellow-16: rgba(254, 255, 241, 1);
-	--yellow-secondary: rgba(220, 220, 194, 1);
-	--yellow-08t: rgba(247, 255, 168, 0.08);
-	--yellow-16t: rgba(247, 255, 168, 0.16);
+	--muted: var(--ak-paper-2);
+	--muted-foreground: #6b5f4b;
 
-	/* ── Purple scale ── */
-	--purple-lilac: #cc9de4;
-	--purple-100: rgba(160, 71, 233, 1);
-	--purple-80t: rgba(160, 71, 233, 0.8);
-	--purple-24t: rgba(160, 71, 233, 0.24);
-	--purple-16t: rgba(160, 71, 233, 0.16);
+	--accent: var(--ak-marigold-soft);
+	--accent-foreground: var(--ak-ink);
 
-	/* ── Animation ── */
-	--curve: cubic-bezier(0.65, 0, 0.45, 1);
-
-	/* ════════════════════════════════════
-     Shadcn semantic tokens – Vercel (light)
-     Monochrome, minimal, high-contrast
-     ════════════════════════════════════ */
-	--radius: 0.625rem;
-	--background: #ffffff;
-	--foreground: #020202;
-	--card: #f5f5f5;
-	--card-foreground: #020202;
-	--popover: #ffffff;
-	--popover-foreground: #020202;
-	--primary: #000000;
-	--primary-foreground: #ffffff;
-	--secondary: #f5f5f5;
-	--secondary-foreground: #020202;
-	--muted: #f4f4f5;
-	--muted-foreground: #71717a;
-	--accent: #f4f4f5;
-	--accent-foreground: #020202;
-	--destructive: #ef4444;
+	--destructive: var(--ak-red);
 	--destructive-foreground: #ffffff;
-	--border: #e4e4e7;
-	--input: #e4e4e7;
-	--ring: #020202;
-	--chart-1: #020202;
-	--chart-2: #52525b;
-	--chart-3: #a1a1aa;
-	--chart-4: #d4d4d8;
-	--chart-5: #f4f4f5;
-	--sidebar: #ffffff;
-	--sidebar-foreground: #020202;
-	--sidebar-primary: #000000;
-	--sidebar-primary-foreground: #ffffff;
-	--sidebar-accent: #f4f4f5;
-	--sidebar-accent-foreground: #020202;
-	--sidebar-border: #e4e4e7;
-	--sidebar-ring: #020202;
 
-	/* Brand / workflow accents – stay monochrome by default */
-	--brand: #000000;
-	--brand-foreground: #ffffff;
-	--connection-prompt: #000000;
-	--connection-image: #000000;
-	--tool-active: #000000;
+	--border: var(--ak-ink);
+	--input: var(--ak-ink);
+	--ring: var(--ak-marigold);
+
+	/* App chrome */
+	--sidebar: var(--ak-white);
+	--sidebar-foreground: var(--ak-ink);
+	--sidebar-primary: var(--ak-ink);
+	--sidebar-primary-foreground: var(--ak-paper);
+	--sidebar-accent: var(--ak-paper-2);
+	--sidebar-accent-foreground: var(--ak-ink);
+	--sidebar-border: var(--ak-ink);
+	--sidebar-ring: var(--ak-marigold);
+
+	/* Canvas data-type / connection accents */
+	--data-string: var(--ak-indigo);
+	--data-image: var(--ak-vermilion);
+	--data-video: var(--ak-marigold);
+	--data-number: var(--ak-peacock);
+	--data-boolean: var(--ak-leaf);
+	--data-json: var(--ak-rani);
+	--data-file: var(--ak-sky);
+	--data-any: #9b8e76;
+
+	/* Run / execution status */
+	--status-idle: #9b8e76;
+	--status-running: var(--ak-sky);
+	--status-completed: var(--ak-leaf);
+	--status-failed: var(--ak-red);
+
+	/* Charts */
+	--chart-1: var(--ak-marigold);
+	--chart-2: var(--ak-indigo);
+	--chart-3: var(--ak-rani);
+	--chart-4: var(--ak-peacock);
+	--chart-5: var(--ak-vermilion);
+}
+
+/* ════════ Semantic — DARK ════════ */
+.dark {
+	--background: #14110d;
+	--foreground: #f5eedf;
+
+	--card: #1f1a14;
+	--card-foreground: #f5eedf;
+	--popover: #1f1a14;
+	--popover-foreground: #f5eedf;
+
+	--primary: var(--ak-marigold);
+	--primary-hover: #ffc23a;
+	--primary-foreground: #161310;
+
+	--secondary: #2e2820;
+	--secondary-hover: #3a3327;
+	--secondary-foreground: #f5eedf;
+
+	--muted: #261f17;
+	--muted-foreground: #a99b82;
+
+	--accent: #3a2f18;
+	--accent-foreground: #ffd479;
+
+	--destructive: #ff6b5e;
+	--destructive-foreground: #1a0f0d;
+
+	--border: #574d3d;
+	--input: #574d3d;
+	--ring: var(--ak-marigold);
+
+	--sidebar: #1a1610;
+	--sidebar-foreground: #f5eedf;
+	--sidebar-primary: var(--ak-marigold);
+	--sidebar-primary-foreground: #161310;
+	--sidebar-accent: #2a2318;
+	--sidebar-accent-foreground: #f5eedf;
+	--sidebar-border: #574d3d;
+	--sidebar-ring: var(--ak-marigold);
+
+	/* Brighter data hues for the dark canvas */
+	--data-string: #7b78ff;
+	--data-image: #ff7a4d;
+	--data-video: var(--ak-marigold);
+	--data-number: #2fc7c7;
+	--data-boolean: #3fcf80;
+	--data-json: #ff5aa6;
+	--data-file: #5ec1f0;
+	--data-any: #a99b82;
+
+	--status-idle: #a99b82;
+	--status-running: #5ec1f0;
+	--status-completed: #3fcf80;
+	--status-failed: #ff6b5e;
+
+	--chart-1: var(--ak-marigold);
+	--chart-2: #7b78ff;
+	--chart-3: #ff5aa6;
+	--chart-4: #2fc7c7;
+	--chart-5: #ff7a4d;
 }
 
 @layer base {
@@ -309,7 +268,50 @@
 		@apply border-border outline-ring/50;
 	}
 	body {
-		@apply bg-background text-foreground;
+		@apply bg-background text-foreground font-sans;
+	}
+	/* Display headings default to the neobrutalist display face */
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		font-family: var(--font-display);
+		font-weight: 400; /* Archivo Black is already heavy */
+		letter-spacing: var(--tracking-tight);
+		line-height: 1.2;
+	}
+	code,
+	kbd,
+	samp,
+	pre {
+		font-family: var(--font-mono);
+	}
+	::selection {
+		background: var(--primary);
+		color: var(--primary-foreground);
+	}
+	:focus-visible {
+		outline: var(--border-2) solid var(--ring);
+		outline-offset: 2px;
+	}
+	/* Chunky neobrutalist scrollbar */
+	* {
+		scrollbar-width: thin;
+		scrollbar-color: var(--muted-foreground) transparent;
+	}
+	*::-webkit-scrollbar {
+		width: 10px;
+		height: 10px;
+	}
+	*::-webkit-scrollbar-thumb {
+		background: var(--muted-foreground);
+		border: 2px solid var(--background);
+		border-radius: 999px;
+	}
+	*::-webkit-scrollbar-track {
+		background: transparent;
 	}
 }
 
@@ -324,50 +326,28 @@
 	}
 }
 
-.dark {
-	/* Dark mode – Vercel */
-	--background: #000000;
-	--foreground: #f9fafb;
-	--card: #020202;
-	--card-foreground: #f9fafb;
-	--popover: #020202;
-	--popover-foreground: #f9fafb;
-	--primary: #ffffff;
-	--primary-foreground: #000000;
-	--secondary: #09090b;
-	--secondary-foreground: #e4e4e7;
-	--muted: #09090b;
-	--muted-foreground: #a1a1aa;
-	--accent: #18181b;
-	--accent-foreground: #fafafa;
-	--destructive: #ef4444;
-	--destructive-foreground: #fef2f2;
-	--border: #27272a;
-	--input: #27272a;
-	--ring: #ffffff;
-	--chart-1: #e5e5e5;
-	--chart-2: #a3a3a3;
-	--chart-3: #737373;
-	--chart-4: #404040;
-	--chart-5: #171717;
-	--sidebar: #020202;
-	--sidebar-foreground: #f9fafb;
-	--sidebar-primary: #ffffff;
-	--sidebar-primary-foreground: #000000;
-	--sidebar-accent: #18181b;
-	--sidebar-accent-foreground: #ffffff;
-	--sidebar-border: #27272a;
-	--sidebar-ring: #ffffff;
+/* ── Shared brand utilities ── */
+@utility ak-eyebrow {
+	font-family: var(--font-mono);
+	font-size: 0.75rem;
+	font-weight: 700;
+	letter-spacing: var(--tracking-widest);
+	text-transform: uppercase;
+	color: var(--muted-foreground);
+}
 
-	--brand: #ffffff;
-	--brand-foreground: #000000;
-	--connection-prompt: #ffffff;
-	--connection-image: #ffffff;
-	--tool-active: #ffffff;
+@utility ak-dotgrid {
+	background-color: var(--background);
+	background-image: radial-gradient(
+		color-mix(in srgb, var(--border) 20%, transparent) 1px,
+		transparent 1px
+	);
+	background-size: 26px 26px;
+	background-position: -1px -1px;
 }
 
 /* ════════════════════════════════════════
-   React Flow – ShadCN theme overrides
+   React Flow — aakriti neobrutalist overrides
    ════════════════════════════════════════ */
 
 .react-flow {
@@ -375,8 +355,8 @@
 	--xy-node-color: var(--foreground);
 	--xy-node-border: var(--border);
 	--xy-node-background-color: var(--card);
-	--xy-node-boxshadow-hover: 0 4px 12px rgba(0, 0, 0, 0.25);
-	--xy-node-boxshadow-selected: 0 0 0 2px var(--ring);
+	--xy-node-boxshadow-hover: var(--shadow-md);
+	--xy-node-boxshadow-selected: var(--shadow-md);
 
 	--xy-handle-background-color: var(--muted-foreground);
 	--xy-handle-border-color: var(--card);
@@ -389,7 +369,7 @@
 	--xy-connectionline-stroke-width: 2;
 
 	--xy-minimap-background-color: var(--card);
-	--xy-minimap-mask-background-color: rgba(15, 23, 42, 0.78);
+	--xy-minimap-mask-background-color: color-mix(in srgb, var(--ak-ink) 55%, transparent);
 	--xy-minimap-node-background-color: var(--muted);
 	--xy-minimap-node-stroke-color: var(--border);
 
@@ -404,14 +384,15 @@
 
 .react-flow__controls {
 	border-radius: var(--radius);
-	border: 1px solid var(--border);
+	border: var(--border-2) solid var(--border);
 	overflow: hidden;
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+	box-shadow: var(--shadow-sm);
 }
 
 .react-flow__controls button {
 	width: 28px;
 	height: 28px;
+	border-bottom: var(--border-1) solid var(--border);
 }
 
 .react-flow__controls button svg {
@@ -422,24 +403,26 @@
 
 .react-flow__minimap {
 	border-radius: var(--radius);
-	border: 1px solid var(--border);
+	border: var(--border-2) solid var(--border);
 	overflow: hidden;
-	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
-	background: linear-gradient(145deg, var(--card) 0%, color-mix(in oklch, var(--card) 85%, var(--primary) 15%) 100%);
+	box-shadow: var(--shadow-sm);
+	background: var(--card);
 }
 
 .react-flow__handle {
-	width: 10px;
-	height: 10px;
-	border-radius: 50%;
-	border: 2px solid var(--card);
+	width: 11px;
+	height: 11px;
+	border-radius: 999px;
+	border: var(--border-2) solid var(--border);
 	background: var(--muted-foreground);
-	transition: background 150ms ease, transform 150ms ease;
+	transition:
+		background var(--dur) var(--ease-snap),
+		transform var(--dur) var(--ease-snap);
 }
 
 .react-flow__handle:hover {
 	background: var(--primary);
-	transform: scale(1.3);
+	transform: scale(1.25);
 }
 
 .react-flow__handle-connecting {
@@ -447,7 +430,7 @@
 }
 
 .react-flow__handle-valid {
-	background: var(--primary);
+	background: var(--status-completed);
 }
 
 .react-flow__background pattern line,
@@ -456,8 +439,8 @@
 	fill: var(--border);
 }
 
-/* Edge sparkle: dash travels from source to target, color matches edge */
-@keyframes edge-sparkle {
+/* Edge march: dashes travel source → target while a flow runs */
+@keyframes edge-march {
 	from {
 		stroke-dashoffset: 0;
 	}
@@ -466,24 +449,21 @@
 	}
 }
 
-/* Node card: cute primary glow when that node is actively running */
+/* Active node: marigold ring pulse while running */
 @keyframes node-pulse-glow {
 	0%,
 	100% {
 		box-shadow:
-			0 0 0 1px rgba(247, 255, 168, 0.18),
-			0 0 8px 0 rgba(247, 255, 168, 0.04);
-		transform: scale(1);
+			0 0 0 2px var(--primary),
+			3px 3px 0 0 var(--border);
 	}
 	50% {
 		box-shadow:
-			0 0 0 2px rgba(247, 255, 168, 0.32),
-			0 0 14px 4px rgba(247, 255, 168, 0.12);
-		transform: scale(1.006);
+			0 0 0 4px color-mix(in srgb, var(--primary) 60%, transparent),
+			3px 3px 0 0 var(--border);
 	}
 }
 
 .node-pulse {
-	transform-origin: center;
-	animation: node-pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+	animation: node-pulse-glow 1.4s var(--ease-snap) infinite;
 }

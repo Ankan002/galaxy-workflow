@@ -13,11 +13,14 @@ const AppsScreen = () => {
 			isHeadingLoading={!isLoaded}
 			heading={user ? `${user.fullName}'s Workspace` : "Workspace"}
 		>
-			<div className="flex-1 flex flex-col items-center justify-center font-sans">
-				<SquarePlay size={40} strokeWidth={0.75} />
-				<p className="mt-4 text-lg">No design apps</p>
+			<div className="flex-1 flex flex-col items-center justify-center">
+				<SquarePlay size={40} strokeWidth={1.5} />
+				<p className="mt-4 font-display text-lg tracking-tight">
+					No design apps
+				</p>
 				<Badge
-					className="mt-6 border border-foreground/80 p-2 rounded-sm cursor-pointer"
+					size="lg"
+					className="mt-6 cursor-pointer shadow-xs transition-[transform,box-shadow] hover:translate-x-px hover:translate-y-px hover:shadow-none"
 					variant="outline"
 				>
 					Learn more about design apps

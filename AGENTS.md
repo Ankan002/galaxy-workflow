@@ -252,7 +252,38 @@ Source nodes (`text`, `image_upload`, `video_upload`) are not individually execu
 - **Desktop-only:** `DesktopOnlyGate` blocks sub-desktop viewports; design for desktop.
 - **Feedback:** `toast` from sonner for success/error; `useAPIErrorHandler()` in screen hooks.
 - **Debouncing:** `DEBOUNCE_TIME` (500ms) from `client-constants.ts`; `use-debounce` for search.
-- **Theming:** `next-themes` + CSS variables in `globals.css`.
+- **Theming:** `next-themes` (`.dark` class) + CSS variables in `globals.css`. See the design system below.
+
+---
+
+## UI / Design system — **aakriti** (neobrutalism)
+
+The app is branded **aakriti** (आकृति, "form/shape"): a warm, Indian-art-inspired neobrutalist system. Source of truth for tokens is `src/app/globals.css`; the original spec lives in `/Aakriti Design System/` (tokens, component specs, UI-kit). **Use the semantic / `--ak-*` / `--data-*` tokens — never invent or hardcode hex.**
+
+**Signature look**
+
+- **Color:** marigold `#FFB200` primary (`--primary`) · ink `#161310` text *and* borders (`--border`) · paper `#FBF3E4` ground (`--background`), white cards. The flat accent set — vermilion, rani, indigo, peacock, leaf, sky — is exposed as `--data-string|image|video|number|boolean|json|file|any` and is reserved for **canvas data-types / connections, charts, and callouts — never chrome**. Run state uses `--status-idle|running|completed|failed`.
+- **Borders:** everything bordered — **`border-2` solid ink** is the standard (`--border-2`); `border-3` for hero tiles.
+- **Radii:** deliberately tight — controls `rounded-[var(--radius)]` (5px), cards `rounded-md`/`rounded-lg` (7–10px); only true pills (switch, badge dots) are round.
+- **Shadows:** **hard offset, zero blur**. The Tailwind `shadow-xs…shadow-2xl` utilities are remapped to these (`--shadow-md: 4px 4px 0 0 var(--border)`); they flip with the theme because they reference `--border`. `shadow-brand` is the marigold hero shadow. **No soft/blurred/ambient shadows, ever. No glassmorphism, no gradients, no inset gloss highlights.**
+- **Type:** `font-display` = Archivo Black (headings, buttons, node titles — already heavy, weight 400) · `font-sans` = Space Grotesk (body/UI) · `font-mono` = Space Mono (labels, meta, numbers, eyebrows) · `font-devanagari` = Tiro Devanagari Hindi (the आ brand mark only). Wired via `next/font` in `layout.tsx`.
+
+**The hover / press recipe (apply to every interactive surface)**
+
+- **Rest:** `border-2 border-border` + `shadow-sm`/`shadow-md`.
+- **Hover:** `hover:translate-x-px hover:translate-y-px` + shadow shrinks (`hover:shadow-xs`) + fill darkens (`--primary-hover`) or fills `accent`.
+- **Active:** `active:translate-x-0.5 active:translate-y-0.5 active:shadow-none` — the object presses fully into its shadow.
+- **Focus:** `focus-visible:ring-2 ring-ring` (marigold), 2px offset. **Disabled:** `opacity-50`, no transform.
+- Motion is snappy: `[transition-timing-function:var(--ease-snap)]`, 90–240ms. Ghost/link variants opt out of border/shadow/press.
+
+**Conventions**
+
+- Build component variants with `cva` and keep every component's prop/variant API **additive** so screens keep compiling. Reference `/Aakriti Design System/components/**/*.prompt.md` for variant coverage.
+- **Copy:** sentence case everywhere; the wordmark is lowercase **aakriti**; eyebrows/meta labels are UPPERCASE Space Mono (use the `ak-eyebrow` utility). Numbers/model-ids/timestamps in mono. **No emoji** — status is colored dots/badges.
+- **Backgrounds:** flat paper, often the `ak-dotgrid` utility (canvas, auth, hero/empty states).
+- **Canvas is tempered:** nodes use lighter borders + `shadow-sm` (not 4px) so the dense graph stays legible; data-type accents color the handles/edges/minimap.
+- **Brand glyph:** the आ marigold tile (`src/components/brand/logo.tsx`) — never a Lucide icon. Lucide elsewhere at 2px stroke.
+- **Clerk** is themed via a custom `appearance` in `auth-provider.tsx` (token-driven `variables` + neobrutalist `elements`), not a prebuilt Clerk theme.
 
 ---
 

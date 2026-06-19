@@ -1,33 +1,33 @@
 "use client"
 
+import { useTheme } from "next-themes"
 import { Toaster as Sonner, type ToasterProps } from "sonner"
 
 /**
- * Sonner Toaster aligned with the app UI theme (globals.css).
- * Uses semantic tokens: background, foreground, border, primary, muted,
- * destructive, and brand for consistent dark-theme toasts.
+ * Sonner Toaster in the aakriti neobrutalist language: 2px ink border, hard
+ * offset shadow, tight radius. Follows the active next-themes theme.
  */
 const Toaster = ({ ...props }: ToasterProps) => {
+	const { resolvedTheme } = useTheme()
+
 	return (
 		<Sonner
-			theme="dark"
+			theme={(resolvedTheme as ToasterProps["theme"]) ?? "system"}
 			className="toaster group"
 			toastOptions={{
 				classNames: {
 					toast:
-						"group toast group-[.toaster]:bg-card group-[.toaster]:text-card-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg group-[.toaster]:rounded-lg",
+						"group toast group-[.toaster]:bg-card group-[.toaster]:text-card-foreground group-[.toaster]:border-2 group-[.toaster]:border-border group-[.toaster]:shadow-md group-[.toaster]:rounded-md",
 					description: "group-[.toast]:text-muted-foreground",
 					actionButton:
-						"group-[.toast]:bg-brand group-[.toast]:text-brand-foreground group-[.toast]:rounded-md",
+						"group-[.toast]:bg-primary group-[.toast]:text-primary-foreground group-[.toast]:border-2 group-[.toast]:border-border group-[.toast]:rounded-[var(--radius)]",
 					cancelButton:
-						"group-[.toast]:bg-muted group-[.toast]:text-muted-foreground group-[.toast]:rounded-md",
+						"group-[.toast]:bg-muted group-[.toast]:text-muted-foreground group-[.toast]:rounded-[var(--radius)]",
 					success:
-						"group-[.toaster]:border-chart-4/50 group-[.toaster]:bg-card group-[.toaster]:[--success-icon]:text-chart-4",
-					error:
-						"group-[.toaster]:border-destructive/50 group-[.toaster]:bg-card group-[.toaster]:[--error-icon]:text-destructive",
-					warning:
-						"group-[.toaster]:border-chart-3/50 group-[.toaster]:bg-card group-[.toaster]:[--warning-icon]:text-chart-3",
-					info: "group-[.toaster]:border-primary/50 group-[.toaster]:bg-card",
+						"group-[.toaster]:[--success-icon:var(--status-completed)]",
+					error: "group-[.toaster]:[--error-icon:var(--destructive)]",
+					warning: "group-[.toaster]:[--warning-icon:var(--primary)]",
+					info: "group-[.toaster]:[--info-icon:var(--data-file)]",
 				},
 			}}
 			{...props}

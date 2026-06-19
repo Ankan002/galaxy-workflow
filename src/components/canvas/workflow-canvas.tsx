@@ -152,19 +152,19 @@ export function WorkflowCanvas({
 						nodeColor={(node: Node) => {
 							const t = node.type as string | undefined;
 							const colors: Record<string, string> = {
-								TEXT: "#a78bfa",
-								IMAGE_UPLOAD: "#34d399",
-								VIDEO_UPLOAD: "#f472b6",
-								RUN_LLM: "#fbbf24",
-								CROP_IMAGE: "#60a5fa",
-								EXTRACT_VIDEO_FRAME: "#c084fc",
-								EXTRACT_VIDEO: "#fb923c",
+								TEXT: "var(--data-string)",
+								IMAGE_UPLOAD: "var(--data-image)",
+								VIDEO_UPLOAD: "var(--data-video)",
+								RUN_LLM: "var(--data-json)",
+								CROP_IMAGE: "var(--data-image)",
+								EXTRACT_VIDEO_FRAME: "var(--data-number)",
+								EXTRACT_VIDEO: "var(--data-video)",
 							};
-							return colors[t ?? ""] ?? "#94a3b8";
+							return colors[t ?? ""] ?? "var(--data-any)";
 						}}
-						nodeStrokeColor="#1e293b"
-						nodeBorderRadius={6}
-						maskColor="rgba(15, 23, 42, 0.75)"
+						nodeStrokeColor="var(--border)"
+						nodeBorderRadius={4}
+						maskColor="color-mix(in srgb, var(--ak-ink) 45%, transparent)"
 					/>
 				)}
 			</ReactFlow>

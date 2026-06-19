@@ -5,18 +5,21 @@ import * as ProgressPrimitive from "@radix-ui/react-progress"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
-const progressVariants = cva("relative h-2 w-full overflow-hidden rounded-full bg-primary/20", {
-	variants: {
-		variant: {
-			default: "",
-			brand: "bg-brand/20",
-			destructive: "bg-destructive/20",
+const progressVariants = cva(
+	"relative h-4 w-full overflow-hidden rounded-full border-2 border-border bg-muted shadow-xs",
+	{
+		variants: {
+			variant: {
+				default: "",
+				brand: "",
+				destructive: "",
+			},
 		},
-	},
-	defaultVariants: {
-		variant: "default",
-	},
-})
+		defaultVariants: {
+			variant: "default",
+		},
+	}
+)
 
 const Progress = React.forwardRef<
 	React.ElementRef<typeof ProgressPrimitive.Root>,
@@ -30,8 +33,7 @@ const Progress = React.forwardRef<
 	>
 		<ProgressPrimitive.Indicator
 			className={cn(
-				"h-full w-full flex-1 bg-primary transition-all",
-				variant === "brand" && "bg-brand",
+				"h-full w-full flex-1 border-r-2 border-border bg-primary transition-all duration-300 [transition-timing-function:var(--ease-out)]",
 				variant === "destructive" && "bg-destructive"
 			)}
 			style={{ transform: `translateX(-${100 - (value || 0)}%)` }}

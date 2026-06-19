@@ -72,11 +72,11 @@ const MyFilesScreen = () => {
 			search.length === 0 && // TODO: Fix disappearing behaviour
 			workflowFiles.length === 0 ? (
 				<div className="flex-1 flex flex-col items-center justify-center">
-					<Volleyball size={40} strokeWidth={1} />
-					<p className="mt-5 font-medium text-lg tracking-wide">
+					<Volleyball size={40} strokeWidth={1.5} />
+					<p className="mt-5 font-display text-lg tracking-tight">
 						Nothing here yet!
 					</p>
-					<p className="text-muted-foreground text-xs mt-1">
+					<p className="text-muted-foreground text-sm mt-1">
 						Start weaving to bring your ideas to life.
 					</p>
 					<Button
@@ -91,11 +91,11 @@ const MyFilesScreen = () => {
 			) : (
 				<div className="w-full flex flex-col">
 					<div className="w-full flex items-center justify-between mt-4">
-						<p className="text-sm font-medium">My Files</p>
+						<p className="ak-eyebrow">My files</p>
 						<div className="flex items-center gap-2">
 							<InputGroup
 								variant="search"
-								className="w-44 h-8 rounded-xs border-secondary"
+								className="w-44 h-8"
 							>
 								<InputGroupInput
 									placeholder="Search"

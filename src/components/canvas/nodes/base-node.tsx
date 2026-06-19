@@ -63,10 +63,10 @@ const statusToNodeStatus = (
 };
 
 const statusBadgeClasses: Record<NodeStatus, string> = {
-	idle: "bg-muted-foreground",
-	running: "bg-yambo-blue animate-pulse",
-	completed: "bg-yambo-green",
-	failed: "bg-destructive",
+	idle: "bg-status-idle",
+	running: "bg-status-running animate-pulse",
+	completed: "bg-status-completed",
+	failed: "bg-status-failed",
 };
 
 function isNodeProps(
@@ -112,44 +112,44 @@ const handleTypeBorderBg: Record<
 	{ border: string; bg: string; label: string }
 > = {
 	string: {
-		border: "!border-connection-prompt",
-		bg: "!bg-connection-prompt/30",
-		label: "text-connection-prompt",
+		border: "!border-data-string",
+		bg: "!bg-data-string/30",
+		label: "text-data-string",
 	},
 	number: {
-		border: "!border-chart-3",
-		bg: "!bg-chart-3/30",
-		label: "text-chart-3",
+		border: "!border-data-number",
+		bg: "!bg-data-number/30",
+		label: "text-data-number",
 	},
 	boolean: {
-		border: "!border-chart-2",
-		bg: "!bg-chart-2/30",
-		label: "text-chart-2",
+		border: "!border-data-boolean",
+		bg: "!bg-data-boolean/30",
+		label: "text-data-boolean",
 	},
 	json: {
-		border: "!border-chart-4",
-		bg: "!bg-chart-4/30",
-		label: "text-chart-4",
+		border: "!border-data-json",
+		bg: "!bg-data-json/30",
+		label: "text-data-json",
 	},
 	image: {
-		border: "!border-connection-image",
-		bg: "!bg-connection-image/30",
-		label: "text-connection-image",
+		border: "!border-data-image",
+		bg: "!bg-data-image/30",
+		label: "text-data-image",
 	},
 	video: {
-		border: "!border-primary",
-		bg: "!bg-primary/30",
-		label: "text-primary",
+		border: "!border-data-video",
+		bg: "!bg-data-video/30",
+		label: "text-data-video",
 	},
 	file: {
-		border: "!border-chart-5",
-		bg: "!bg-chart-5/30",
-		label: "text-chart-5",
+		border: "!border-data-file",
+		bg: "!bg-data-file/30",
+		label: "text-data-file",
 	},
 	any: {
-		border: "!border-muted-foreground",
-		bg: "!bg-muted-foreground/20",
-		label: "text-muted-foreground",
+		border: "!border-data-any",
+		bg: "!bg-data-any/20",
+		label: "text-data-any",
 	},
 };
 
@@ -302,7 +302,7 @@ export function BaseNode(props: BaseNodeProps | NodeProps) {
 					>
 						<div className="flex items-center gap-2.5 px-3.5 py-2.5">
 							{icon && (
-								<div className="flex size-7 shrink-0 items-center justify-center rounded-md bg-accent text-foreground">
+								<div className="flex size-7 shrink-0 items-center justify-center rounded-sm border-2 border-border bg-accent text-accent-foreground">
 									{icon}
 								</div>
 							)}
@@ -317,7 +317,7 @@ export function BaseNode(props: BaseNodeProps | NodeProps) {
 											title={status}
 										/>
 									)}
-									<span className="text-sm font-medium text-foreground truncate">
+									<span className="font-display text-sm text-foreground truncate">
 										{label}
 									</span>
 								</div>

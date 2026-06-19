@@ -3,14 +3,14 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const textareaVariants = cva(
-	"flex min-h-[60px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+	"flex min-h-[76px] w-full resize-y rounded-[var(--radius)] border-2 border-input bg-card px-3 py-2 text-sm shadow-xs transition-[box-shadow,border-color] duration-150 [transition-timing-function:var(--ease-snap)] placeholder:text-muted-foreground focus-visible:outline-none focus-visible:border-ring focus-visible:shadow-sm disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive",
 	{
 		variants: {
 			variant: {
 				default: "",
-				ghost: "border-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0",
-				node: "bg-card border-border resize-none",
-				error: "border-destructive focus-visible:ring-destructive",
+				ghost: "border-transparent bg-transparent shadow-none focus-visible:shadow-none focus-visible:border-transparent",
+				node: "resize-none bg-card",
+				error: "border-destructive text-destructive focus-visible:border-destructive",
 			},
 		},
 		defaultVariants: {

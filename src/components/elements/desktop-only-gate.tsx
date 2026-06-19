@@ -6,7 +6,7 @@ import { Logo } from "@/components/brand";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-const APP_NAME = "Galaxy Workflow";
+const APP_NAME = "aakriti";
 
 export function DesktopOnlyGate({ children }: { children: React.ReactNode }) {
 	return (

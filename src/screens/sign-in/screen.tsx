@@ -13,7 +13,7 @@ const SignInScreen = () => {
 	useSignUpScreen();
 
 	return (
-		<div className="bg-muted min-h-screen flex flex-col w-full">
+		<div className="ak-dotgrid min-h-screen flex flex-col w-full">
 			<div className="w-full flex pt-3 pb-3 px-4">
 				<LongLogo />
 			</div>

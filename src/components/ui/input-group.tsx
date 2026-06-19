@@ -14,8 +14,8 @@ const inputGroupVariants = cva(
 		variants: {
 			variant: {
 				default:
-					"rounded-md border border-input shadow-xs dark:bg-input/30 has-[[data-slot=input-group-control]:focus-visible]:border-ring has-[[data-slot=input-group-control]:focus-visible]:ring-[3px] has-[[data-slot=input-group-control]:focus-visible]:ring-ring/50",
-				search: "rounded-xl border border-black-40 bg-card shadow-none has-[[data-slot=input-group-control]:focus-visible]:border-black-64",
+					"rounded-[var(--radius)] border-2 border-input bg-card shadow-xs has-[[data-slot=input-group-control]:focus-visible]:border-ring has-[[data-slot=input-group-control]:focus-visible]:shadow-sm",
+				search: "rounded-[var(--radius)] border-2 border-input bg-card shadow-xs has-[[data-slot=input-group-control]:focus-visible]:border-ring has-[[data-slot=input-group-control]:focus-visible]:shadow-sm",
 			},
 		},
 		defaultVariants: { variant: "default" },

@@ -13,6 +13,8 @@ const eslintConfig = defineConfig([
 		"build/**",
 		"next-env.d.ts",
 		".trigger/**",
+		// Vendored design-system reference kit — not application source.
+		"Aakriti Design System/**",
 	]),
 ]);
 

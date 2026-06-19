@@ -29,12 +29,12 @@ const variantStroke: Record<
 	string
 > = {
 	default: "var(--muted-foreground)",
-	prompt: "var(--connection-prompt)",
-	image: "var(--connection-image)",
-	video: "var(--primary)",
-	number: "var(--chart-3)",
-	json: "var(--chart-4)",
-	file: "var(--chart-5)",
+	prompt: "var(--data-string)",
+	image: "var(--data-image)",
+	video: "var(--data-video)",
+	number: "var(--data-number)",
+	json: "var(--data-json)",
+	file: "var(--data-file)",
 };
 
 export function WorkflowEdge({
@@ -78,7 +78,7 @@ export function WorkflowEdge({
 					style={{
 						stroke,
 						strokeWidth,
-						transition: "stroke 150ms ease, stroke-width 150ms ease",
+						transition: "stroke 150ms ease",
 					}}
 					className={cn(animated && "animated")}
 				/>
@@ -94,7 +94,7 @@ export function WorkflowEdge({
 					opacity={0.4}
 					style={{
 						pointerEvents: "none",
-						animation: "edge-sparkle 1.8s linear infinite",
+						animation: "edge-march 1.4s linear infinite",
 					}}
 				/>
 				{/* Sparkle: bright dash travels source → target, same color as edge */}
@@ -108,7 +108,7 @@ export function WorkflowEdge({
 					pathLength={100}
 					style={{
 						pointerEvents: "none",
-						animation: "edge-sparkle 1.8s linear infinite",
+						animation: "edge-march 1.4s linear infinite",
 					}}
 				/>
 			</g>
@@ -122,7 +122,7 @@ export function WorkflowEdge({
 						}}
 					>
 						{label && (
-							<span className="rounded-md bg-card border border-border px-2 py-0.5 text-[10px] font-medium text-muted-foreground shadow-sm">
+							<span className="rounded-sm bg-card border-2 border-border px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wide text-muted-foreground shadow-xs">
 								{label}
 							</span>
 						)}

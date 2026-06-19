@@ -20,14 +20,14 @@ export const DashboardProvider: React.FC<Props> = ({
 		<>
 			<AppSidebar />
 			<SidebarInset>
-				<div className="w-full min-h-screen flex flex-col font-primary">
+				<div className="w-full min-h-screen flex flex-col">
 					<div className="w-full flex justify-between items-center my-8 px-8 min-h-10">
 						<div className="flex items-center gap-3">
 							<ThemeToggle />
 							{isHeadingLoading ? (
-								<Skeleton className="h-5 w-24" />
+								<Skeleton className="h-6 w-32" />
 							) : (
-								<p className="text-foreground text-sm ml-1">
+								<p className="font-display text-base text-foreground ml-1">
 									{heading}
 								</p>
 							)}

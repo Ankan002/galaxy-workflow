@@ -8,9 +8,11 @@ interface Props {
 
 const LongLogo = ({ logoClassName, className }: Props) => {
 	return (
-		<div className={cn("flex items-center gap-2 font-sans", className)}>
-			<Logo className={logoClassName} />
-			<span className="text-lg">Weavy</span>
+		<div className={cn("flex items-center gap-2.5", className)}>
+			<Logo className={cn("size-9", logoClassName)} />
+			<span className="font-display text-2xl lowercase tracking-tight text-foreground">
+				aakriti
+			</span>
 		</div>
 	);
 };
