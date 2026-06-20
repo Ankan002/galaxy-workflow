@@ -1,16 +1,16 @@
-# Graph Report - galaxy-workflow  (2026-06-19)
+# Graph Report - galaxy-workflow  (2026-06-20)
 
 ## Corpus Check
-- 703 files · ~1,048,968 words
+- 636 files · ~1,021,285 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 13707 nodes · 24063 edges · 978 communities (792 shown, 186 thin omitted)
+- 13335 nodes · 23750 edges · 926 communities (778 shown, 148 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `129c8a2d`
+- Built from commit: `8465fe7c`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -496,7 +496,6 @@
 - [[_COMMUNITY_Community 478|Community 478]]
 - [[_COMMUNITY_Community 479|Community 479]]
 - [[_COMMUNITY_Community 480|Community 480]]
-- [[_COMMUNITY_Community 481|Community 481]]
 - [[_COMMUNITY_Community 482|Community 482]]
 - [[_COMMUNITY_Community 483|Community 483]]
 - [[_COMMUNITY_Community 484|Community 484]]
@@ -534,12 +533,10 @@
 - [[_COMMUNITY_Community 516|Community 516]]
 - [[_COMMUNITY_Community 517|Community 517]]
 - [[_COMMUNITY_Community 518|Community 518]]
-- [[_COMMUNITY_Community 519|Community 519]]
 - [[_COMMUNITY_Community 520|Community 520]]
 - [[_COMMUNITY_Community 521|Community 521]]
 - [[_COMMUNITY_Community 522|Community 522]]
 - [[_COMMUNITY_Community 524|Community 524]]
-- [[_COMMUNITY_Community 525|Community 525]]
 - [[_COMMUNITY_Community 526|Community 526]]
 - [[_COMMUNITY_Community 527|Community 527]]
 - [[_COMMUNITY_Community 528|Community 528]]
@@ -558,7 +555,6 @@
 - [[_COMMUNITY_Community 541|Community 541]]
 - [[_COMMUNITY_Community 542|Community 542]]
 - [[_COMMUNITY_Community 543|Community 543]]
-- [[_COMMUNITY_Community 544|Community 544]]
 - [[_COMMUNITY_Community 545|Community 545]]
 - [[_COMMUNITY_Community 546|Community 546]]
 - [[_COMMUNITY_Community 547|Community 547]]
@@ -587,7 +583,6 @@
 - [[_COMMUNITY_Community 571|Community 571]]
 - [[_COMMUNITY_Community 572|Community 572]]
 - [[_COMMUNITY_Community 573|Community 573]]
-- [[_COMMUNITY_Community 574|Community 574]]
 - [[_COMMUNITY_Community 575|Community 575]]
 - [[_COMMUNITY_Community 576|Community 576]]
 - [[_COMMUNITY_Community 577|Community 577]]
@@ -624,13 +619,10 @@
 - [[_COMMUNITY_Community 608|Community 608]]
 - [[_COMMUNITY_Community 609|Community 609]]
 - [[_COMMUNITY_Community 610|Community 610]]
-- [[_COMMUNITY_Community 611|Community 611]]
 - [[_COMMUNITY_Community 612|Community 612]]
 - [[_COMMUNITY_Community 613|Community 613]]
 - [[_COMMUNITY_Community 614|Community 614]]
 - [[_COMMUNITY_Community 615|Community 615]]
-- [[_COMMUNITY_Community 616|Community 616]]
-- [[_COMMUNITY_Community 617|Community 617]]
 - [[_COMMUNITY_Community 618|Community 618]]
 - [[_COMMUNITY_Community 619|Community 619]]
 - [[_COMMUNITY_Community 620|Community 620]]
@@ -774,35 +766,17 @@
 - [[_COMMUNITY_Community 758|Community 758]]
 - [[_COMMUNITY_Community 759|Community 759]]
 - [[_COMMUNITY_Community 760|Community 760]]
-- [[_COMMUNITY_Community 761|Community 761]]
 - [[_COMMUNITY_Community 762|Community 762]]
 - [[_COMMUNITY_Community 763|Community 763]]
 - [[_COMMUNITY_Community 764|Community 764]]
-- [[_COMMUNITY_Community 766|Community 766]]
-- [[_COMMUNITY_Community 767|Community 767]]
-- [[_COMMUNITY_Community 768|Community 768]]
-- [[_COMMUNITY_Community 769|Community 769]]
-- [[_COMMUNITY_Community 770|Community 770]]
 - [[_COMMUNITY_Community 771|Community 771]]
-- [[_COMMUNITY_Community 772|Community 772]]
-- [[_COMMUNITY_Community 774|Community 774]]
-- [[_COMMUNITY_Community 775|Community 775]]
 - [[_COMMUNITY_Community 776|Community 776]]
-- [[_COMMUNITY_Community 777|Community 777]]
 - [[_COMMUNITY_Community 778|Community 778]]
-- [[_COMMUNITY_Community 779|Community 779]]
 - [[_COMMUNITY_Community 780|Community 780]]
-- [[_COMMUNITY_Community 781|Community 781]]
-- [[_COMMUNITY_Community 782|Community 782]]
 - [[_COMMUNITY_Community 783|Community 783]]
 - [[_COMMUNITY_Community 784|Community 784]]
-- [[_COMMUNITY_Community 785|Community 785]]
-- [[_COMMUNITY_Community 786|Community 786]]
-- [[_COMMUNITY_Community 787|Community 787]]
-- [[_COMMUNITY_Community 788|Community 788]]
 - [[_COMMUNITY_Community 789|Community 789]]
 - [[_COMMUNITY_Community 791|Community 791]]
-- [[_COMMUNITY_Community 792|Community 792]]
 - [[_COMMUNITY_Community 793|Community 793]]
 - [[_COMMUNITY_Community 796|Community 796]]
 - [[_COMMUNITY_Community 797|Community 797]]
@@ -813,9 +787,7 @@
 - [[_COMMUNITY_Community 806|Community 806]]
 - [[_COMMUNITY_Community 807|Community 807]]
 - [[_COMMUNITY_Community 808|Community 808]]
-- [[_COMMUNITY_Community 809|Community 809]]
 - [[_COMMUNITY_Community 810|Community 810]]
-- [[_COMMUNITY_Community 811|Community 811]]
 - [[_COMMUNITY_Community 812|Community 812]]
 - [[_COMMUNITY_Community 813|Community 813]]
 - [[_COMMUNITY_Community 814|Community 814]]
@@ -839,20 +811,10 @@
 - [[_COMMUNITY_Community 832|Community 832]]
 - [[_COMMUNITY_Community 833|Community 833]]
 - [[_COMMUNITY_Community 834|Community 834]]
-- [[_COMMUNITY_Community 835|Community 835]]
-- [[_COMMUNITY_Community 836|Community 836]]
-- [[_COMMUNITY_Community 837|Community 837]]
 - [[_COMMUNITY_Community 838|Community 838]]
-- [[_COMMUNITY_Community 839|Community 839]]
 - [[_COMMUNITY_Community 840|Community 840]]
-- [[_COMMUNITY_Community 841|Community 841]]
-- [[_COMMUNITY_Community 842|Community 842]]
 - [[_COMMUNITY_Community 843|Community 843]]
-- [[_COMMUNITY_Community 844|Community 844]]
 - [[_COMMUNITY_Community 845|Community 845]]
-- [[_COMMUNITY_Community 846|Community 846]]
-- [[_COMMUNITY_Community 847|Community 847]]
-- [[_COMMUNITY_Community 848|Community 848]]
 - [[_COMMUNITY_Community 849|Community 849]]
 - [[_COMMUNITY_Community 850|Community 850]]
 - [[_COMMUNITY_Community 851|Community 851]]
@@ -865,11 +827,9 @@
 - [[_COMMUNITY_Community 860|Community 860]]
 - [[_COMMUNITY_Community 861|Community 861]]
 - [[_COMMUNITY_Community 862|Community 862]]
-- [[_COMMUNITY_Community 863|Community 863]]
 - [[_COMMUNITY_Community 864|Community 864]]
 - [[_COMMUNITY_Community 865|Community 865]]
 - [[_COMMUNITY_Community 866|Community 866]]
-- [[_COMMUNITY_Community 867|Community 867]]
 - [[_COMMUNITY_Community 868|Community 868]]
 - [[_COMMUNITY_Community 869|Community 869]]
 - [[_COMMUNITY_Community 870|Community 870]]
@@ -948,16 +908,12 @@
 - [[_COMMUNITY_Community 948|Community 948]]
 - [[_COMMUNITY_Community 949|Community 949]]
 - [[_COMMUNITY_Community 950|Community 950]]
-- [[_COMMUNITY_Community 951|Community 951]]
 - [[_COMMUNITY_Community 952|Community 952]]
 - [[_COMMUNITY_Community 953|Community 953]]
 - [[_COMMUNITY_Community 954|Community 954]]
 - [[_COMMUNITY_Community 955|Community 955]]
 - [[_COMMUNITY_Community 956|Community 956]]
 - [[_COMMUNITY_Community 957|Community 957]]
-- [[_COMMUNITY_Community 958|Community 958]]
-- [[_COMMUNITY_Community 959|Community 959]]
-- [[_COMMUNITY_Community 960|Community 960]]
 - [[_COMMUNITY_Community 961|Community 961]]
 - [[_COMMUNITY_Community 962|Community 962]]
 - [[_COMMUNITY_Community 963|Community 963]]
@@ -966,41 +922,38 @@
 - [[_COMMUNITY_Community 966|Community 966]]
 - [[_COMMUNITY_Community 967|Community 967]]
 - [[_COMMUNITY_Community 968|Community 968]]
-- [[_COMMUNITY_Community 969|Community 969]]
 - [[_COMMUNITY_Community 970|Community 970]]
 - [[_COMMUNITY_Community 971|Community 971]]
 - [[_COMMUNITY_Community 972|Community 972]]
-- [[_COMMUNITY_Community 973|Community 973]]
 - [[_COMMUNITY_Community 974|Community 974]]
 - [[_COMMUNITY_Community 975|Community 975]]
-- [[_COMMUNITY_Community 976|Community 976]]
 - [[_COMMUNITY_Community 977|Community 977]]
 
 ## God Nodes (most connected - your core abstractions)
-1. `tokenKinds` - 120 edges
-2. `cn()` - 74 edges
-3. `files` - 44 edges
+1. `cn()` - 75 edges
+2. `files` - 44 edges
+3. `runHook()` - 28 edges
 4. `runHook()` - 28 edges
 5. `runHook()` - 28 edges
 6. `runHook()` - 28 edges
-7. `runHook()` - 28 edges
-8. `API_ROUTES` - 28 edges
-9. `setLiveState()` - 26 edges
-10. `el()` - 26 edges
+7. `API_ROUTES` - 28 edges
+8. `setLiveState()` - 26 edges
+9. `el()` - 26 edges
+10. `collectBrowserFindings()` - 26 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `CanvasWorkflowLayoutInner()` --calls--> `useWorkflowCanvasStore`  [EXTRACTED]
   src/components/canvas/canvas-workflow-layout.tsx → src/store/use-workflow-canvas.store.ts
-- `ExportWorkflowResponseData` --references--> `WorkflowExportPayload`  [EXTRACTED]
-  src/services/client-api/workflow-file/export-workflow.ts → src/lib/workflow-export/schema.ts
+- `AppSidebar()` --calls--> `useAppSidebar()`  [EXTRACTED]
+  src/components/common/app-sidebar/app-sidebar.tsx → src/components/common/app-sidebar/hook.ts
 - `ImportWorkflowArgs` --references--> `WorkflowExportPayload`  [EXTRACTED]
   src/services/client-api/workflow-file/import-workflow.ts → src/lib/workflow-export/schema.ts
 - `POST()` --calls--> `getPublicUrlFromAssemblyStatus()`  [EXTRACTED]
   src/app/api/transloadit/notify/route.ts → src/utils/server/tus.ts
-- `useWorkflowFile()` --calls--> `useWorkflowCanvas()`  [EXTRACTED]
-  src/screens/workflow/hook.ts → src/components/canvas/hook.ts
+- `POST()` --calls--> `sendJsonApiResponse()`  [EXTRACTED]
+  src/app/api/webhooks/execution-complete/route.ts → src/utils/server/api.ts
 
-## Communities (978 total, 186 thin omitted)
+## Communities (926 total, 148 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.02
@@ -1012,7 +965,7 @@ Nodes (116): ACTIONS, addManualContextText(), annotLastPinClick, annotState, app
 
 ### Community 2 - "Community 2"
 Cohesion: 0.02
-Nodes (116): ACTIONS, addManualContextText(), annotLastPinClick, annotState, apply(), applyGlobalBarLabelState(), averageRgb01(), bufferToBase64() (+108 more)
+Nodes (117): ACTIONS, annotLastPinClick, annotState, apply(), applyGlobalBarLabelState(), applyPlaceholderSizingStyles(), applySvelteComponentVariantStyle(), averageRgb01() (+109 more)
 
 ### Community 3 - "Community 3"
 Cohesion: 0.02
@@ -1020,15 +973,15 @@ Nodes (116): ACTIONS, addManualContextText(), annotLastPinClick, annotState, app
 
 ### Community 4 - "Community 4"
 Cohesion: 0.03
-Nodes (81): ApiHandler, InferBodyOrUndefined, InferQueryOrUndefined, JsonApiResponse, AppSidebar(), useAppSidebar(), EdgeVariant, getMinImageInputCountByTarget() (+73 more)
+Nodes (50): ApiHandler, InferBodyOrUndefined, InferQueryOrUndefined, JsonApiResponse, AppNavItem, ProfileMenuActionId, ProfileMenuItem, API_ROUTES (+42 more)
 
 ### Community 5 - "Community 5"
-Cohesion: 0.02
-Nodes (120): --accent, --accent-foreground, --ak-indigo, --ak-ink, --ak-leaf, --ak-marigold, --ak-marigold-deep, --ak-marigold-soft (+112 more)
+Cohesion: 0.06
+Nodes (45): useAppSidebar(), ExecutionHistory(), CROP_PERCENT_TARGET_HANDLES, CropPercentHandleKey, isCropPercentHandle(), parsePercentageClient(), EdgeVariant, getMinImageInputCountByTarget() (+37 more)
 
 ### Community 6 - "Community 6"
 Cohesion: 0.04
-Nodes (72): useIsMobile(), Props, useSidebarUser(), SidebarUser(), Alert, AlertDescription, AlertTitle, alertVariants (+64 more)
+Nodes (71): AppSidebar(), APP_NAV_ITEMS, useIsMobile(), useSidebarUser(), SidebarUser(), Alert, AlertDescription, AlertTitle (+63 more)
 
 ### Community 7 - "Community 7"
 Cohesion: 0.05
@@ -1051,20 +1004,20 @@ Cohesion: 0.05
 Nodes (80): allEntryIds(), argVal(), buildRepairBatch(), candidatesForEntry(), changedFilesSinceSnapshot(), clearAppliedEntries(), collectApplyOwnedFiles(), collectRollbackFiles() (+72 more)
 
 ### Community 12 - "Community 12"
-Cohesion: 0.05
-Nodes (80): allEntryIds(), argVal(), buildRepairBatch(), candidatesForEntry(), changedFilesSinceSnapshot(), clearAppliedEntries(), collectApplyOwnedFiles(), collectRollbackFiles() (+72 more)
+Cohesion: 0.09
+Nodes (49): allEntryIds(), argVal(), buildRepairBatch(), candidatesForEntry(), changedFilesSinceSnapshot(), clearAppliedEntries(), collectApplyOwnedFiles(), collectRollbackFiles() (+41 more)
 
 ### Community 13 - "Community 13"
-Cohesion: 0.06
-Nodes (68): CROP_PERCENT_TARGET_HANDLES, CropPercentHandleKey, isCropPercentHandle(), parsePercentageClient(), useTransloaditUpload(), CROP_IMAGE_DEFINITION, CROP_PERCENT_HANDLES, CropImageNode() (+60 more)
+Cohesion: 0.08
+Nodes (52): useTransloaditUpload(), CROP_IMAGE_DEFINITION, CROP_PERCENT_HANDLES, CropImageNode(), CropImageNodeConfig, PERCENT_HANDLE_KEYS, useConnectedPercentHandles(), useConnectedSourceConfigDeps() (+44 more)
 
 ### Community 14 - "Community 14"
-Cohesion: 0.04
-Nodes (86): checkBorders(), checkClippedOverflow(), checkColors(), checkCreamPalette(), checkElementAIPaletteDOM(), checkElementBorders(), checkElementBordersDOM(), checkElementClippedOverflow() (+78 more)
+Cohesion: 0.05
+Nodes (74): checkBorders(), checkClippedOverflow(), checkElementBorders(), checkElementBordersDOM(), checkElementClippedOverflow(), checkElementClippedOverflowDOM(), checkElementGlow(), checkElementGlowDOM() (+66 more)
 
 ### Community 15 - "Community 15"
-Cohesion: 0.05
-Nodes (55): Logo, LongLogo(), Props, CanvasNodeSidebarProps, NODE_ICONS, QUICK_ACCESS_TYPES, CanvasRightSidebar(), CanvasRightSidebarProps (+47 more)
+Cohesion: 0.07
+Nodes (42): Logo, LongLogo(), Props, CanvasNodeSidebarProps, NODE_ICONS, QUICK_ACCESS_TYPES, CanvasRightSidebar(), CanvasRightSidebarProps (+34 more)
 
 ### Community 16 - "Community 16"
 Cohesion: 0.03
@@ -1099,8 +1052,8 @@ Cohesion: 0.07
 Nodes (65): $(), ae(), at(), be(), bt(), ce(), ct(), de() (+57 more)
 
 ### Community 24 - "Community 24"
-Cohesion: 0.03
-Nodes (21): Alert, Avatar, Badge, Button, Card, Checkbox, Dialog, __ds_scope (+13 more)
+Cohesion: 0.09
+Nodes (34): addManualContextText(), applyEditing(), buildLocatorForLeaf(), canRestoreManualEditElement(), collectManualContextPieces(), contextElementForManualEdit(), copyEditContainerContext(), copyEditLeafContext() (+26 more)
 
 ### Community 25 - "Community 25"
 Cohesion: 0.06
@@ -1112,7 +1065,7 @@ Nodes (56): abortSvelteComponentInjection(), buildPickedAnchorSnapshot(), cancel
 
 ### Community 27 - "Community 27"
 Cohesion: 0.06
-Nodes (56): applyParamDefaults(), applyParamValue(), applyPlaceholderDimensions(), applyPlaceholderSizingStyles(), applySavedSessionMeta(), buildInsertPlaceholderSnapshotFromDom(), clampVariantIndex(), clearHandled() (+48 more)
+Nodes (56): applyOriginalAttrsToSvelteAnchor(), applyPlaceholderDimensions(), applySavedSessionMeta(), buildInsertPlaceholderSnapshotFromDom(), clampVariantIndex(), clearHandled(), commitAcceptedSvelteComponentToDom(), elementMatchesOriginalMarkup() (+48 more)
 
 ### Community 28 - "Community 28"
 Cohesion: 0.10
@@ -1171,8 +1124,8 @@ Cohesion: 0.09
 Nodes (51): addColorObject(), addDesignColor(), addRoundedScale(), addRoundedToken(), addSidecarColors(), addSidecarRadii(), addTypographyFonts(), canonicalDesignFindingKey() (+43 more)
 
 ### Community 42 - "Community 42"
-Cohesion: 0.08
-Nodes (50): applyEditing(), buildLocatorForLeaf(), canRestoreManualEditElement(), clearStoredManualApplyState(), copyEditContainerContext(), copyEditLeafContext(), copyToClipboard(), directMixedTextRestoreNodes() (+42 more)
+Cohesion: 0.18
+Nodes (26): clearStoredManualApplyState(), fetchPendingCount(), handleManualEditActivity(), hidePendingApplyDock(), manualApplyLoadingText(), manualApplyStateKey(), manualEditEventForCurrentPage(), numberOrNull() (+18 more)
 
 ### Community 43 - "Community 43"
 Cohesion: 0.18
@@ -1231,8 +1184,8 @@ Cohesion: 0.09
 Nodes (42): appendCssToSvelteStyle(), appendSanitizedCssRule(), applyDeferredSvelteComponentAccepts(), bakeParamValuesInCss(), buildInsertVariantStub(), buildPropContract(), buildPropsScript(), buildVariantStub() (+34 more)
 
 ### Community 57 - "Community 57"
-Cohesion: 0.07
-Nodes (46): armPageChatForTyping(), attachSteerFocusDebug(), checkpointPayload(), clearSteerAwaitTimer(), collapsePageChat(), configureVoiceContext(), expandPageChat(), finishVoiceSession() (+38 more)
+Cohesion: 0.11
+Nodes (33): armPageChatForTyping(), attachSteerFocusDebug(), checkpointPayload(), clearSteerAwaitTimer(), collapsePageChat(), expandPageChat(), focusConfigureInput(), focusPageChatInput() (+25 more)
 
 ### Community 58 - "Community 58"
 Cohesion: 0.07
@@ -1279,12 +1232,12 @@ Cohesion: 0.05
 Nodes (34): allFindings, allText, banner, bodyResizeObserver, close, collected, controls, DESIGN_SKIP_TAGS (+26 more)
 
 ### Community 69 - "Community 69"
-Cohesion: 0.08
-Nodes (31): errorPreview(), ExecutionHistory(), ExecutionHistoryProps, formatDuration(), getImageUrl(), getLLMText(), getVideoUrl(), isImageUrl() (+23 more)
+Cohesion: 0.10
+Nodes (24): errorPreview(), ExecutionHistoryProps, formatDuration(), getImageUrl(), getLLMText(), getVideoUrl(), isImageUrl(), LLM_ANSWER_KEYS (+16 more)
 
 ### Community 70 - "Community 70"
 Cohesion: 0.10
-Nodes (42): actionLabel(), applyConfigureBarChrome(), bindConfigureCountPillTooltip(), bindConfigureInlineControlHover(), buildConfigureActionControl(), buildConfigureCountControl(), buildConfigureRow(), buildConfigureSubmitButton() (+34 more)
+Nodes (43): actionLabel(), applyConfigureBarChrome(), bindConfigureCountPillTooltip(), bindConfigureInlineControlHover(), buildConfigureActionControl(), buildConfigureCountControl(), buildConfigureRow(), buildConfigureSubmitButton() (+35 more)
 
 ### Community 71 - "Community 71"
 Cohesion: 0.10
@@ -1296,15 +1249,15 @@ Nodes (42): actionLabel(), applyConfigureBarChrome(), bindConfigureCountPillTool
 
 ### Community 73 - "Community 73"
 Cohesion: 0.10
-Nodes (23): CanvasBottomIsland(), CanvasBottomIslandProps, InteractionMode, ZOOM_PRESETS, CanvasNodeSidebar(), CanvasWorkflowLayout(), CanvasWorkflowLayoutInner(), CanvasWorkflowLayoutProps (+15 more)
+Nodes (22): CanvasBottomIsland(), CanvasBottomIslandProps, InteractionMode, ZOOM_PRESETS, CanvasNodeSidebar(), CanvasWorkflowLayout(), CanvasWorkflowLayoutInner(), CanvasWorkflowLayoutProps (+14 more)
 
 ### Community 74 - "Community 74"
-Cohesion: 0.08
-Nodes (34): createWorkflowTemplate(), CreateWorkflowTemplateArgs, deleteWorkflowTemplate(), getWorkflowTemplateById(), getWorkflowTemplates(), GetWorkflowTemplatesArgs, updateWorkflowTemplate(), UpdateWorkflowTemplateArgs (+26 more)
+Cohesion: 0.04
+Nodes (60): createWorkflowFile(), CreateWorkflowFileArgs, deleteWorkflowFile(), GetWorkflowFileArgs, getWorkflowFiles(), importWorkflowFromExport(), ImportWorkflowFromExportResult, updateWorkflowFileName() (+52 more)
 
 ### Community 75 - "Community 75"
-Cohesion: 0.05
-Nodes (39): replaces, replaces, replaces, replaces, replaces, replaces, Alert, Avatar (+31 more)
+Cohesion: 0.13
+Nodes (31): applyMockWrites(), buildCopyEditBatchPrompt(), checkFrameworkSourceSyntax(), chooseCopyEditAgent(), COMMAND_AUTH_CACHE, commandAuthed(), commandExists(), compactBatchForPrompt() (+23 more)
 
 ### Community 76 - "Community 76"
 Cohesion: 0.08
@@ -1319,8 +1272,8 @@ Cohesion: 0.08
 Nodes (19): detectUrl(), runVisualContrastFallback(), serializeDesignSystemForBrowser(), STATIC_ELEMENT_RULES, captureVisualContrastCandidate(), compareScreenshotContrast(), sanitizeScreenshotClip(), finding() (+11 more)
 
 ### Community 79 - "Community 79"
-Cohesion: 0.08
-Nodes (38): attachSteerFocusGuard(), barPaletteForTheme(), brandMarkSvg(), buildDesignHeader(), buildParamsPanel(), buildSteerProcessingDots(), connectSSE(), cursorForInsertAxis() (+30 more)
+Cohesion: 0.09
+Nodes (37): attachSteerFocusGuard(), barPaletteForTheme(), brandMarkSvg(), buildDesignHeader(), buildParamsPanel(), buildSteerProcessingDots(), connectSSE(), cursorForInsertAxis() (+29 more)
 
 ### Community 80 - "Community 80"
 Cohesion: 0.09
@@ -1332,11 +1285,11 @@ Nodes (37): computedHash, skillPath, source, sourceType, computedHash, skillPath
 
 ### Community 82 - "Community 82"
 Cohesion: 0.08
-Nodes (38): attachSteerFocusGuard(), barPaletteForTheme(), brandMarkSvg(), buildDesignHeader(), buildParamsPanel(), buildSteerProcessingDots(), connectSSE(), cursorForInsertAxis() (+30 more)
+Nodes (39): attachSteerFocusGuard(), barPaletteForTheme(), brandMarkSvg(), buildDesignHeader(), buildParamsPanel(), buildSteerProcessingDots(), connectSSE(), cursorForInsertAxis() (+31 more)
 
 ### Community 83 - "Community 83"
 Cohesion: 0.11
-Nodes (18): getWorkflowExecutions(), getWorkflowExecutionWithNodeExecutions(), getWorkflowFileById(), VALID_NODE_CONNECTIONS, VALID_NODE_CONNECTIONS_SET, POST, GET, GetExecutionResponseData (+10 more)
+Nodes (10): TOAST_POSITION, DashboardProvider(), Props, Skeleton(), Tabs(), TabsContent(), TabsList(), tabsListVariants (+2 more)
 
 ### Community 84 - "Community 84"
 Cohesion: 0.08
@@ -1373,6 +1326,10 @@ Nodes (34): ACTIONS, addIgnoreFile(), addIgnoreRule(), addIgnoreValue(), DETECTO
 ### Community 92 - "Community 92"
 Cohesion: 0.15
 Nodes (33): buildColor(), CANONICAL_SECTIONS, collectBullets(), collectColorValues(), collectParagraphs(), detectFormat(), extractColors(), extractComponents() (+25 more)
+
+### Community 93 - "Community 93"
+Cohesion: 0.14
+Nodes (16): buildInputHandles(), clampImageCount(), LLMModelId, RunLlmNode(), RunLlmNodeConfig, STATIC_INPUT_HANDLES, Label, labelVariants (+8 more)
 
 ### Community 94 - "Community 94"
 Cohesion: 0.06
@@ -1416,15 +1373,15 @@ Nodes (33): armPageChatForTyping(), attachSteerFocusDebug(), checkpointPayload()
 
 ### Community 104 - "Community 104"
 Cohesion: 0.06
-Nodes (33): 1. App Router pages — thin entrypoints, 2. Screens — UI + colocated hooks, 3. API routes — `createApi` factory, 4. Database — `src/db/actions/*.action.ts`, 5. Client API — TanStack Query in `src/services/client-api/`, 6. Trigger.dev tasks — `src/trigger/`, 7. Canvas & nodes — `src/components/canvas/`, AGENTS.md — Galaxy Workflow (+25 more)
+Nodes (34): 1. App Router pages — thin entrypoints, 2. Screens — UI + colocated hooks, 3. API routes — `createApi` factory, 4. Database — `src/db/actions/*.action.ts`, 5. Client API — TanStack Query in `src/services/client-api/`, 6. Trigger.dev tasks — `src/trigger/`, 7. Canvas & nodes — `src/components/canvas/`, AGENTS.md — Galaxy Workflow (+26 more)
 
 ### Community 105 - "Community 105"
 Cohesion: 0.13
 Nodes (30): acceptCli(), argVal(), buildCarbonizeReplacement(), decodeHtmlAttr(), deindentContent(), detectCommentSyntax(), escapeRegExp(), expandReplaceRange() (+22 more)
 
 ### Community 106 - "Community 106"
-Cohesion: 0.07
-Nodes (13): ErrorMapper, clientUtils, NameGenerator, QueryClient, UIEventsHandler, OAUTH_ERROR_MAP, Props, QueryProvider() (+5 more)
+Cohesion: 0.08
+Nodes (12): ErrorMapper, clientUtils, NameGenerator, QueryClient, UIEventsHandler, OAUTH_ERROR_MAP, Props, QueryProvider() (+4 more)
 
 ### Community 107 - "Community 107"
 Cohesion: 0.06
@@ -1475,16 +1432,16 @@ Cohesion: 0.14
 Nodes (31): allow(), bumpCursorDenial(), cursorBlockMessage(), deny(), done(), escapeRegExp(), findingSignature(), firstMatch() (+23 more)
 
 ### Community 119 - "Community 119"
-Cohesion: 0.08
-Nodes (20): getDevScript(), main(), clientEnv, PUBLIC_ROUTES, serverEnv, adapter, globalForPrisma, POST() (+12 more)
+Cohesion: 0.05
+Nodes (36): createUsers(), CreateUsersArgs, deleteUser(), DeleteUserArgs, getAllUsers(), UpdateUserArgs, upsertUser(), UpsertUserArgs (+28 more)
 
 ### Community 120 - "Community 120"
 Cohesion: 0.06
 Nodes (30): Assess Adaptation Challenge, Breakpoints: Content-Driven, code:css (/* Fine pointer (mouse, trackpad) */), code:css (body {), code:html (<meta name="viewport" content="width=device-width, initial-s), code:html (<img), code:html (<picture>), Content Adaptation (+22 more)
 
 ### Community 121 - "Community 121"
-Cohesion: 0.09
-Nodes (28): ACK_EXTS, ALLOWED_EXTS, clampByte(), CO_SCAN_STYLE_NAMES, colorIgnoreKey(), DEFAULT_CONFIG, DETECTOR_CANDIDATES, __dirname (+20 more)
+Cohesion: 0.07
+Nodes (41): ACK_EXTS, ALLOWED_EXTS, applyConfigSource(), applyDetectorConfigSource(), clampByte(), cloneDefaultConfig(), CO_SCAN_STYLE_NAMES, colorIgnoreKey() (+33 more)
 
 ### Community 122 - "Community 122"
 Cohesion: 0.06
@@ -1507,12 +1464,12 @@ Cohesion: 0.06
 Nodes (30): Assess Adaptation Challenge, Breakpoints: Content-Driven, code:css (/* Fine pointer (mouse, trackpad) */), code:css (body {), code:html (<meta name="viewport" content="width=device-width, initial-s), code:html (<img), code:html (<picture>), Content Adaptation (+22 more)
 
 ### Community 127 - "Community 127"
-Cohesion: 0.09
-Nodes (28): ACK_EXTS, ALLOWED_EXTS, clampByte(), CO_SCAN_STYLE_NAMES, colorIgnoreKey(), DEFAULT_CONFIG, DETECTOR_CANDIDATES, __dirname (+20 more)
+Cohesion: 0.07
+Nodes (41): ACK_EXTS, ALLOWED_EXTS, applyConfigSource(), applyDetectorConfigSource(), clampByte(), cloneDefaultConfig(), CO_SCAN_STYLE_NAMES, colorIgnoreKey() (+33 more)
 
 ### Community 128 - "Community 128"
-Cohesion: 0.08
-Nodes (26): createWorkflowNode(), CreateWorkflowNodeArgs, deleteWorkflowNode(), DeleteWorkflowNodeArgs, getWorkflowNode(), GetWorkflowNodeArgs, getWorkflowNodes(), GetWorkflowNodesArgs (+18 more)
+Cohesion: 0.04
+Nodes (61): createWorkflowEdge(), CreateWorkflowEdgeArgs, deleteWorkflowEdge(), DeleteWorkflowEdgeArgs, getWorkflowEdge(), GetWorkflowEdgeArgs, getWorkflowEdges(), GetWorkflowEdgesArgs (+53 more)
 
 ### Community 129 - "Community 129"
 Cohesion: 0.06
@@ -1543,12 +1500,12 @@ Cohesion: 0.07
 Nodes (28): Accessibility, Animation Standards Reference, Asymmetric timing, code:css (--ease-out: cubic-bezier(0.23, 1, 0.32, 1);        /* strong), code:css (.item { opacity: 0; transform: translateY(8px); animation: f), code:css (@media (prefers-reduced-motion: reduce) {), code:jsx (const reduce = useReducedMotion();), code:css (.popover { transform-origin: var(--radix-popover-content-tra) (+20 more)
 
 ### Community 136 - "Community 136"
-Cohesion: 0.13
-Nodes (26): createNodeExecution(), createSourceNodeExecution(), createWorkflowExecution(), getCompletedNodeIdsInRun(), getNodeIdsWithExecutionInRun(), getNodeOutputForExecution(), createFullFlowRun(), CROP_PERCENT_PAYLOAD_KEYS (+18 more)
+Cohesion: 0.05
+Nodes (67): createNodeExecution(), CreateNodeExecutionArgs, createSourceNodeExecution(), CreateSourceNodeExecutionArgs, createWorkflowExecution(), CreateWorkflowExecutionArgs, getCompletedNodeIdsInRun(), getLatestNodeOutput() (+59 more)
 
 ### Community 137 - "Community 137"
-Cohesion: 0.09
-Nodes (24): createWorkflowFile(), CreateWorkflowFileArgs, deleteWorkflowFile(), GetWorkflowFileArgs, getWorkflowFiles(), importWorkflowFromExport(), ImportWorkflowFromExportResult, updateWorkflowFileName() (+16 more)
+Cohesion: 0.16
+Nodes (19): checkColors(), checkCreamPalette(), checkElementAIPaletteDOM(), checkElementColors(), checkElementColorsDOM(), checkElementIconTile(), checkElementIconTileDOM(), checkIconTile() (+11 more)
 
 ### Community 138 - "Community 138"
 Cohesion: 0.10
@@ -1583,12 +1540,12 @@ Cohesion: 0.14
 Nodes (26): applyBufferedManualEditToLines(), argVal(), buildCssAuthoring(), buildCssSelectorPrefixExamples(), buildSearchQueries(), countOccurrences(), detectCommentSyntax(), detectStyleMode() (+18 more)
 
 ### Community 146 - "Community 146"
-Cohesion: 0.12
-Nodes (23): CreateNodeExecutionArgs, CreateSourceNodeExecutionArgs, CreateWorkflowExecutionArgs, GetLatestNodeOutputArgs, getNodeExecutionById(), GetNodeExecutionByIdArgs, GetNodeOutputForExecutionArgs, getRunningWorkflowExecution() (+15 more)
+Cohesion: 0.21
+Nodes (13): configureVoiceContext(), finishVoiceSession(), isEmbeddedPreviewBrowser(), releaseVoiceEngine(), startVoice(), steerSpeechRecognitionCtor(), steerVoiceContext(), steerVoiceErrorMessage() (+5 more)
 
 ### Community 147 - "Community 147"
-Cohesion: 0.11
-Nodes (27): acceptedDomAlreadyClean(), applyOriginalAttrsToSvelteAnchor(), applySvelteComponentVariantStyle(), commitAcceptedSvelteComponentToDom(), elementMatchesOriginalMarkup(), ensureAcceptedDomClean(), extractSvelteComponentStyle(), findAcceptedRuntimeWrappers() (+19 more)
+Cohesion: 0.36
+Nodes (8): acceptedDomAlreadyClean(), ensureAcceptedDomClean(), findAcceptedRuntimeWrappers(), markSessionHandled(), maybeCompleteAcceptedSession(), reloadAfterMissingAcceptedDom(), restoreAcceptedDomFromSnapshot(), scheduleAcceptCleanup()
 
 ### Community 148 - "Community 148"
 Cohesion: 0.14
@@ -1768,7 +1725,7 @@ Nodes (24): browserHasDirectText(), browserPrimaryFont(), browserRadiusTokens(),
 
 ### Community 192 - "Community 192"
 Cohesion: 0.13
-Nodes (13): useAppScreen(), AppsScreen(), EXECUTION_STATUS, ExecutionStatusBadge(), ExecutionStatusBadgeProps, ExecutionStatusIcon(), ExecutionStatusValue, getExecutionStatusLabel() (+5 more)
+Nodes (12): useAppScreen(), AppsScreen(), EXECUTION_STATUS, ExecutionStatusBadge(), ExecutionStatusBadgeProps, ExecutionStatusIcon(), ExecutionStatusValue, getExecutionStatusLabel() (+4 more)
 
 ### Community 193 - "Community 193"
 Cohesion: 0.11
@@ -1779,8 +1736,8 @@ Cohesion: 0.17
 Nodes (20): augmentEventWithAcceptHandling(), buildAcceptScriptArgs(), buildPollReplyPayload(), EVENT_TYPES_NEEDING_AGENT_REPLY, fetchNextEvent(), fetchServerStatus(), handlePollError(), isEventPending() (+12 more)
 
 ### Community 195 - "Community 195"
-Cohesion: 0.12
-Nodes (13): archivoBlack, dmMono, dmSans, metadata, spaceGrotesk, spaceMono, tiroDevanagari, AuthProvider() (+5 more)
+Cohesion: 0.11
+Nodes (14): archivoBlack, dmMono, dmSans, instrumentSerif, metadata, spaceGrotesk, spaceMono, tiroDevanagari (+6 more)
 
 ### Community 196 - "Community 196"
 Cohesion: 0.17
@@ -1907,12 +1864,12 @@ Cohesion: 0.17
 Nodes (18): buildUpdateDirective(), cli(), compareSemver(), computeUpdateDirective(), DESIGN_NAMES, extractRegister(), FALLBACK_DIRS, fetchLatestSkillVersion() (+10 more)
 
 ### Community 227 - "Community 227"
-Cohesion: 0.16
-Nodes (18): getLatestNodeOutput(), POST, TRIGGER_TASK_IDS, CROP_PERCENT_PAYLOAD_KEYS, EXECUTABLE_NODE_TYPES, extractTextFromPredecessorOutput(), getNodeOutputForHandle(), getRequiredInputHandles() (+10 more)
+Cohesion: 0.27
+Nodes (11): applyParamDefaults(), applyParamValue(), closedClipPath(), hideParamsPanel(), openTunePopover(), parseVariantParams(), popoverDirection(), positionParamsPanel() (+3 more)
 
 ### Community 228 - "Community 228"
-Cohesion: 0.13
-Nodes (19): beginEditPin(), buildAnnotationsForCapture(), buildPinElement(), cancelEditingPin(), clampPlaceholderSize(), finalizeEditingPin(), localCoords(), materializePlaceholderWidth() (+11 more)
+Cohesion: 0.17
+Nodes (16): beginEditPin(), buildAnnotationsForCapture(), buildPinElement(), cancelEditingPin(), clampPlaceholderSize(), finalizeEditingPin(), localCoords(), onAnnotDown() (+8 more)
 
 ### Community 229 - "Community 229"
 Cohesion: 0.16
@@ -1939,8 +1896,8 @@ Cohesion: 0.16
 Nodes (12): CSS_IN_JS_EXTENSIONS, detectText(), extFromFilePath(), extractCSSinJS(), extractStyleBlocks(), PAGE_ANALYZER_EXTS, REGEX_ANALYZERS, REGEX_MATCHERS (+4 more)
 
 ### Community 235 - "Community 235"
-Cohesion: 0.18
-Nodes (15): FORBIDDEN_MANUAL_EDIT_TEXT_CHARS, INSERT_POSITIONS, isValidId(), isValidVariantId(), validateAnnotationFields(), validateEvent(), validateInsertGenerate(), validateManualEditEvent() (+7 more)
+Cohesion: 0.24
+Nodes (12): FORBIDDEN_MANUAL_EDIT_TEXT_CHARS, INSERT_POSITIONS, isValidId(), isValidVariantId(), validateAnnotationFields(), validateEvent(), validateInsertGenerate(), validateManualEditEvent() (+4 more)
 
 ### Community 236 - "Community 236"
 Cohesion: 0.11
@@ -1999,12 +1956,12 @@ Cohesion: 0.11
 Nodes (17): code:bash (npm i -g graphify-ts    # install CLI), code:bash (graphify build .), code:bash (graphify build .), code:bash (graphify query graphify-out/graph.json <name>), code:bash (graphify update graphify-out/graph.json <file1> [file2...]), code:bash (graphify auto-update [dir]), code:json ({), Commands (+9 more)
 
 ### Community 250 - "Community 250"
-Cohesion: 0.10
-Nodes (20): createWorkflowEdge(), CreateWorkflowEdgeArgs, deleteWorkflowEdge(), DeleteWorkflowEdgeArgs, getWorkflowEdge(), GetWorkflowEdgeArgs, getWorkflowEdges(), GetWorkflowEdgesArgs (+12 more)
+Cohesion: 0.29
+Nodes (5): args, buffer, cwd, pageUrlFilter, remaining
 
 ### Community 251 - "Community 251"
-Cohesion: 0.20
-Nodes (14): args, buffer, cwd, pageUrlFilter, remaining, countByPage(), getBufferPath(), readBuffer() (+6 more)
+Cohesion: 0.44
+Nodes (9): countByPage(), getBufferPath(), readBuffer(), readBufferInternal(), readBufferStrict(), removeEntries(), stageEntry(), truncateBuffer() (+1 more)
 
 ### Community 252 - "Community 252"
 Cohesion: 0.44
@@ -2019,8 +1976,8 @@ Cohesion: 0.12
 Nodes (16): 1. Skill Meta, 2.1 Swiss Industrial Print, 2.2 Tactical Telemetry & CRT Terminal, 2. Visual Archetypes, 3.1 Macro-Typography (Structural Headers), 3.2 Micro-Typography (Data & Telemetry), 3.3 Textural Contrast (Artistic Disruption), 3. Typographic Architecture (+8 more)
 
 ### Community 255 - "Community 255"
-Cohesion: 0.16
-Nodes (12): createUsers(), CreateUsersArgs, deleteUser(), DeleteUserArgs, getAllUsers(), UpdateUserArgs, upsertUser(), UpsertUserArgs (+4 more)
+Cohesion: 0.83
+Nodes (3): createManualEditRoutes(), sendJson(), summarizePendingManualEditBatch()
 
 ### Community 256 - "Community 256"
 Cohesion: 0.12
@@ -2083,8 +2040,8 @@ Cohesion: 0.16
 Nodes (19): checkColors(), checkCreamPalette(), checkElementAIPaletteDOM(), checkElementColors(), checkElementColorsDOM(), checkElementIconTile(), checkElementIconTileDOM(), checkIconTile() (+11 more)
 
 ### Community 271 - "Community 271"
-Cohesion: 0.13
-Nodes (15): CardContent(), CardDescription(), CardHeader(), CardRoot(), CardTitle(), Check(), ChevronDown(), _extends() (+7 more)
+Cohesion: 0.67
+Nodes (3): 6. Write all variants in a single edit, code:html (<!-- Variants: insert below this line -->), code:tsx (<style data-impeccable-css="SESSION_ID">{`)
 
 ### Community 272 - "Community 272"
 Cohesion: 0.13
@@ -2107,8 +2064,8 @@ Cohesion: 0.20
 Nodes (15): blendRgba(), clampByte(), firstCssUrl(), getLayerValue(), loadVisualContrastImage(), parseObjectPosition(), parsePositionPair(), parsePositionToken() (+7 more)
 
 ### Community 277 - "Community 277"
-Cohesion: 0.15
-Nodes (15): appendDesignSystemNote(), depthIsSet(), designSystemOptions(), loadDetector(), parseApplyPatchPaths(), payload(), relativize(), renderCleanAck() (+7 more)
+Cohesion: 0.13
+Nodes (21): appendDesignSystemNote(), bumpEditCount(), dedupeAgainstCache(), depthIsSet(), designSystemOptions(), ensureFile(), ensureSession(), findingCacheKey() (+13 more)
 
 ### Community 278 - "Community 278"
 Cohesion: 0.26
@@ -2195,8 +2152,8 @@ Cohesion: 0.20
 Nodes (15): blendRgba(), clampByte(), firstCssUrl(), getLayerValue(), loadVisualContrastImage(), parseObjectPosition(), parsePositionPair(), parsePositionToken() (+7 more)
 
 ### Community 299 - "Community 299"
-Cohesion: 0.15
-Nodes (15): appendDesignSystemNote(), depthIsSet(), designSystemOptions(), loadDetector(), parseApplyPatchPaths(), payload(), relativize(), renderCleanAck() (+7 more)
+Cohesion: 0.13
+Nodes (21): appendDesignSystemNote(), bumpEditCount(), dedupeAgainstCache(), depthIsSet(), designSystemOptions(), ensureFile(), ensureSession(), findingCacheKey() (+13 more)
 
 ### Community 300 - "Community 300"
 Cohesion: 0.26
@@ -2223,16 +2180,16 @@ Cohesion: 0.22
 Nodes (14): firstCssUrl(), getLayerValue(), loadVisualContrastImage(), parseObjectPosition(), parsePositionPair(), parsePositionToken(), pickWorstContrastColor(), pointToImageSource() (+6 more)
 
 ### Community 306 - "Community 306"
-Cohesion: 0.24
-Nodes (12): FORBIDDEN_MANUAL_EDIT_TEXT_CHARS, INSERT_POSITIONS, isValidId(), isValidVariantId(), validateAnnotationFields(), validateEvent(), validateInsertGenerate(), validateManualEditEvent() (+4 more)
+Cohesion: 0.18
+Nodes (15): FORBIDDEN_MANUAL_EDIT_TEXT_CHARS, INSERT_POSITIONS, isValidId(), isValidVariantId(), validateAnnotationFields(), validateEvent(), validateInsertGenerate(), validateManualEditEvent() (+7 more)
 
 ### Community 307 - "Community 307"
 Cohesion: 0.19
 Nodes (13): analyzeVisualContrast(), analyzeVisualContrastCandidate(), buildSelectorSegment(), checkElementTextOverflowDOM(), classSelector(), collectVisualContrastCandidates(), collectVisualContrastReasons(), generateSelector() (+5 more)
 
 ### Community 308 - "Community 308"
-Cohesion: 0.17
-Nodes (13): applyConfigSource(), applyDetectorConfigSource(), cloneDefaultConfig(), detectorSection(), getConfigPath(), getLocalConfigPath(), hookSection(), ignoreValueFilesKey() (+5 more)
+Cohesion: 0.67
+Nodes (3): /Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/brand/logo.tsx, editCount, findings
 
 ### Community 309 - "Community 309"
 Cohesion: 0.24
@@ -2303,12 +2260,12 @@ Cohesion: 0.19
 Nodes (13): analyzeVisualContrast(), analyzeVisualContrastCandidate(), buildSelectorSegment(), checkElementTextOverflowDOM(), classSelector(), collectVisualContrastCandidates(), collectVisualContrastReasons(), generateSelector() (+5 more)
 
 ### Community 326 - "Community 326"
-Cohesion: 0.22
-Nodes (9): files, updatedAt, /Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/brand/logo.tsx, /Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/screens/my-files/components/prebuilt-workflows/prebuilt-workflows.tsx, 58c92dcd-7e73-4253-b51d-29ac5dafbb8a, editCount, findings, editCount (+1 more)
+Cohesion: 0.07
+Nodes (26): files, updatedAt, /Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/canvas/canvas-node-sidebar.tsx, /Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/common/sidebar-user/sidebar-user.tsx, /Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/ui/card.tsx, /Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/screens/my-files/components/prebuilt-workflows/prebuilt-workflows.tsx, /Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/screens/my-files/components/skeleton-card/skeleton-card.tsx, /Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/screens/sign-in/screen.tsx (+18 more)
 
 ### Community 327 - "Community 327"
-Cohesion: 0.17
-Nodes (13): applyConfigSource(), applyDetectorConfigSource(), cloneDefaultConfig(), detectorSection(), getConfigPath(), getLocalConfigPath(), hookSection(), ignoreValueFilesKey() (+5 more)
+Cohesion: 0.67
+Nodes (3): /Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/canvas/nodes/library/image-upload-node.tsx, editCount, findings
 
 ### Community 328 - "Community 328"
 Cohesion: 0.24
@@ -2323,8 +2280,8 @@ Cohesion: 0.24
 Nodes (11): hasGeneratedHeader(), HEADER_MARKERS, isGeneratedFile(), isGitIgnored(), argVal(), buildInsertWrapperLines(), computeInsertLine(), INSERT_POSITIONS (+3 more)
 
 ### Community 331 - "Community 331"
-Cohesion: 0.17
-Nodes (11): brandFonts, cards, components, fonts, globalCssPaths, namespace, source, startingPoints (+3 more)
+Cohesion: 0.67
+Nodes (3): /Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/canvas/nodes/library/video-upload-node.tsx, editCount, findings
 
 ### Community 332 - "Community 332"
 Cohesion: 0.17
@@ -2511,8 +2468,8 @@ Cohesion: 0.18
 Nodes (9): BORDER_SAFE_TAGS, BRAND_FONT_DOMAINS, GENERIC_FONTS, GITHUB_DOMAINS, GOOGLE_DOMAINS, KNOWN_SERIF_FONTS, OVERUSED_FONTS, SAFE_TAGS (+1 more)
 
 ### Community 378 - "Community 378"
-Cohesion: 0.33
-Nodes (7): checkRepeatedSectionKickers(), checkRepeatedSectionKickersDOM(), checkRepeatedSectionKickersFromDoc(), cleanInlineText(), collectRepeatedSectionKickerCandidates(), isRepeatedKickerCandidate(), isRepeatedKickerCardContext()
+Cohesion: 0.67
+Nodes (3): /Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/common/app-sidebar/app-sidebar.tsx, editCount, findings
 
 ### Community 379 - "Community 379"
 Cohesion: 0.24
@@ -2567,8 +2524,8 @@ Cohesion: 0.18
 Nodes (11): 10. Help and Documentation, 1. Visibility of System Status, 2. Match Between System and Real World, 3. User Control and Freedom, 4. Consistency and Standards, 5. Error Prevention, 6. Recognition Rather Than Recall, 7. Flexibility and Efficiency of Use (+3 more)
 
 ### Community 392 - "Community 392"
-Cohesion: 0.14
-Nodes (14): 1. Read the screenshot (if present), 3. Load the action's reference, 5. Apply the freeform prompt (if present), 6. Write all variants in a single edit, 8. Signal done, Aborting an in-flight session, code:bash (node .github/skills/impeccable/scripts/live-poll.mjs --reply), code:bash (node .github/skills/impeccable/scripts/live-poll.mjs --reply) (+6 more)
+Cohesion: 0.18
+Nodes (11): 1. Read the screenshot (if present), 3. Load the action's reference, 5. Apply the freeform prompt (if present), 8. Signal done, Aborting an in-flight session, code:bash (node .github/skills/impeccable/scripts/live-poll.mjs --reply), code:bash (node .github/skills/impeccable/scripts/live-poll.mjs --reply), code:bash (node .github/skills/impeccable/scripts/live-insert.mjs --id ) (+3 more)
 
 ### Community 393 - "Community 393"
 Cohesion: 0.18
@@ -2599,8 +2556,8 @@ Cohesion: 0.18
 Nodes (10): code:bash (npx react-doctor@latest rules explain react-doctor/no-array-), code:bash (npx react-doctor@latest --verbose --diff), code:bash (npx react-doctor@latest rules list                         #), code:ts (// doctor.config.ts), Commands, Config shape, Decision guide, Educating the user (+2 more)
 
 ### Community 400 - "Community 400"
-Cohesion: 0.20
-Nodes (9): overrides, plugins, rules, no-restricted-imports, no-restricted-syntax, react/forbid-elements, x-omelette, fontFamilies (+1 more)
+Cohesion: 0.67
+Nodes (3): /Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/common/sidebar-user/hook.ts, editCount, findings
 
 ### Community 401 - "Community 401"
 Cohesion: 0.20
@@ -2667,8 +2624,8 @@ Cohesion: 0.31
 Nodes (10): cleanIgnoreValueDisplay(), extractFindingIgnoreValue(), extractFindingIgnoreValueRaw(), extractMotionIgnoreValue(), filterFindings(), formatFindingIgnoreCommand(), isIgnoredFindingValue(), normalizeIgnoreRule() (+2 more)
 
 ### Community 417 - "Community 417"
-Cohesion: 0.44
-Nodes (9): countByPage(), getBufferPath(), readBuffer(), readBufferInternal(), readBufferStrict(), removeEntries(), stageEntry(), truncateBuffer() (+1 more)
+Cohesion: 0.20
+Nodes (14): args, buffer, cwd, pageUrlFilter, remaining, countByPage(), getBufferPath(), readBuffer() (+6 more)
 
 ### Community 418 - "Community 418"
 Cohesion: 0.29
@@ -2819,12 +2776,16 @@ Cohesion: 0.28
 Nodes (4): contrastRatio(), parseGradientColors(), parseRgb(), relativeLuminance()
 
 ### Community 455 - "Community 455"
-Cohesion: 0.31
-Nodes (9): bindEditBadgeProxy(), editBadgeProxyTargets(), initEditBadge(), initEditBadgeHitProxies(), positionEditBadge(), setImportantStyle(), styleEditBadgeProxy(), syncEditBadgeHitProxies() (+1 more)
+Cohesion: 0.36
+Nodes (8): bindEditBadgeProxy(), editBadgeProxyTargets(), initEditBadgeHitProxies(), positionEditBadge(), setImportantStyle(), styleEditBadgeProxy(), syncEditBadgeHitProxies(), usesShadowChromeRoot()
 
 ### Community 456 - "Community 456"
 Cohesion: 0.22
 Nodes (8): code:bash (curl --fail --silent --show-error \), React Doctor, After making React code changes:, code:bash (npx react-doctor@latest --verbose --scope changed), Command, Configuring or explaining rules, /doctor — full local triage workflow, For general cleanup or code improvement:
+
+### Community 457 - "Community 457"
+Cohesion: 0.67
+Nodes (3): /Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/config/client-constants.ts, editCount, findings
 
 ### Community 458 - "Community 458"
 Cohesion: 0.25
@@ -2913,6 +2874,10 @@ Nodes (8): ensureHookGitExcludes(), escapeRegExp(), getCachePath(), persistCache
 ### Community 479 - "Community 479"
 Cohesion: 0.46
 Nodes (6): __dirname, ensureServerRunning(), liveCli(), runScript(), safeParse(), scanForDrift()
+
+### Community 480 - "Community 480"
+Cohesion: 0.67
+Nodes (3): /Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/types/common/profile.ts, editCount, findings
 
 ### Community 482 - "Community 482"
 Cohesion: 0.29
@@ -3062,10 +3027,6 @@ Nodes (3): /Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/component
 Cohesion: 0.33
 Nodes (7): clampGroupedToBudget(), clampToBudget(), directiveFooter(), formatFindingLine(), quoteCommandArg(), renderGroupedTemplate(), renderTemplate()
 
-### Community 519 - "Community 519"
-Cohesion: 0.29
-Nodes (5): args, buffer, cwd, pageUrlFilter, remaining
-
 ### Community 520 - "Community 520"
 Cohesion: 0.67
 Nodes (3): /Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/canvas/workflow-canvas.tsx, editCount, findings
@@ -3081,10 +3042,6 @@ Nodes (7): tus.ts, getPublicUrlFromAssemblyStatus, isPublicUrl, TUS, .constructo
 ### Community 524 - "Community 524"
 Cohesion: 0.40
 Nodes (6): clippedByInset(), clippedByRect(), expandBoxShorthand(), firstMetricLengthPx(), isScreenReaderOnlyTextStyle(), metricLengthPx()
-
-### Community 525 - "Community 525"
-Cohesion: 0.53
-Nodes (6): bumpEditCount(), dedupeAgainstCache(), ensureFile(), ensureSession(), findingCacheKey(), rememberFindings()
 
 ### Community 526 - "Community 526"
 Cohesion: 0.40
@@ -3145,10 +3102,6 @@ Nodes (5): ignoreScripts, name, private, trustedDependencies, version
 ### Community 543 - "Community 543"
 Cohesion: 0.40
 Nodes (6): clippedByInset(), clippedByRect(), expandBoxShorthand(), firstMetricLengthPx(), isScreenReaderOnlyTextStyle(), metricLengthPx()
-
-### Community 544 - "Community 544"
-Cohesion: 0.53
-Nodes (6): bumpEditCount(), dedupeAgainstCache(), ensureFile(), ensureSession(), findingCacheKey(), rememberFindings()
 
 ### Community 545 - "Community 545"
 Cohesion: 0.40
@@ -3257,10 +3210,6 @@ Nodes (4): completeCli(), completeThroughServer(), parseArgs(), readServerInfo()
 ### Community 573 - "Community 573"
 Cohesion: 0.40
 Nodes (4): code:bash (npx -y react-doctor@latest . --verbose --diff), React Doctor, Usage, Workflow
-
-### Community 574 - "Community 574"
-Cohesion: 0.50
-Nodes (3): TabsPartProps, TabsProps, TabsValueProps
 
 ### Community 575 - "Community 575"
 Cohesion: 0.50
@@ -3405,10 +3354,6 @@ Nodes (4): postSerializedFindings(), renderBrowserFindings(), scanResultMeta(), 
 ### Community 610 - "Community 610"
 Cohesion: 0.67
 Nodes (3): /Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/providers/dashboard-provider.tsx, editCount, findings
-
-### Community 611 - "Community 611"
-Cohesion: 0.83
-Nodes (3): createManualEditRoutes(), sendJson(), summarizePendingManualEditBatch()
 
 ### Community 612 - "Community 612"
 Cohesion: 0.67
@@ -3691,7 +3636,7 @@ Cohesion: 0.67
 Nodes (3): craft, argumentHint, description
 
 ### Community 689 - "Community 689"
-Cohesion: 0.50
+Cohesion: 0.67
 Nodes (3): critique, argumentHint, description
 
 ### Community 690 - "Community 690"
@@ -3727,7 +3672,7 @@ Cohesion: 0.67
 Nodes (3): live, argumentHint, description
 
 ### Community 698 - "Community 698"
-Cohesion: 0.67
+Cohesion: 0.50
 Nodes (3): onboard, argumentHint, description
 
 ### Community 699 - "Community 699"
@@ -3990,10 +3935,6 @@ Nodes (3): /Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/component
 Cohesion: 0.67
 Nodes (3): /Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/ui/button.tsx, editCount, findings
 
-### Community 951 - "Community 951"
-Cohesion: 0.67
-Nodes (3): /Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/ui/card.tsx, editCount, findings
-
 ### Community 952 - "Community 952"
 Cohesion: 0.67
 Nodes (3): /Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/ui/checkbox.tsx, editCount, findings
@@ -4015,20 +3956,8 @@ Cohesion: 0.67
 Nodes (3): /Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/ui/input-group.tsx, editCount, findings
 
 ### Community 957 - "Community 957"
-Cohesion: 0.67
-Nodes (3): /Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/ui/input.tsx, editCount, findings
-
-### Community 958 - "Community 958"
-Cohesion: 0.67
-Nodes (3): /Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/ui/label.tsx, editCount, findings
-
-### Community 959 - "Community 959"
-Cohesion: 0.67
-Nodes (3): /Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/ui/popover.tsx, editCount, findings
-
-### Community 960 - "Community 960"
-Cohesion: 0.67
-Nodes (3): /Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/ui/progress.tsx, editCount, findings
+Cohesion: 0.11
+Nodes (18): files, updatedAt, /Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/ui/input.tsx, /Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/ui/label.tsx, /Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/ui/popover.tsx, /Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/ui/progress.tsx, /Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/ui/tabs.tsx, 58c92dcd-7e73-4253-b51d-29ac5dafbb8a (+10 more)
 
 ### Community 961 - "Community 961"
 Cohesion: 0.67
@@ -4062,10 +3991,6 @@ Nodes (3): /Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/component
 Cohesion: 0.67
 Nodes (3): /Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/ui/switch.tsx, editCount, findings
 
-### Community 969 - "Community 969"
-Cohesion: 0.67
-Nodes (3): /Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/ui/tabs.tsx, editCount, findings
-
 ### Community 970 - "Community 970"
 Cohesion: 0.67
 Nodes (3): /Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/ui/textarea.tsx, editCount, findings
@@ -4078,10 +4003,6 @@ Nodes (3): /Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/component
 Cohesion: 0.67
 Nodes (3): /Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/screens/apps/screen.tsx, editCount, findings
 
-### Community 973 - "Community 973"
-Cohesion: 0.67
-Nodes (3): /Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/screens/my-files/components/skeleton-card/skeleton-card.tsx, editCount, findings
-
 ### Community 974 - "Community 974"
 Cohesion: 0.67
 Nodes (3): /Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/screens/my-files/components/workflow-file-card/workflow-file-card.tsx, editCount, findings
@@ -4090,33 +4011,29 @@ Nodes (3): /Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/screens/m
 Cohesion: 0.67
 Nodes (3): /Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/screens/my-files/my-files-screen.tsx, editCount, findings
 
-### Community 976 - "Community 976"
-Cohesion: 0.67
-Nodes (3): /Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/screens/sign-in/screen.tsx, editCount, findings
-
 ### Community 977 - "Community 977"
 Cohesion: 0.67
 Nodes (3): /Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/screens/sign-up/screen.tsx, editCount, findings
 
 ## Knowledge Gaps
-- **4016 isolated node(s):** `version`, `source`, `sourceType`, `skillPath`, `computedHash` (+4011 more)
+- **3817 isolated node(s):** `version`, `source`, `sourceType`, `skillPath`, `computedHash` (+3812 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **186 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **148 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `getValidLlmModel()` connect `Community 136` to `Community 25`, `Community 227`, `Community 13`?**
-  _High betweenness centrality (0.001) - this node is a cross-community bridge._
-- **Why does `Card` connect `Community 69` to `Community 13`, `Community 6`, `Community 15`?**
+- **Why does `WorkflowExportPayload` connect `Community 74` to `Community 128`, `Community 83`, `Community 4`?**
   _High betweenness centrality (0.000) - this node is a cross-community bridge._
-- **Why does `WorkflowExportPayload` connect `Community 74` to `Community 137`, `Community 4`, `Community 15`?**
+- **Why does `cn()` connect `Community 15` to `Community 192`, `Community 69`, `Community 6`, `Community 73`, `Community 13`, `Community 83`, `Community 93`?**
+  _High betweenness centrality (0.000) - this node is a cross-community bridge._
+- **Why does `getValidLlmModel()` connect `Community 136` to `Community 25`, `Community 93`?**
   _High betweenness centrality (0.000) - this node is a cross-community bridge._
 - **What connects `version`, `source`, `sourceType` to the rest of the system?**
-  _4016 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _3817 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
   _Cohesion score 0.022849888924151063 - nodes in this community are weakly interconnected._
 - **Should `Community 1` be split into smaller, more focused modules?**
   _Cohesion score 0.022971232288535853 - nodes in this community are weakly interconnected._
 - **Should `Community 2` be split into smaller, more focused modules?**
-  _Cohesion score 0.022971232288535853 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.022849888924151063 - nodes in this community are weakly interconnected._

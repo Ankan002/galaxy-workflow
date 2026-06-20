@@ -1124,236 +1124,6 @@
     "ast_hash": "4d8cfd9e0e92963ed8814180ee258b2c",
     "semantic_hash": ""
   },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/_ds_bundle.js": {
-    "mtime": 1781869454.0,
-    "ast_hash": "79ccd33ec5014236aaa3406f4e7b0dff",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/_ds_manifest.json": {
-    "mtime": 1781869454.0,
-    "ast_hash": "9e83d3b38defbdcc38157f6337c748a7",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/_adherence.oxlintrc.json": {
-    "mtime": 1781869454.0,
-    "ast_hash": "4ecb4828d449ab0214149e932c695f24",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/ui_kits/aakriti-app/CanvasScreen.jsx": {
-    "mtime": 1781869454.0,
-    "ast_hash": "5c2f85bac0024fedfc51aea9be6ab605",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/ui_kits/aakriti-app/icons.jsx": {
-    "mtime": 1781869454.0,
-    "ast_hash": "4306539ad0aca241c691d0edaef4111d",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/ui_kits/aakriti-app/DashboardScreen.jsx": {
-    "mtime": 1781869454.0,
-    "ast_hash": "15ac4ed31baac3ee996e70525246dadd",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/ui_kits/aakriti-app/SignInScreen.jsx": {
-    "mtime": 1781869454.0,
-    "ast_hash": "0bbda036cc4c017b906129113682be72",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/ui_kits/aakriti-app/app.jsx": {
-    "mtime": 1781869454.0,
-    "ast_hash": "2969aba27b2a9c920ccb65796fef5f56",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/forms/Switch.d.ts": {
-    "mtime": 1781869454.0,
-    "ast_hash": "be05d5e50a1166bafde0d29658c915ba",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/forms/Switch.jsx": {
-    "mtime": 1781869454.0,
-    "ast_hash": "a7cad53b5f5e50b08aff6f496f876f2b",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/forms/Slider.d.ts": {
-    "mtime": 1781869454.0,
-    "ast_hash": "d5f7be4808441262eb284aa2b8fdd712",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/forms/Input.d.ts": {
-    "mtime": 1781869454.0,
-    "ast_hash": "f1168dd8fdd7da624636b7edf48f5b2d",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/forms/Input.jsx": {
-    "mtime": 1781869454.0,
-    "ast_hash": "14967b1d9f1a3f9d39c5e74861f04f7f",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/forms/Textarea.jsx": {
-    "mtime": 1781869454.0,
-    "ast_hash": "57d24f37196f361a1ee65bfa5516c989",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/forms/Select.jsx": {
-    "mtime": 1781869454.0,
-    "ast_hash": "2e0752aebff7378097a7095dd81d7b1a",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/forms/Checkbox.jsx": {
-    "mtime": 1781869454.0,
-    "ast_hash": "5723221e17c3b2e1d8df57c885b3a391",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/forms/Checkbox.d.ts": {
-    "mtime": 1781869454.0,
-    "ast_hash": "57fb0e7dc15714be2377a4a0756ee861",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/forms/Radio.jsx": {
-    "mtime": 1781869454.0,
-    "ast_hash": "c0112235395685d85beb10b34c82d7aa",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/forms/Slider.jsx": {
-    "mtime": 1781869454.0,
-    "ast_hash": "cb64f868d202291da2e10e0c6b391345",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/forms/Textarea.d.ts": {
-    "mtime": 1781869454.0,
-    "ast_hash": "04abb4f5fca12cc339fb8e962f679529",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/forms/Radio.d.ts": {
-    "mtime": 1781869454.0,
-    "ast_hash": "a0b74d90702001fd780b91a3bafd7d21",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/forms/Label.d.ts": {
-    "mtime": 1781869454.0,
-    "ast_hash": "b080a653a688978a1d1eb264f84766eb",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/forms/Label.jsx": {
-    "mtime": 1781869454.0,
-    "ast_hash": "33b8ce3d37ff698737c2453679ae70e5",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/forms/Select.d.ts": {
-    "mtime": 1781869454.0,
-    "ast_hash": "ffd32ee7bda822cf59400cc966aabd40",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/navigation/Tabs.jsx": {
-    "mtime": 1781869454.0,
-    "ast_hash": "b9bc6872ae901d178b108b5ec78c17f0",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/navigation/Tabs.d.ts": {
-    "mtime": 1781869454.0,
-    "ast_hash": "18fb0a9a24bdda30fdb11a8d421f492e",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/feedback/Dialog.jsx": {
-    "mtime": 1781869454.0,
-    "ast_hash": "3126ad8881a363c2d77770084c6a6d4a",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/feedback/Tooltip.d.ts": {
-    "mtime": 1781869454.0,
-    "ast_hash": "6c1574c9900d3cabe3fde173ca2d1701",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/feedback/Alert.d.ts": {
-    "mtime": 1781869454.0,
-    "ast_hash": "0a03a193eb9c41c5f0e9232d16dc7fe8",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/feedback/Dialog.d.ts": {
-    "mtime": 1781869454.0,
-    "ast_hash": "24343e06c4c7861bf00282562f52808e",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/feedback/Progress.jsx": {
-    "mtime": 1781869454.0,
-    "ast_hash": "5fe0c527832b1d4606746edc25162096",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/feedback/Progress.d.ts": {
-    "mtime": 1781869454.0,
-    "ast_hash": "ae5a99a31b48ef7640b4039896b922c4",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/feedback/Alert.jsx": {
-    "mtime": 1781869454.0,
-    "ast_hash": "dea498b92fc20b0cd52524a3d5147e14",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/feedback/Tooltip.jsx": {
-    "mtime": 1781869454.0,
-    "ast_hash": "afdaea254082bf08c778aff6a891f8fd",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/actions/Button.jsx": {
-    "mtime": 1781869454.0,
-    "ast_hash": "8dedcd92d12fe61dff78db2ccfefc7ff",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/actions/IconButton.jsx": {
-    "mtime": 1781869454.0,
-    "ast_hash": "cab5ba9df3d76c058886832398a5dbaa",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/actions/Button.d.ts": {
-    "mtime": 1781869454.0,
-    "ast_hash": "3a692fd9434e73eef5110a5051b898ef",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/actions/IconButton.d.ts": {
-    "mtime": 1781869454.0,
-    "ast_hash": "c4971377ff63ee0e086f43e2d194a75a",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/surfaces/Avatar.jsx": {
-    "mtime": 1781869454.0,
-    "ast_hash": "b3dd63a20b0698af002e34c01881f884",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/surfaces/Separator.jsx": {
-    "mtime": 1781869454.0,
-    "ast_hash": "29e92869b6ddaa8d9c8cdc2469e33ca7",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/surfaces/Badge.jsx": {
-    "mtime": 1781869454.0,
-    "ast_hash": "70a3c5ecffd39330147fa52c9e3525f4",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/surfaces/Card.jsx": {
-    "mtime": 1781869454.0,
-    "ast_hash": "99fbe15f88a48b0893c15c1bda9e3895",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/surfaces/Card.d.ts": {
-    "mtime": 1781869454.0,
-    "ast_hash": "a87c99555c33b65a62720a8046b9642a",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/surfaces/Avatar.d.ts": {
-    "mtime": 1781869454.0,
-    "ast_hash": "69e8c21b1e4e962459ed3961cb0fc2f3",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/surfaces/Badge.d.ts": {
-    "mtime": 1781869454.0,
-    "ast_hash": "37de97021cf69696894b8d41875fccb4",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/surfaces/Separator.d.ts": {
-    "mtime": 1781869454.0,
-    "ast_hash": "a9f6ac5e6f02b6624bb6cb05a2b36e39",
-    "semantic_hash": ""
-  },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/.codex/hooks.json": {
     "mtime": 1781802938.1011953,
     "ast_hash": "f9d6ee8ebcb86195520de746702b1a0d",
@@ -1680,8 +1450,8 @@
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/.impeccable/hook.cache.json": {
-    "mtime": 1781876615.5073142,
-    "ast_hash": "d2801d00347279f5426bf5b6b69e6b90",
+    "mtime": 1781950613.5073311,
+    "ast_hash": "3153e1ffd6af78d3a0eed28420247203",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/.impeccable/config.local.json": {
@@ -1720,8 +1490,8 @@
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/types/common/index.ts": {
-    "mtime": 1772862391.499677,
-    "ast_hash": "cbbc3e20a1645864f6bfb3208ef4273a",
+    "mtime": 1781950495.0543332,
+    "ast_hash": "0dc5da8c68427c033e6f160aa332a182",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/types/api/json-api-response.ts": {
@@ -1780,8 +1550,8 @@
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/app/layout.tsx": {
-    "mtime": 1781870304.8416257,
-    "ast_hash": "5136ead2fb6316906e6160fa66fd702c",
+    "mtime": 1781896198.6743755,
+    "ast_hash": "b4299754e7cb5301e356977dc60c92ba",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/app/page.tsx": {
@@ -1930,8 +1700,8 @@
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/config/client-constants.ts": {
-    "mtime": 1772862391.469676,
-    "ast_hash": "a0b43eae24a025ace6db26885683b176",
+    "mtime": 1781950510.8450425,
+    "ast_hash": "395d62ff337b2b01dffaad5d8334d883",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/utils/server/google-gemini.ts": {
@@ -2015,8 +1785,8 @@
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/screens/sign-up/screen.tsx": {
-    "mtime": 1781872038.9037533,
-    "ast_hash": "b835a22e02aac5418786ac1e8571fc97",
+    "mtime": 1781950613.4629169,
+    "ast_hash": "3592a447f7545414030d0b8a931ba20b",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/screens/sign-up/index.ts": {
@@ -2040,8 +1810,8 @@
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/screens/my-files/my-files-screen.tsx": {
-    "mtime": 1781872129.6157796,
-    "ast_hash": "b9bfb5c6c837f22a6fed79fd00e2be5e",
+    "mtime": 1781896606.0516517,
+    "ast_hash": "038dc9e9e6b4cc401b3314feb56cb6b9",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/screens/my-files/hook.ts": {
@@ -2060,8 +1830,8 @@
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/screens/my-files/components/skeleton-card/skeleton-card.tsx": {
-    "mtime": 1781872188.8562906,
-    "ast_hash": "f9c2d9ebbe267d47c8b24c607e4d724d",
+    "mtime": 1781896568.635115,
+    "ast_hash": "0427e73e281b02b82a8a085b3435327d",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/screens/my-files/components/skeleton-card/index.ts": {
@@ -2070,8 +1840,8 @@
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/screens/my-files/components/workflow-file-card/workflow-file-card.tsx": {
-    "mtime": 1781876154.1157477,
-    "ast_hash": "600a71b9815b2d53322ee436f7a91aa1",
+    "mtime": 1781896577.1027055,
+    "ast_hash": "faf19cae767e0f67818d7c970c4b9b49",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/screens/my-files/components/workflow-file-card/index.ts": {
@@ -2080,8 +1850,8 @@
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/screens/my-files/components/prebuilt-workflows/prebuilt-workflows.tsx": {
-    "mtime": 1781876161.0268047,
-    "ast_hash": "cc25afa81c725d02699f19ec711dfc22",
+    "mtime": 1781929133.9181132,
+    "ast_hash": "eb009bb5e35e2d3cb7084dbb72ac224f",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/screens/sign-in/hook.ts": {
@@ -2090,8 +1860,8 @@
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/screens/sign-in/screen.tsx": {
-    "mtime": 1781872034.8234453,
-    "ast_hash": "867fd4e1ca5bcc6a23eae3bf28ff030b",
+    "mtime": 1781950609.9667988,
+    "ast_hash": "2be0f96675bbf868cf5214455db275f1",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/screens/sign-in/index.ts": {
@@ -2105,8 +1875,8 @@
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/screens/apps/screen.tsx": {
-    "mtime": 1781872245.113328,
-    "ast_hash": "747cbb3f91d4f87215abc5e51ef6982f",
+    "mtime": 1781896571.4962912,
+    "ast_hash": "456bf54dd2fa6f2a191b9ac2b347899b",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/screens/apps/index.ts": {
@@ -2115,102 +1885,102 @@
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/ui/tabs.tsx": {
-    "mtime": 1781870783.9328246,
-    "ast_hash": "dee1b8e219bca76cb77f79074c17c603",
+    "mtime": 1781929078.2336245,
+    "ast_hash": "7cc4ed0a8ae6bc921891a7e815745094",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/ui/card.tsx": {
-    "mtime": 1781876148.3465724,
-    "ast_hash": "c34223391d7e3b7a844fd750109f48e3",
+    "mtime": 1781929065.8172529,
+    "ast_hash": "d9a4cb926c59896b1372c5a8a1718f05",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/ui/slider.tsx": {
-    "mtime": 1781870561.2046194,
-    "ast_hash": "3544136a0ca1de957ecdf72f59a5719d",
+    "mtime": 1781929065.8174222,
+    "ast_hash": "892b9dcbbf5bac07a27fb9fb23eb6792",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/ui/input-group.tsx": {
-    "mtime": 1781870813.7876813,
-    "ast_hash": "8ab0739cccf5ded0b6d6e2deb2766319",
+    "mtime": 1781929065.817638,
+    "ast_hash": "8ba44ebdfb88a5daeb738e138824aa6f",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/ui/popover.tsx": {
-    "mtime": 1781870690.6120257,
-    "ast_hash": "7236069b0127861437ac5f8e67d866d4",
+    "mtime": 1781929065.8179758,
+    "ast_hash": "77b417a4e7a4692b3cad267886baea2e",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/ui/progress.tsx": {
-    "mtime": 1781870512.0745392,
-    "ast_hash": "264f678675358b044879897743f3851e",
+    "mtime": 1781929065.8184042,
+    "ast_hash": "81296e304b177a3ea4f03c48d115829b",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/ui/sheet.tsx": {
-    "mtime": 1781870866.1966176,
-    "ast_hash": "14f506c40e337ae6528b0dbba1d4ded3",
+    "mtime": 1781929065.8187077,
+    "ast_hash": "5890dc3730bca076c183a2ca496bddb2",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/ui/scroll-area.tsx": {
-    "mtime": 1781813479.755669,
+    "mtime": 1781929065.819128,
     "ast_hash": "0c0c2fbd6ac4b58669a4d96b6e7c9953",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/ui/label.tsx": {
-    "mtime": 1781870494.6400638,
+    "mtime": 1781929065.8194208,
     "ast_hash": "bcf8d70658f05c679145547d3eb85233",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/ui/sonner.tsx": {
-    "mtime": 1781870633.8056133,
-    "ast_hash": "789d33f36a0f50911a14b18e74b80650",
+    "mtime": 1781929065.8196795,
+    "ast_hash": "d506efa64740f504960b94eddb22b6ba",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/ui/accordion.tsx": {
-    "mtime": 1781871717.5238616,
-    "ast_hash": "9deddd7992a04c8a0eb8e5ef81b677da",
+    "mtime": 1781929078.235989,
+    "ast_hash": "556cd034eca7c41a47474591560ae150",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/ui/tooltip.tsx": {
-    "mtime": 1781870613.127139,
-    "ast_hash": "04317fce48fb7d3b6100decc898ef4e5",
+    "mtime": 1781929065.820356,
+    "ast_hash": "dd14255f09a819cff2d8da7f5c2f103f",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/ui/alert.tsx": {
-    "mtime": 1781870602.6789715,
-    "ast_hash": "9c7e7b3eee25c87f3fe0b238fece4961",
+    "mtime": 1781929065.8205855,
+    "ast_hash": "d8289b80e796c6062e215d583ba8cc6e",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/ui/switch.tsx": {
-    "mtime": 1781870553.7796125,
-    "ast_hash": "0c74e4b8f8d170da627e29f3efc02950",
+    "mtime": 1781929065.8209078,
+    "ast_hash": "03ad3944b847bcd13df2f03fb7acf873",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/ui/radio-group.tsx": {
-    "mtime": 1781870759.354698,
-    "ast_hash": "f4377a7b746d790f070ba709f5788765",
+    "mtime": 1781929065.8211892,
+    "ast_hash": "f5b347e26a7a0cbc7bb414fa0cde4c99",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/ui/avatar.tsx": {
-    "mtime": 1781870624.9578688,
-    "ast_hash": "ae613ce59a85bb4bed3e137d8e43d4dd",
+    "mtime": 1781929065.821572,
+    "ast_hash": "f0d6d9940f7bd61b19d37c0c03bd31da",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/ui/dialog.tsx": {
-    "mtime": 1781870684.8972359,
-    "ast_hash": "2485957ff188531ff4663230ab3ebd9a",
+    "mtime": 1781929065.8226352,
+    "ast_hash": "a1e990c4ba0bc9f2a5c41e47b0aa68db",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/ui/badge.tsx": {
-    "mtime": 1781870451.911944,
-    "ast_hash": "b40f341bcb3be8886e84a1e62f69352f",
+    "mtime": 1781929065.8228464,
+    "ast_hash": "fe73698ccd698aa7e03343a39687512f",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/ui/sidebar.tsx": {
-    "mtime": 1781813479.7570019,
+    "mtime": 1781929065.823272,
     "ast_hash": "bc6ab85c6d2bcdc7c7ec5fbc635f2f81",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/ui/table.tsx": {
-    "mtime": 1781813479.7578368,
+    "mtime": 1781929065.8234725,
     "ast_hash": "67237b73967a2175715f66f1f2bfbb6d",
     "semantic_hash": ""
   },
@@ -2220,58 +1990,58 @@
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/ui/separator.tsx": {
-    "mtime": 1781870500.398947,
+    "mtime": 1781929065.8236463,
     "ast_hash": "fcceedffab5ee119498d779205d8f934",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/ui/button.tsx": {
-    "mtime": 1781870428.0990386,
-    "ast_hash": "bf30e994dd9ec80f7d1903508ffec482",
+    "mtime": 1781929065.8238473,
+    "ast_hash": "c39467e2fa5546e9c7eeb4c7e4b33578",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/ui/theme-toggle.tsx": {
-    "mtime": 1781813479.7584252,
+    "mtime": 1781929065.8240433,
     "ast_hash": "b3ee1ba65b04276554a6a32895ef2bde",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/ui/checkbox.tsx": {
-    "mtime": 1781870543.6600678,
-    "ast_hash": "37786f148bdcf3e2f03d6a550624d6b0",
+    "mtime": 1781929065.8243222,
+    "ast_hash": "3b6339baebe6f47f248f87338f946ee8",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/ui/collapsible.tsx": {
-    "mtime": 1771566994.4683504,
+    "mtime": 1781929065.824563,
     "ast_hash": "87cce2923d03d5560ae6838e54e87f60",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/ui/dropdown-menu.tsx": {
-    "mtime": 1781872223.460799,
-    "ast_hash": "50bff977978a919ad7ea1b9ab24bb76b",
+    "mtime": 1781929065.8248413,
+    "ast_hash": "76eee56c61be7b6908328db43f197039",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/ui/select.tsx": {
-    "mtime": 1781870740.9927201,
-    "ast_hash": "7cda45860217890b3c7d56c4d1e881d1",
+    "mtime": 1781929065.8252704,
+    "ast_hash": "62c2f4cf8edf791688901cd3ba8d8cfa",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/ui/textarea.tsx": {
-    "mtime": 1781870487.2300572,
-    "ast_hash": "0ab7ce227fe497f4a2aad7799dd2f9a9",
+    "mtime": 1781929065.82853,
+    "ast_hash": "3e05ee92f625d1a4edbbde3184c84812",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/ui/input.tsx": {
-    "mtime": 1781870478.4214678,
-    "ast_hash": "46ad6f8b4ec980b39fbac66cdcb90ed8",
+    "mtime": 1781929065.829056,
+    "ast_hash": "cb140fa838bf30b9b4137db8bfbbcc31",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/ui/skeleton.tsx": {
-    "mtime": 1781870504.600921,
-    "ast_hash": "761a1bd3506310bf5a861d689c42a97d",
+    "mtime": 1781929065.8292851,
+    "ast_hash": "ce91c82fd5c5efcf76e7a3c16340ad81",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/ui/context-menu.tsx": {
-    "mtime": 1781870825.8096974,
-    "ast_hash": "c9c0c944b9839b281ab4d064aca6a2fd",
+    "mtime": 1781929065.8296762,
+    "ast_hash": "2d668dd6e155c40f74070f1900559782",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/providers/theme-provider.tsx": {
@@ -2280,8 +2050,8 @@
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/providers/dashboard-provider.tsx": {
-    "mtime": 1781872045.0656922,
-    "ast_hash": "41fa54a11488c65955c84241b6e6f4d9",
+    "mtime": 1781950598.6137996,
+    "ast_hash": "db198fa5a56b158fc692805f99a57eb7",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/providers/motion-provider.tsx": {
@@ -2290,8 +2060,8 @@
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/providers/auth-provider.tsx": {
-    "mtime": 1781876615.4462147,
-    "ast_hash": "e3fa5094157533c10aa76288d291e320",
+    "mtime": 1781930694.7469738,
+    "ast_hash": "a47fb51b0ac83437dadec367653309dc",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/providers/index.ts": {
@@ -2330,8 +2100,8 @@
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/canvas/execution-history.tsx": {
-    "mtime": 1781813479.748114,
-    "ast_hash": "e6bf429c5afd82fb3382cc8953a0f23e",
+    "mtime": 1781929133.921079,
+    "ast_hash": "8406db718cf90f06c118c6e63ed4e15c",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/canvas/workflow-canvas.tsx": {
@@ -2360,8 +2130,8 @@
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/canvas/canvas-node-sidebar.tsx": {
-    "mtime": 1781813479.7464488,
-    "ast_hash": "499da297971b38a5eba09c819410e014",
+    "mtime": 1781929133.9153113,
+    "ast_hash": "e184c8b503b6887cbd423efc451a8064",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/canvas/nodes/use-update-node-config.ts": {
@@ -2375,13 +2145,13 @@
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/canvas/nodes/base-node.tsx": {
-    "mtime": 1781871852.2953162,
-    "ast_hash": "750433e306af72fe0a0bb0adaf987505",
+    "mtime": 1781896652.8488486,
+    "ast_hash": "ed79a3a14aaa8d2633ad01dcba6a5622",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/canvas/nodes/library/image-upload-node.tsx": {
-    "mtime": 1781813479.748979,
-    "ast_hash": "6ce4d143a1e5855f96fbdca3054cabbb",
+    "mtime": 1781896716.212108,
+    "ast_hash": "0f0f8f6bc6354588829a37450012217c",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/canvas/nodes/library/crop-image-node.tsx": {
@@ -2405,8 +2175,8 @@
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/canvas/nodes/library/video-upload-node.tsx": {
-    "mtime": 1781813479.7496302,
-    "ast_hash": "45a54db56513a9bc90b85b183a1b1110",
+    "mtime": 1781896719.4743185,
+    "ast_hash": "8de0294a98471763fa9364833e7b3874",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/canvas/nodes/library/index.ts": {
@@ -2430,8 +2200,8 @@
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/canvas/edges/base-edge.tsx": {
-    "mtime": 1781871819.0352535,
-    "ast_hash": "5956b82da2980f5537b3230e949d070f",
+    "mtime": 1781896668.0385048,
+    "ast_hash": "7c8e35945afef8c35f13486292002e07",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/canvas/edges/index.ts": {
@@ -2445,8 +2215,8 @@
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/common/app-sidebar/app-sidebar.tsx": {
-    "mtime": 1781813479.7503297,
-    "ast_hash": "58d9164871f985aec1f8a356c5532cc6",
+    "mtime": 1781950587.0056033,
+    "ast_hash": "04f44ad5e17d8bab425754b6b11a0f91",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/common/app-sidebar/hook.ts": {
@@ -2460,13 +2230,13 @@
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/common/sidebar-user/hook.ts": {
-    "mtime": 1772862391.4644604,
-    "ast_hash": "995c4351d508d6faa1f8021220619936",
+    "mtime": 1781950530.4708045,
+    "ast_hash": "bf1280f8539a43bfda1172d8df8765b4",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/common/sidebar-user/sidebar-user.tsx": {
-    "mtime": 1781813479.750739,
-    "ast_hash": "e66ed23a4c01dead7c8970da2af1e181",
+    "mtime": 1781950560.8998425,
+    "ast_hash": "6df0cd23f9f63faf2562c1eeb06cffa2",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/components/common/sidebar-user/index.ts": {
@@ -2750,8 +2520,8 @@
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/AGENTS.md": {
-    "mtime": 1781872298.863674,
-    "ast_hash": "eefef447e955d3470c58a59f12b422d4",
+    "mtime": 1781896922.581729,
+    "ast_hash": "787b23dbb54b799383ff187394fb53e1",
     "semantic_hash": ""
   },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/CLAUDE.md": {
@@ -3259,221 +3029,6 @@
     "ast_hash": "0df4b2064cadee109afe865ce7d20d1e",
     "semantic_hash": ""
   },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/readme.md": {
-    "mtime": 1781869454.0,
-    "ast_hash": "579ef98bafcb21b81f610f086f632ac3",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/Aakriti App.html": {
-    "mtime": 1781869453.0,
-    "ast_hash": "857babbbe80edc17ed3df03056fba644",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/SKILL.md": {
-    "mtime": 1781869454.0,
-    "ast_hash": "ff0e75d708b50f9cab3ad32cae0b8168",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/ui_kits/aakriti-app/index.html": {
-    "mtime": 1781869454.0,
-    "ast_hash": "8de599b5cade137be0cc19a7bcf003b8",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/ui_kits/aakriti-app/README.md": {
-    "mtime": 1781869454.0,
-    "ast_hash": "33e92bf2ebe570d403a4a08b270cee89",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/forms/forms.card.html": {
-    "mtime": 1781869454.0,
-    "ast_hash": "61f7f2c1818c8234d6781f1da4d87a6a",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/forms/Select.prompt.md": {
-    "mtime": 1781869454.0,
-    "ast_hash": "07886bbf30a8e3fb67c35d0e836de9f0",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/forms/Radio.prompt.md": {
-    "mtime": 1781869454.0,
-    "ast_hash": "4c90e54efb72070d1c6421eca4243e46",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/forms/Textarea.prompt.md": {
-    "mtime": 1781869454.0,
-    "ast_hash": "1f45d390a43a2a7ab4148efa7f164217",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/forms/Checkbox.prompt.md": {
-    "mtime": 1781869454.0,
-    "ast_hash": "889202c838043ff6ed75319a9e1f3559",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/forms/Slider.prompt.md": {
-    "mtime": 1781869454.0,
-    "ast_hash": "5dc1550782fa1d589eabe92a0ece4c04",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/forms/Switch.prompt.md": {
-    "mtime": 1781869454.0,
-    "ast_hash": "6956fe528162bf07ebc0e515618405a2",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/forms/Label.prompt.md": {
-    "mtime": 1781869454.0,
-    "ast_hash": "76ed5bd37974bc443bd70820aefeb57f",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/forms/Input.prompt.md": {
-    "mtime": 1781869454.0,
-    "ast_hash": "f680aed9466f6952dd22bb6d3d78b0d7",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/navigation/navigation.card.html": {
-    "mtime": 1781869454.0,
-    "ast_hash": "a3a5998fa4bb4e5cd2d100d9ee5e988a",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/navigation/Tabs.prompt.md": {
-    "mtime": 1781869454.0,
-    "ast_hash": "633db9b88bff5364e7c46a7b5e87063d",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/feedback/Progress.prompt.md": {
-    "mtime": 1781869454.0,
-    "ast_hash": "cd8611a50a79b11438b3ea2c28777f88",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/feedback/Dialog.prompt.md": {
-    "mtime": 1781869454.0,
-    "ast_hash": "77987f60ecbfdb90a129d3fcba9f1134",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/feedback/Alert.prompt.md": {
-    "mtime": 1781869454.0,
-    "ast_hash": "bf51de19eabf1e8d795d279910cc10fe",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/feedback/feedback.card.html": {
-    "mtime": 1781869454.0,
-    "ast_hash": "f56e15ec49ffce47462518f5fdb584d8",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/feedback/Tooltip.prompt.md": {
-    "mtime": 1781869454.0,
-    "ast_hash": "4e745dcac5fbae2552a9b4f5a22b3a3c",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/actions/actions.card.html": {
-    "mtime": 1781869454.0,
-    "ast_hash": "3ab1c4e34138640231963ea61dcd3125",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/actions/IconButton.prompt.md": {
-    "mtime": 1781869454.0,
-    "ast_hash": "ccebc0a6970d45873490880ecd588246",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/actions/Button.prompt.md": {
-    "mtime": 1781869454.0,
-    "ast_hash": "aefe2c034dd11a2f25a902c4bf0caed3",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/surfaces/Card.prompt.md": {
-    "mtime": 1781869454.0,
-    "ast_hash": "cedbd3a3b053598ed903d61a5a49ecc4",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/surfaces/Badge.prompt.md": {
-    "mtime": 1781869454.0,
-    "ast_hash": "a75f106fb6a6a13fb0df839571ff1406",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/surfaces/Separator.prompt.md": {
-    "mtime": 1781869454.0,
-    "ast_hash": "5c5fbd6de6e333b6d23ec9ec00d47ad9",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/surfaces/surfaces.card.html": {
-    "mtime": 1781869454.0,
-    "ast_hash": "60d65cd9e2f4962bb1c7f2e0dfd39bcc",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/components/surfaces/Avatar.prompt.md": {
-    "mtime": 1781869454.0,
-    "ast_hash": "116f9737607dcfc3ef9da92fd8dc3103",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/guidelines/type-body.card.html": {
-    "mtime": 1781869454.0,
-    "ast_hash": "f3754844d2819c27bd446aef727ae3c7",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/guidelines/colors-semantic.card.html": {
-    "mtime": 1781869454.0,
-    "ast_hash": "e92fab807536392a4e5d1950236a8044",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/guidelines/type-display.card.html": {
-    "mtime": 1781869454.0,
-    "ast_hash": "2cc2afe9841f655bb732ee66c729d2fd",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/guidelines/brand-mark.card.html": {
-    "mtime": 1781869454.0,
-    "ast_hash": "7e0d2f2d9481182c37515eab820907fc",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/guidelines/colors-neutrals.card.html": {
-    "mtime": 1781869454.0,
-    "ast_hash": "9f10aa1cfed0b6ab405a0d4a798a8a02",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/guidelines/colors-status.card.html": {
-    "mtime": 1781869454.0,
-    "ast_hash": "26b325651505716bebd85864b005aece",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/guidelines/type-scale.card.html": {
-    "mtime": 1781869454.0,
-    "ast_hash": "f86b7d8da278db92595f586a05e8895b",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/guidelines/spacing-shadows.card.html": {
-    "mtime": 1781869454.0,
-    "ast_hash": "46da38c834832023be825a882091bb38",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/guidelines/spacing-radii.card.html": {
-    "mtime": 1781869454.0,
-    "ast_hash": "6d2b3ea45b338f1aceda4019773d5c5d",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/guidelines/colors-accents.card.html": {
-    "mtime": 1781869454.0,
-    "ast_hash": "763bcb142d3966dc73a63c20511ec978",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/guidelines/colors-primary.card.html": {
-    "mtime": 1781869454.0,
-    "ast_hash": "907f0a563a77fd1958f561411e490a12",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/guidelines/spacing-scale.card.html": {
-    "mtime": 1781869454.0,
-    "ast_hash": "392652ff64c7f01112df419dde76ee92",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/guidelines/type-mono-deva.card.html": {
-    "mtime": 1781869454.0,
-    "ast_hash": "e02ded5ef242b432120bdb5dc9ce8b0d",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/guidelines/brand-logo.card.html": {
-    "mtime": 1781869454.0,
-    "ast_hash": "c475c53f68f91f31f34c46d86c771071",
-    "semantic_hash": ""
-  },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/.github/workflows/ci-main.yml": {
     "mtime": 1772862391.4342775,
     "ast_hash": "c381809be7bad485a2577d72c01eb59b",
@@ -3629,31 +3184,6 @@
     "ast_hash": "675cbf78865e28dd33cab299adc38082",
     "semantic_hash": ""
   },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/assets/favicon-64.png": {
-    "mtime": 1781869454.0,
-    "ast_hash": "f963fd528a99e829b80111cf1b74cfeb",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/assets/og-image.png": {
-    "mtime": 1781869454.0,
-    "ast_hash": "4a55a9b30682bbb564349434eb65e358",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/assets/favicon-256.png": {
-    "mtime": 1781869454.0,
-    "ast_hash": "64fad341f3e54a436a3a7400d1456e3e",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/assets/favicon-32.png": {
-    "mtime": 1781869454.0,
-    "ast_hash": "8ffa996bab0d4a54f3c2396b2f845088",
-    "semantic_hash": ""
-  },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/Aakriti Design System/assets/logo-mark.png": {
-    "mtime": 1781869454.0,
-    "ast_hash": "2e2b828a82ffd84d58e06b76ddb2e054",
-    "semantic_hash": ""
-  },
   "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/public/logo-mark.png": {
     "mtime": 1781870206.8772373,
     "ast_hash": "2e2b828a82ffd84d58e06b76ddb2e054",
@@ -3679,9 +3209,9 @@
     "ast_hash": "4a55a9b30682bbb564349434eb65e358",
     "semantic_hash": ""
   },
-  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/login-section-issue.png": {
-    "mtime": 1781872788.3465862,
-    "ast_hash": "c6830dd185d31e0066db7e5f93c30085",
+  "/Users/ankan002/Desktop/coding-projects/galaxy-workflow/src/types/common/profile.ts": {
+    "mtime": 1781950491.730317,
+    "ast_hash": "2a7990631240c912d00a35a2d5f88f70",
     "semantic_hash": ""
   }
 }
