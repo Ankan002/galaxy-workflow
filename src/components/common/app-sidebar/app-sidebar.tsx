@@ -10,10 +10,10 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from "@/components/ui";
+import { LongLogo } from "@/components/brand";
 import { APP_NAV_ITEMS } from "@/config/client-constants";
 import { Loader2, Plus } from "lucide-react";
 import Link from "next/link";
-import { FaDiscord } from "react-icons/fa6";
 import { SidebarUser } from "../sidebar-user";
 import { useAppSidebar } from "./hook";
 
@@ -28,8 +28,8 @@ const AppSidebar = () => {
 			variant="sidebar"
 			className="pl-2 pr-2 py-1 font-sans"
 		>
-			<SidebarHeader className="mt-1">
-				<SidebarUser />
+			<SidebarHeader className="mt-1 px-2 py-2">
+				<LongLogo />
 			</SidebarHeader>
 			<SidebarContent>
 				<Button
@@ -63,13 +63,7 @@ const AppSidebar = () => {
 				</SidebarMenu>
 			</SidebarContent>
 			<SidebarFooter>
-				<Button
-					variant="ghost"
-					className="justify-start h-12 text-base rounded-sm"
-				>
-					<FaDiscord className="size-6 mr-1" />
-					Discord
-				</Button>
+				<SidebarUser />
 			</SidebarFooter>
 		</Sidebar>
 	);

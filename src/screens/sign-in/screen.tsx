@@ -6,6 +6,7 @@ import {
 	SIGN_IN_URL,
 	SIGN_UP_URL,
 } from "@/config/client-constants";
+import { ThemeToggle } from "@/components/ui";
 import { SignIn } from "@clerk/nextjs";
 import { useSignUpScreen } from "../sign-up/hook";
 
@@ -14,8 +15,9 @@ const SignInScreen = () => {
 
 	return (
 		<div className="ak-dotgrid min-h-screen flex flex-col w-full">
-			<div className="w-full flex pt-3 pb-3 px-4">
+			<div className="w-full flex items-center justify-between pt-3 pb-3 px-4">
 				<LongLogo />
+				<ThemeToggle />
 			</div>
 			<div className="flex-1 flex flex-col items-center justify-center">
 				<SignIn

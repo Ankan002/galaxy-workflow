@@ -1,5 +1,13 @@
-import { AppNavItem } from "@/types/common";
-import { GalleryVerticalEnd, SquarePlay, Users } from "lucide-react";
+import { AppNavItem, ProfileMenuItem } from "@/types/common";
+import {
+	GalleryVerticalEnd,
+	LogOut,
+	Settings,
+	SquarePlay,
+	SunMoon,
+	User,
+	Users,
+} from "lucide-react";
 
 export const SIGN_IN_URL = "/auth/sign-in";
 export const SIGN_UP_URL = "/auth/sign-up";
@@ -34,6 +42,31 @@ export const APP_NAV_ITEMS: AppNavItem[] = [
 		Icon: SquarePlay,
 		label: "Apps",
 		href: "/apps",
+	},
+];
+
+/** Items in the sidebar profile dropdown. `theme` is rendered dynamically. */
+export const PROFILE_MENU_ITEMS: ProfileMenuItem[] = [
+	{
+		id: "profile",
+		label: "Profile",
+		Icon: User,
+	},
+	{
+		id: "settings",
+		label: "Settings",
+		Icon: Settings,
+	},
+	{
+		id: "theme",
+		label: "Theme",
+		Icon: SunMoon,
+	},
+	{
+		id: "sign-out",
+		label: "Sign out",
+		Icon: LogOut,
+		isDestructive: true,
 	},
 ];
 
