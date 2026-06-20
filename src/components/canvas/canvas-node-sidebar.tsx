@@ -181,7 +181,7 @@ export function CanvasNodeSidebar({
 						<button
 							type="button"
 							className={cn(
-								"flex min-w-0 shrink-0 items-center gap-2 rounded-lg outline-none ring-sidebar-ring transition-colors hover:bg-sidebar-accent focus-visible:ring-2",
+								"flex min-w-0 shrink-0 cursor-pointer items-center gap-2 rounded-lg outline-none ring-sidebar-ring transition-colors hover:bg-sidebar-accent focus-visible:ring-2",
 								collapsed
 									? "justify-center px-2 py-1"
 									: "w-full px-2 py-1.5",
@@ -273,7 +273,7 @@ export function CanvasNodeSidebar({
 							type="button"
 							onClick={() => setFromInputToOutput((v) => !v)}
 							className={cn(
-								"flex items-center gap-2 rounded-md px-2 py-1.5 text-xs font-medium transition-colors",
+								"flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-xs font-medium transition-colors",
 								fromInputToOutput
 									? "bg-accent text-accent-foreground"
 									: "text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
@@ -327,12 +327,12 @@ export function CanvasNodeSidebar({
 											collapsed ? def.label : undefined
 										}
 										className={cn(
-											"flex flex-1 min-w-0 cursor-grab active:cursor-grabbing items-center rounded-xl border-2 transition-colors hover:border-accent hover:bg-sidebar-accent/50",
+											"flex flex-1 min-w-0 cursor-grab active:cursor-grabbing items-center rounded-xl border border-border transition-colors hover:border-border-strong/40 hover:bg-sidebar-accent/50",
 											collapsed
 												? "w-10 flex-none justify-center rounded-xl p-2"
 												: "gap-2.5 px-2 py-2.5",
 											isHovered &&
-												"border-accent bg-sidebar-accent/50",
+												"border-border-strong/40 bg-sidebar-accent/50",
 										)}
 									>
 										{Icon && (

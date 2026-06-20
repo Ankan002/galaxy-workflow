@@ -39,14 +39,14 @@ export const WorkflowFileCard = ({
 	const lastEdited = formatRelativeTime(new Date(file.updated_at));
 
 	const cardContent = (
-		<div className="flex min-h-[180px] w-full items-center justify-center rounded-sm border-2 border-border bg-muted/40 transition-colors group-hover:bg-accent/30">
+		<div className="flex min-h-[180px] w-full items-center justify-center rounded-md border border-border bg-muted/40 transition-colors group-hover:bg-accent/30">
 			<WorkflowIcon className="size-12 text-muted-foreground transition group-hover:text-foreground" />
 		</div>
 	);
 
 	const textContent = (
 		<div className="mt-3 flex flex-col gap-1 text-left">
-			<p className="font-display text-sm leading-none text-foreground truncate">
+			<p className="font-sans font-medium text-sm leading-none text-foreground truncate">
 				{file.name}
 			</p>
 			<p className="font-mono text-[11px] text-muted-foreground">

@@ -7,10 +7,10 @@ interface Props {
 }
 
 /**
- * Clerk styled in the aakriti neobrutalist language. Colors are wired to our
+ * Clerk styled in the aakriti warm-monochrome language. Colors are wired to our
  * CSS tokens (var(--…)) so the widget flips automatically with the .dark theme,
- * and element classes add the 2px ink borders, hard offset shadows, and tactile
- * press that the rest of the app uses.
+ * and element classes carry the 1px hairline borders, flat surfaces, and quiet
+ * ink CTA that the rest of the app uses — no hard shadows, no tactile press.
  */
 export const AuthProvider: React.FC<Props> = ({ children }) => {
 	return (
@@ -46,27 +46,29 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
 				},
 				elements: {
 					rootBox: "w-full",
-					card: "border-2 border-border bg-card shadow-md rounded-lg",
+					card: "border border-border bg-card shadow-md rounded-lg",
 					headerTitle: "font-display tracking-tight text-foreground",
 					headerSubtitle: "text-muted-foreground",
 					socialButtons: "gap-2",
 					socialButtonsBlockButton:
-						"flex h-10 items-center justify-center gap-2.5 border-2 border-border bg-card text-foreground shadow-xs rounded-[var(--radius)] transition-[transform,box-shadow] hover:translate-x-px hover:translate-y-px hover:shadow-none hover:bg-accent",
+						"flex h-10 items-center justify-center gap-2.5 border border-border bg-card text-foreground rounded-[var(--radius)] transition-colors hover:bg-accent",
 					socialButtonsProviderIcon: "size-5 shrink-0",
 					socialButtonsBlockButtonText:
-						"font-sans font-semibold text-sm truncate",
-					dividerLine: "bg-border h-0.5",
+						"font-sans font-medium text-sm truncate",
+					dividerLine: "bg-border h-px",
 					dividerText:
 						"font-mono text-xs uppercase tracking-widest text-muted-foreground",
-					formFieldLabel: "font-semibold text-foreground",
+					formFieldLabel: "font-medium text-foreground",
 					formFieldInput:
-						"border-2 border-input bg-card text-foreground shadow-xs rounded-[var(--radius)] focus:border-ring focus:shadow-sm",
+						"border border-input bg-card text-foreground rounded-[var(--radius)] transition-colors focus:border-ring",
 					formButtonPrimary:
-						"border-2 border-border bg-primary text-primary-foreground font-display shadow-sm rounded-[var(--radius)] transition-[transform,box-shadow] hover:translate-x-px hover:translate-y-px hover:shadow-xs hover:bg-primary-hover active:translate-x-0.5 active:translate-y-0.5 active:shadow-none normal-case",
-					footerActionLink: "text-primary font-semibold hover:text-primary-hover",
-					identityPreview: "border-2 border-border bg-card rounded-[var(--radius)]",
-					otpCodeFieldInput: "border-2 border-input rounded-[var(--radius)]",
-					badge: "border-2 border-border bg-secondary text-secondary-foreground rounded-sm",
+						// `!` wins over Clerk's injected styles, which otherwise keep white
+						// text on the light dark-mode CTA (invisible). Forces the token pair.
+						"border border-transparent !bg-primary !text-primary-foreground font-sans font-medium rounded-[var(--radius)] transition-colors hover:!bg-primary-hover normal-case",
+					footerActionLink: "text-foreground font-medium underline underline-offset-4 hover:text-muted-foreground",
+					identityPreview: "border border-border bg-card rounded-[var(--radius)]",
+					otpCodeFieldInput: "border border-input rounded-[var(--radius)]",
+					badge: "border border-border bg-secondary text-secondary-foreground rounded-sm",
 				},
 			}}
 		>

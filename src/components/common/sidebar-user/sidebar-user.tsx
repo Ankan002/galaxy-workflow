@@ -35,7 +35,7 @@ const SidebarUser = () => {
 						) : (
 							<SidebarMenuButton
 								size="lg"
-								className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground h-14"
+								className="border border-border data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground hover:bg-sidebar-accent h-14"
 								ripple
 							>
 								<Avatar>

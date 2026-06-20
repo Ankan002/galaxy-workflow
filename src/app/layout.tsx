@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import {
-	Archivo_Black,
+	Instrument_Serif,
 	Space_Grotesk,
 	Space_Mono,
 	Tiro_Devanagari_Hindi,
@@ -17,10 +17,12 @@ import {
 import { SidebarProvider } from "@/components/ui";
 import { Analytics } from "@vercel/analytics/next";
 
-const archivoBlack = Archivo_Black({
-	variable: "--font-archivo-black",
+// Editorial serif — reserved for large display / hero moments only.
+const instrumentSerif = Instrument_Serif({
+	variable: "--font-instrument-serif",
 	subsets: ["latin"],
 	weight: "400",
+	style: ["normal", "italic"],
 });
 
 const spaceGrotesk = Space_Grotesk({
@@ -85,7 +87,7 @@ export default function RootLayout({
 		<AuthProvider>
 			<html lang="en" suppressHydrationWarning>
 				<body
-					className={`${archivoBlack.variable} ${spaceGrotesk.variable} ${spaceMono.variable} ${tiroDevanagari.variable} antialiased`}
+					className={`${instrumentSerif.variable} ${spaceGrotesk.variable} ${spaceMono.variable} ${tiroDevanagari.variable} antialiased`}
 				>
 					<MotionProvider>
 						<ThemeProvider>

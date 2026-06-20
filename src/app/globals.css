@@ -4,10 +4,12 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ════════════════════════════════════════════════════════════
-   aakriti — neobrutalist design tokens
-   Warm, Indian-art-inspired. Marigold primary · ink 2px borders ·
-   paper ground · HARD offset shadows (zero blur) · tight radii ·
-   tactile press. Light + dark are both first-class.
+   aakriti — warm-monochrome, editorial · mild-brutalist tokens
+   Calm paper/ink ground · hairline (1px) borders · ultra-soft
+   shadows (almost none) · ink primary, marigold as a RARE accent
+   (focus ring · running dot · the आ glyph) · editorial serif for
+   display, Space Grotesk for UI, Space Mono for meta.
+   Light + dark are both first-class.
    ════════════════════════════════════════════════════════════ */
 
 @theme inline {
@@ -28,9 +30,12 @@
 	--color-muted-foreground: var(--muted-foreground);
 	--color-accent: var(--accent);
 	--color-accent-foreground: var(--accent-foreground);
+	--color-highlight: var(--highlight);
+	--color-highlight-foreground: var(--highlight-foreground);
 	--color-destructive: var(--destructive);
 	--color-destructive-foreground: var(--destructive-foreground);
 	--color-border: var(--border);
+	--color-border-strong: var(--border-strong);
 	--color-input: var(--input);
 	--color-ring: var(--ring);
 
@@ -49,7 +54,7 @@
 	--color-sidebar-border: var(--sidebar-border);
 	--color-sidebar-ring: var(--sidebar-ring);
 
-	/* ── Raw brand hues (callouts / illustration) ── */
+	/* ── Raw brand hues (callouts / illustration / the आ glyph) ── */
 	--color-ink: var(--ak-ink);
 	--color-paper: var(--ak-paper);
 	--color-marigold: var(--ak-marigold);
@@ -60,7 +65,7 @@
 	--color-leaf: var(--ak-leaf);
 	--color-sky: var(--ak-sky);
 
-	/* ── Canvas data-type / connection accents ── */
+	/* ── Canvas data-type / connection accents (canvas-only) ── */
 	--color-data-string: var(--data-string);
 	--color-data-image: var(--data-image);
 	--color-data-video: var(--data-video);
@@ -76,64 +81,65 @@
 	--color-status-completed: var(--status-completed);
 	--color-status-failed: var(--status-failed);
 
-	/* ── Type families (next/font vars) ── */
-	--font-display: var(--font-archivo-black), "Space Grotesk", system-ui, sans-serif;
+	/* ── Type families (next/font vars) ──
+	   display = editorial serif, used sparingly for hero / wordmark moments. */
+	--font-display: var(--font-instrument-serif), "Times New Roman", Georgia, serif;
 	--font-sans: var(--font-space-grotesk), system-ui, -apple-system, sans-serif;
 	--font-mono: var(--font-space-mono), ui-monospace, "SF Mono", Menlo, monospace;
 	--font-devanagari: var(--font-tiro-devanagari), "Space Grotesk", serif;
 }
 
 @theme {
-	/* ── Radii (deliberately tight) — emitted so utilities + var() both work ── */
-	--radius-sm: 3px;
-	--radius: 5px;
-	--radius-md: 7px;
-	--radius-lg: 10px;
-	--radius-xl: 14px;
-	--radius-2xl: 18px;
-	--radius-3xl: 24px;
+	/* ── Radii (softened — minimalist, not pill) — emitted so utilities + var() both work ── */
+	--radius-sm: 5px;
+	--radius: 8px;
+	--radius-md: 10px;
+	--radius-lg: 12px;
+	--radius-xl: 16px;
+	--radius-2xl: 20px;
+	--radius-3xl: 28px;
 
-	/* ── HARD offset shadows (zero blur). Subtle by default — small offsets
-	     keep the neobrutalist language without shouting. Reference --border
-	     so they flip automatically between light and dark themes. ── */
-	--shadow-xs: 1px 1px 0 0 var(--border);
-	--shadow-sm: 2px 2px 0 0 var(--border);
-	--shadow-md: 3px 3px 0 0 var(--border);
-	--shadow-lg: 4px 4px 0 0 var(--border);
-	--shadow-xl: 6px 6px 0 0 var(--border);
-	--shadow-2xl: 8px 8px 0 0 var(--border);
-	--shadow-brand: 4px 4px 0 0 var(--primary);
+	/* ── Ultra-diffuse soft shadows (almost none). Surfaces rest flat; hover
+	     earns a whisper. Low-opacity black so the warm ground stays calm. ── */
+	--shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.04);
+	--shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+	--shadow-md: 0 2px 6px -1px rgb(0 0 0 / 0.06);
+	--shadow-lg: 0 4px 12px -2px rgb(0 0 0 / 0.07);
+	--shadow-xl: 0 8px 24px -4px rgb(0 0 0 / 0.08);
+	--shadow-2xl: 0 16px 40px -8px rgb(0 0 0 / 0.1);
+	/* Kept for compatibility — now a soft elevation, no longer a marigold slab. */
+	--shadow-brand: var(--shadow-md);
 }
 
 :root {
-	/* ── Base palette (raw brand hues) ── */
-	--ak-ink: #161310; /* warm near-black — borders & text */
-	--ak-paper: #fbf3e4; /* warm cream — page ground */
-	--ak-paper-2: #f4e8d1; /* deeper cream */
+	/* ── Base palette (raw, warm) ── */
+	--ak-ink: #1a1714; /* warm charcoal — text (never pure black) */
+	--ak-paper: #faf6ee; /* warm bone — page ground */
+	--ak-paper-2: #f2ece0; /* deeper bone — muted surfaces */
 	--ak-white: #ffffff;
+	--ak-line: #e7e0d2; /* warm hairline — the default 1px border */
 
-	--ak-marigold: #ffb200; /* primary — saffron/marigold */
+	--ak-marigold: #ffb200; /* the one accent — saffron/marigold */
 	--ak-marigold-deep: #f0a300;
-	--ak-marigold-soft: #ffe08a;
+	--ak-marigold-soft: #ffe7ad;
 
-	--ak-vermilion: #ff5a1f; /* sindoor / vermilion */
-	--ak-rani: #e5147a; /* rani pink (traditional magenta) */
-	--ak-indigo: #3a36e0; /* neel / indigo */
-	--ak-peacock: #0c9c9c; /* peacock teal */
-	--ak-leaf: #1e9e57; /* mehndi / leaf green */
-	--ak-sky: #2ba3e0; /* sky blue */
-	--ak-red: #e5443b; /* error / destructive */
+	--ak-vermilion: #e1623a; /* sindoor / vermilion */
+	--ak-rani: #cf2f7e; /* rani pink */
+	--ak-indigo: #4a47c9; /* neel / indigo */
+	--ak-peacock: #1a8f93; /* peacock teal */
+	--ak-leaf: #2f8f5b; /* mehndi / leaf green */
+	--ak-sky: #2f93cf; /* sky blue */
+	--ak-red: #d6453b; /* error / destructive */
 
 	/* ── Border weights & motion (used via var() in custom CSS / cva) ── */
-	--border-1: 1.5px;
-	--border-2: 2px; /* the neobrutalist standard */
-	--border-3: 3px;
+	--border-1: 1px; /* the hairline standard */
+	--border-2: 1.5px; /* rare emphasis */
+	--border-3: 2px; /* rarest — hero outline only */
 	--ease-snap: cubic-bezier(0.2, 0, 0, 1);
 	--ease-out: cubic-bezier(0.33, 1, 0.68, 1);
 	--dur-fast: 90ms;
 	--dur: 150ms;
 	--dur-slow: 240ms;
-	--press-travel: 2px;
 	--tracking-tight: -0.015em;
 	--tracking-widest: 0.18em;
 
@@ -146,26 +152,34 @@
 	--popover: var(--ak-white);
 	--popover-foreground: var(--ak-ink);
 
-	--primary: var(--ak-marigold);
-	--primary-hover: var(--ak-marigold-deep);
-	--primary-foreground: var(--ak-ink);
+	/* Primary action = ink/charcoal (monochrome CTA) */
+	--primary: var(--ak-ink);
+	--primary-hover: #322b23;
+	--primary-foreground: var(--ak-paper);
 
-	--secondary: var(--ak-ink);
-	--secondary-hover: #2c2620;
-	--secondary-foreground: var(--ak-paper);
+	/* Secondary = quiet neutral surface */
+	--secondary: var(--ak-paper-2);
+	--secondary-hover: #e7ddca;
+	--secondary-foreground: var(--ak-ink);
 
 	--muted: var(--ak-paper-2);
-	--muted-foreground: #6b5f4b;
+	--muted-foreground: #7a6f5d;
 
-	--accent: var(--ak-marigold-soft);
+	/* Accent = neutral hover wash (NOT marigold anymore) */
+	--accent: var(--ak-paper-2);
 	--accent-foreground: var(--ak-ink);
+
+	/* Highlight = the rare marigold moment */
+	--highlight: var(--ak-marigold);
+	--highlight-foreground: var(--ak-ink);
 
 	--destructive: var(--ak-red);
 	--destructive-foreground: #ffffff;
 
-	--border: var(--ak-ink);
-	--input: var(--ak-ink);
-	--ring: var(--ak-marigold);
+	--border: var(--ak-line); /* hairline default */
+	--border-strong: var(--ak-ink); /* rare emphasized divider/outline */
+	--input: var(--ak-line);
+	--ring: var(--ak-marigold); /* focus — the one accent */
 
 	/* App chrome */
 	--sidebar: var(--ak-white);
@@ -174,7 +188,7 @@
 	--sidebar-primary-foreground: var(--ak-paper);
 	--sidebar-accent: var(--ak-paper-2);
 	--sidebar-accent-foreground: var(--ak-ink);
-	--sidebar-border: var(--ak-ink);
+	--sidebar-border: var(--ak-line);
 	--sidebar-ring: var(--ak-marigold);
 
 	/* Canvas data-type / connection accents */
@@ -189,7 +203,7 @@
 
 	/* Run / execution status */
 	--status-idle: #9b8e76;
-	--status-running: var(--ak-sky);
+	--status-running: var(--ak-marigold);
 	--status-completed: var(--ak-leaf);
 	--status-failed: var(--ak-red);
 
@@ -201,49 +215,58 @@
 	--chart-5: var(--ak-vermilion);
 }
 
-/* ════════ Semantic — DARK ════════ */
+/* ════════ Semantic — DARK ════════
+   Neutral near-black ground (no yellow cast). Warmth survives only in the
+   off-white text and the marigold accent, so the chrome reads blackish. */
 .dark {
-	--background: #14110d;
-	--foreground: #f5eedf;
+	--background: #0e0e0f;
+	--foreground: #ecebe6;
 
-	--card: #1f1a14;
-	--card-foreground: #f5eedf;
-	--popover: #1f1a14;
-	--popover-foreground: #f5eedf;
+	--card: #161618;
+	--card-foreground: #ecebe6;
+	--popover: #161618;
+	--popover-foreground: #ecebe6;
 
-	--primary: var(--ak-marigold);
-	--primary-hover: #ffc23a;
-	--primary-foreground: #161310;
+	/* In dark, the monochrome CTA inverts to a light surface */
+	--primary: #ecebe6;
+	--primary-hover: #dbdad3;
+	--primary-foreground: #0e0e0f;
 
-	--secondary: #2e2820;
-	--secondary-hover: #3a3327;
-	--secondary-foreground: #f5eedf;
+	--secondary: #1d1d1f;
+	--secondary-hover: #27272a;
+	--secondary-foreground: #ecebe6;
 
-	--muted: #261f17;
-	--muted-foreground: #a99b82;
+	--muted: #19191b;
+	--muted-foreground: #989791;
 
-	--accent: #3a2f18;
-	--accent-foreground: #ffd479;
+	--accent: #1d1d1f;
+	--accent-foreground: #ecebe6;
 
-	--destructive: #ff6b5e;
-	--destructive-foreground: #1a0f0d;
+	--highlight: var(--ak-marigold);
+	--highlight-foreground: #0e0e0f;
 
-	--border: #574d3d;
-	--input: #574d3d;
+	--destructive: #e8645a;
+	--destructive-foreground: #160e0d;
+
+	/* Slightly stronger hairlines in dark so the brutalist structure reads
+	   (not a flat Vercel-minimal slab) while the ground stays neutral black. */
+	--border: #3b3b3f;
+	--border-strong: #525258;
+	--input: #3b3b3f;
 	--ring: var(--ak-marigold);
 
-	--sidebar: #1a1610;
-	--sidebar-foreground: #f5eedf;
-	--sidebar-primary: var(--ak-marigold);
-	--sidebar-primary-foreground: #161310;
-	--sidebar-accent: #2a2318;
-	--sidebar-accent-foreground: #f5eedf;
-	--sidebar-border: #574d3d;
+	--sidebar: #121214;
+	--sidebar-foreground: #ecebe6;
+	--sidebar-primary: #ecebe6;
+	--sidebar-primary-foreground: #0e0e0f;
+	--sidebar-accent: #1b1b1e;
+	--sidebar-accent-foreground: #ecebe6;
+	--sidebar-border: #3b3b3f;
 	--sidebar-ring: var(--ak-marigold);
 
 	/* Brighter data hues for the dark canvas */
 	--data-string: #7b78ff;
-	--data-image: #ff7a4d;
+	--data-image: #ff8a5d;
 	--data-video: var(--ak-marigold);
 	--data-number: #2fc7c7;
 	--data-boolean: #3fcf80;
@@ -252,15 +275,15 @@
 	--data-any: #a99b82;
 
 	--status-idle: #a99b82;
-	--status-running: #5ec1f0;
+	--status-running: var(--ak-marigold);
 	--status-completed: #3fcf80;
-	--status-failed: #ff6b5e;
+	--status-failed: #e8645a;
 
 	--chart-1: var(--ak-marigold);
 	--chart-2: #7b78ff;
 	--chart-3: #ff5aa6;
 	--chart-4: #2fc7c7;
-	--chart-5: #ff7a4d;
+	--chart-5: #ff8a5d;
 }
 
 @layer base {
@@ -270,15 +293,16 @@
 	body {
 		@apply bg-background text-foreground font-sans;
 	}
-	/* Display headings default to the neobrutalist display face */
+	/* Headings default to editorial sans (Space Grotesk, tight). The serif
+	   display face is opt-in via the `font-display` class for hero moments. */
 	h1,
 	h2,
 	h3,
 	h4,
 	h5,
 	h6 {
-		font-family: var(--font-display);
-		font-weight: 400; /* Archivo Black is already heavy */
+		font-family: var(--font-sans);
+		font-weight: 600;
 		letter-spacing: var(--tracking-tight);
 		line-height: 1.2;
 	}
@@ -288,27 +312,34 @@
 	pre {
 		font-family: var(--font-mono);
 	}
+	/* Selection — a quiet marigold wash (one of the few accent moments). */
 	::selection {
-		background: var(--primary);
-		color: var(--primary-foreground);
+		background: var(--ak-marigold-soft);
+		color: var(--ak-ink);
 	}
 	:focus-visible {
-		outline: var(--border-2) solid var(--ring);
+		outline: 2px solid var(--ring);
 		outline-offset: 2px;
 	}
-	/* Chunky neobrutalist scrollbar */
+	/* Slim, neutral scrollbar */
 	* {
 		scrollbar-width: thin;
-		scrollbar-color: var(--muted-foreground) transparent;
+		scrollbar-color: color-mix(in srgb, var(--muted-foreground) 55%, transparent)
+			transparent;
 	}
 	*::-webkit-scrollbar {
-		width: 10px;
-		height: 10px;
+		width: 8px;
+		height: 8px;
 	}
 	*::-webkit-scrollbar-thumb {
-		background: var(--muted-foreground);
-		border: 2px solid var(--background);
+		background: color-mix(in srgb, var(--muted-foreground) 45%, transparent);
+		border: 2px solid transparent;
+		background-clip: padding-box;
 		border-radius: 999px;
+	}
+	*::-webkit-scrollbar-thumb:hover {
+		background: color-mix(in srgb, var(--muted-foreground) 70%, transparent);
+		background-clip: padding-box;
 	}
 	*::-webkit-scrollbar-track {
 		background: transparent;
@@ -329,8 +360,8 @@
 /* ── Shared brand utilities ── */
 @utility ak-eyebrow {
 	font-family: var(--font-mono);
-	font-size: 0.75rem;
-	font-weight: 700;
+	font-size: 0.7rem;
+	font-weight: 600;
 	letter-spacing: var(--tracking-widest);
 	text-transform: uppercase;
 	color: var(--muted-foreground);
@@ -339,15 +370,15 @@
 @utility ak-dotgrid {
 	background-color: var(--background);
 	background-image: radial-gradient(
-		color-mix(in srgb, var(--border) 20%, transparent) 1px,
+		color-mix(in srgb, var(--border) 70%, transparent) 1px,
 		transparent 1px
 	);
-	background-size: 26px 26px;
+	background-size: 28px 28px;
 	background-position: -1px -1px;
 }
 
 /* ════════════════════════════════════════
-   React Flow — aakriti neobrutalist overrides
+   React Flow — aakriti warm-monochrome overrides
    ════════════════════════════════════════ */
 
 .react-flow {
@@ -362,14 +393,14 @@
 	--xy-handle-border-color: var(--card);
 
 	--xy-edge-stroke: var(--muted-foreground);
-	--xy-edge-stroke-selected: var(--primary);
-	--xy-edge-stroke-width: 2;
+	--xy-edge-stroke-selected: var(--ring);
+	--xy-edge-stroke-width: 1.5;
 
-	--xy-connectionline-stroke: var(--primary);
-	--xy-connectionline-stroke-width: 2;
+	--xy-connectionline-stroke: var(--ring);
+	--xy-connectionline-stroke-width: 1.5;
 
 	--xy-minimap-background-color: var(--card);
-	--xy-minimap-mask-background-color: color-mix(in srgb, var(--ak-ink) 55%, transparent);
+	--xy-minimap-mask-background-color: color-mix(in srgb, var(--ak-ink) 35%, transparent);
 	--xy-minimap-node-background-color: var(--muted);
 	--xy-minimap-node-stroke-color: var(--border);
 
@@ -384,7 +415,7 @@
 
 .react-flow__controls {
 	border-radius: var(--radius);
-	border: var(--border-2) solid var(--border);
+	border: var(--border-1) solid var(--border);
 	overflow: hidden;
 	box-shadow: var(--shadow-sm);
 }
@@ -403,15 +434,15 @@
 
 .react-flow__minimap {
 	border-radius: var(--radius);
-	border: var(--border-2) solid var(--border);
+	border: var(--border-1) solid var(--border);
 	overflow: hidden;
 	box-shadow: var(--shadow-sm);
 	background: var(--card);
 }
 
 .react-flow__handle {
-	width: 11px;
-	height: 11px;
+	width: 10px;
+	height: 10px;
 	border-radius: 999px;
 	border: var(--border-2) solid var(--border);
 	background: var(--muted-foreground);
@@ -421,8 +452,8 @@
 }
 
 .react-flow__handle:hover {
-	background: var(--primary);
-	transform: scale(1.25);
+	background: var(--ring);
+	transform: scale(1.2);
 }
 
 .react-flow__handle-connecting {
@@ -435,8 +466,8 @@
 
 .react-flow__background pattern line,
 .react-flow__background pattern circle {
-	stroke: var(--border);
-	fill: var(--border);
+	stroke: color-mix(in srgb, var(--border) 70%, transparent);
+	fill: color-mix(in srgb, var(--border) 70%, transparent);
 }
 
 /* Edge march: dashes travel source → target while a flow runs */
@@ -449,21 +480,17 @@
 	}
 }
 
-/* Active node: marigold ring pulse while running */
+/* Active node: gentle marigold ring pulse while running */
 @keyframes node-pulse-glow {
 	0%,
 	100% {
-		box-shadow:
-			0 0 0 2px var(--primary),
-			3px 3px 0 0 var(--border);
+		box-shadow: 0 0 0 1.5px var(--ring);
 	}
 	50% {
-		box-shadow:
-			0 0 0 4px color-mix(in srgb, var(--primary) 60%, transparent),
-			3px 3px 0 0 var(--border);
+		box-shadow: 0 0 0 3px color-mix(in srgb, var(--ring) 45%, transparent);
 	}
 }
 
 .node-pulse {
-	animation: node-pulse-glow 1.4s var(--ease-snap) infinite;
+	animation: node-pulse-glow 1.6s var(--ease-snap) infinite;
 }

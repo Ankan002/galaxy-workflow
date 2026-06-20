@@ -4,33 +4,40 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-	// Neobrutalist base: display face, 2px ink border, hard offset shadow, and a
-	// tactile press — the button translates into its shadow on hover/active.
-	"inline-flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-[var(--radius)] border-2 border-border font-display text-sm tracking-tight shadow-sm transition-[transform,box-shadow,background-color] duration-150 [transition-timing-function:var(--ease-snap)] hover:translate-x-px hover:translate-y-px hover:shadow-xs active:translate-x-0.5 active:translate-y-0.5 active:shadow-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 disabled:translate-x-0 disabled:translate-y-0 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+	// Minimalist base: editorial sans, 1px hairline, no shadow, no press —
+	// interaction reads through a quiet color shift only.
+	"inline-flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-[var(--radius)] border font-sans font-medium text-sm transition-[color,background-color,border-color] duration-150 [transition-timing-function:var(--ease-snap)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
 	{
 		variants: {
 			variant: {
-				default: "bg-primary text-primary-foreground hover:bg-primary-hover",
-				primary: "bg-primary text-primary-foreground hover:bg-primary-hover",
-				brand: "bg-primary text-primary-foreground hover:bg-primary-hover",
+				/* Monochrome ink CTA */
+				default:
+					"border-transparent bg-primary text-primary-foreground hover:bg-primary-hover",
+				primary:
+					"border-transparent bg-primary text-primary-foreground hover:bg-primary-hover",
+				/* The rare marigold moment */
+				brand: "border-transparent bg-highlight text-highlight-foreground hover:bg-[var(--ak-marigold-deep)]",
+				highlight:
+					"border-transparent bg-highlight text-highlight-foreground hover:bg-[var(--ak-marigold-deep)]",
 				secondary:
-					"bg-secondary text-secondary-foreground hover:bg-secondary-hover",
+					"border-border bg-secondary text-secondary-foreground hover:bg-secondary-hover",
 				destructive:
-					"bg-destructive text-destructive-foreground hover:brightness-95",
-				outline: "bg-card text-foreground hover:bg-accent hover:text-accent-foreground",
-				ghost: "border-transparent shadow-none hover:translate-x-0 hover:translate-y-0 hover:bg-accent hover:text-accent-foreground hover:shadow-none active:translate-x-0 active:translate-y-0",
-				link: "border-transparent shadow-none text-foreground underline decoration-2 decoration-primary underline-offset-4 hover:translate-x-0 hover:translate-y-0 hover:text-primary-hover hover:shadow-none active:translate-x-0 active:translate-y-0",
+					"border-transparent bg-destructive text-destructive-foreground hover:brightness-95",
+				outline:
+					"border-border bg-card text-foreground hover:bg-accent hover:text-accent-foreground",
+				ghost: "border-transparent bg-transparent hover:bg-accent hover:text-accent-foreground",
+				link: "border-transparent text-foreground underline decoration-1 underline-offset-4 hover:text-muted-foreground",
 				/* Canvas / connection accents (kept for compatibility) */
 				"connection-prompt":
 					"border-data-string bg-data-string/15 text-data-string hover:bg-data-string/25",
 				"connection-image":
 					"border-data-image bg-data-image/15 text-data-image hover:bg-data-image/25",
 				"tool-active":
-					"bg-primary text-primary-foreground hover:bg-primary-hover",
+					"border-transparent bg-primary text-primary-foreground hover:bg-primary-hover",
 				sidebar:
-					"bg-sidebar-accent text-sidebar-accent-foreground hover:bg-accent",
+					"border-transparent bg-sidebar-accent text-sidebar-accent-foreground hover:bg-accent",
 				"sidebar-primary":
-					"bg-sidebar-primary text-sidebar-primary-foreground hover:bg-secondary-hover",
+					"border-transparent bg-sidebar-primary text-sidebar-primary-foreground hover:opacity-90",
 			},
 			size: {
 				default: "h-9 px-4 py-2",

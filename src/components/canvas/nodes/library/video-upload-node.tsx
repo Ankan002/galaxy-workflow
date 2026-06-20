@@ -175,12 +175,12 @@ export function VideoUploadNode({ id, data, selected }: NodeProps) {
 						onDragOver={onDragOver}
 						onDragLeave={onDragLeave}
 						className={cn(
-							"relative aspect-video min-h-[120px] flex items-center justify-center overflow-hidden cursor-pointer transition-all duration-200 rounded-xl border border-border/80 bg-neutral-950 shadow-inner",
+							"relative aspect-video min-h-[120px] flex items-center justify-center overflow-hidden cursor-pointer transition-all duration-200 rounded-xl border border-border/80 bg-ink",
 							workflowId &&
 								!isUploading &&
-								"hover:border-primary/40 hover:shadow-md hover:shadow-primary/5",
+								"hover:border-ring/40 hover:shadow-md",
 							isDragOver &&
-								"ring-2 ring-primary ring-offset-2 ring-offset-background border-primary/60 scale-[1.01]",
+								"ring-2 ring-ring ring-offset-2 ring-offset-background border-ring/60 scale-[1.01]",
 							previewUrl && "shadow-lg",
 						)}
 						aria-label="Click or drop video to upload"

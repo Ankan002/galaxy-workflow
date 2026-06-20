@@ -176,7 +176,7 @@ export function ImageUploadNode({ id, data, selected }: NodeProps) {
 						className={cn(
 							"rounded-md border border-border bg-muted/30 aspect-video min-h-[80px] flex items-center justify-center overflow-hidden cursor-pointer transition-colors",
 							workflowId && !isUploading && "hover:bg-muted/50",
-							isDragOver && "ring-2 ring-primary bg-muted/50",
+							isDragOver && "ring-2 ring-ring bg-muted/50",
 						)}
 						aria-label="Click or drop image to upload"
 					>

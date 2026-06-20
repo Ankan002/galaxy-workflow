@@ -183,7 +183,7 @@ function renderHandles(
 							id={h.key}
 							position={Position.Left}
 							className={cn(
-								"!w-2.5 !h-2.5 !border-2 !bg-background",
+								"!w-2.5 !h-2.5 !border !bg-background",
 								style.border,
 								style.bg,
 							)}
@@ -224,7 +224,7 @@ function renderHandles(
 							id={h.key}
 							position={Position.Right}
 							className={cn(
-								"!w-2.5 !h-2.5 !border-2 !bg-background",
+								"!w-2.5 !h-2.5 !border !bg-background",
 								style.border,
 								style.bg,
 							)}
@@ -296,13 +296,13 @@ export function BaseNode(props: BaseNodeProps | NodeProps) {
 						data-node-id={id}
 						className={cn(
 							"min-w-[200px] max-w-[280px] transition-shadow",
-							selected && "shadow-lg",
+							selected && "shadow-sm",
 							isPulsating && "node-pulse",
 						)}
 					>
 						<div className="flex items-center gap-2.5 px-3.5 py-2.5">
 							{icon && (
-								<div className="flex size-7 shrink-0 items-center justify-center rounded-sm border-2 border-border bg-accent text-accent-foreground">
+								<div className="flex size-7 shrink-0 items-center justify-center rounded-md border border-border bg-accent text-accent-foreground">
 									{icon}
 								</div>
 							)}
@@ -317,7 +317,7 @@ export function BaseNode(props: BaseNodeProps | NodeProps) {
 											title={status}
 										/>
 									)}
-									<span className="font-display text-sm text-foreground truncate">
+									<span className="font-sans font-medium text-sm text-foreground truncate">
 										{label}
 									</span>
 								</div>

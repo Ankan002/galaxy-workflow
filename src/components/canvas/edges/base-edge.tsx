@@ -122,7 +122,7 @@ export function WorkflowEdge({
 						}}
 					>
 						{label && (
-							<span className="rounded-sm bg-card border-2 border-border px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wide text-muted-foreground shadow-xs">
+							<span className="rounded-sm bg-card border border-border px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
 								{label}
 							</span>
 						)}

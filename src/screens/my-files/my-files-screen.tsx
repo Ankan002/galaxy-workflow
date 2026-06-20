@@ -73,7 +73,7 @@ const MyFilesScreen = () => {
 			workflowFiles.length === 0 ? (
 				<div className="flex-1 flex flex-col items-center justify-center">
 					<Volleyball size={40} strokeWidth={1.5} />
-					<p className="mt-5 font-display text-lg tracking-tight">
+					<p className="mt-5 font-display text-2xl tracking-tight">
 						Nothing here yet!
 					</p>
 					<p className="text-muted-foreground text-sm mt-1">

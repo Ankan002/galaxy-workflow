@@ -27,7 +27,7 @@ export const DashboardProvider: React.FC<Props> = ({
 							{isHeadingLoading ? (
 								<Skeleton className="h-6 w-32" />
 							) : (
-								<p className="font-display text-base text-foreground ml-1">
+								<p className="font-display text-xl text-foreground ml-1">
 									{heading}
 								</p>
 							)}

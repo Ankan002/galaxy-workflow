@@ -417,7 +417,7 @@ function NodeExecutionItem({
 													<button
 														type="button"
 														onClick={() => setLlmModalOpen(true)}
-														className="mt-1 flex items-center gap-0.5 text-xs text-primary hover:underline"
+														className="mt-1 flex cursor-pointer items-center gap-0.5 text-xs text-primary hover:underline"
 													>
 														Know more
 														<ChevronRight className="size-3.5" />
@@ -452,7 +452,7 @@ function NodeExecutionItem({
 													<button
 														type="button"
 														onClick={() => setLlmModalOpen(true)}
-														className="mt-1 flex items-center gap-0.5 text-xs text-primary hover:underline"
+														className="mt-1 flex cursor-pointer items-center gap-0.5 text-xs text-primary hover:underline"
 													>
 														Know more
 														<ChevronRight className="size-3.5" />

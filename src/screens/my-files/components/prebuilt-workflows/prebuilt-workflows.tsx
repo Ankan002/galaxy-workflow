@@ -29,18 +29,18 @@ function TemplateCard({
 			type="button"
 			onClick={() => onUse(template)}
 			disabled={isLoading}
-			className="group shrink-0 w-[200px] text-left"
+			className="group shrink-0 w-[200px] cursor-pointer text-left"
 		>
 			<Card
 				variant="file-item"
 				padding="none"
 				className="flex h-full flex-col overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
 			>
-				<div className="relative flex h-[120px] items-center justify-center border-b-2 border-border bg-muted/40 transition-colors group-hover:bg-accent/30">
+				<div className="relative flex h-[120px] items-center justify-center border-b border-border bg-muted/40 transition-colors group-hover:bg-accent/30">
 					<WorkflowIcon className="size-12 text-muted-foreground transition group-hover:text-foreground" />
 				</div>
 				<div className="px-3 py-2.5">
-					<p className="truncate text-left font-display text-sm text-foreground">
+					<p className="truncate text-left font-sans font-medium text-sm text-foreground">
 						{template.name}
 					</p>
 				</div>
@@ -126,7 +126,7 @@ export function PrebuiltWorkflows() {
 							{Array.from({ length: 4 }).map((_, i) => (
 								<div
 									key={i}
-									className="flex h-[120px] w-[200px] shrink-0 animate-pulse rounded-sm border-2 border-border/60 bg-muted"
+									className="flex h-[120px] w-[200px] shrink-0 animate-pulse rounded-md border border-border/60 bg-muted"
 								/>
 							))}
 						</div>

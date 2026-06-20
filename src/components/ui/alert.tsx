@@ -3,7 +3,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const alertVariants = cva(
-	"relative w-full rounded-md border-2 border-border bg-card text-card-foreground shadow-sm p-4 [&>svg~*]:pl-7 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-foreground",
+	"relative w-full rounded-md border border-border bg-card text-card-foreground shadow-sm p-4 [&>svg~*]:pl-7 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-foreground",
 	{
 		variants: {
 			variant: {
@@ -40,7 +40,7 @@ const AlertTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
 	<h5
 		ref={ref as React.Ref<HTMLParagraphElement>}
-		className={cn("mb-1 font-display text-base leading-none tracking-tight", className)}
+		className={cn("mb-1 font-sans font-semibold text-base leading-none tracking-tight", className)}
 		{...props}
 	/>
 ))
