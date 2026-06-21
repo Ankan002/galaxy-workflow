@@ -180,6 +180,9 @@
 	--border-strong: var(--ak-ink); /* rare emphasized divider/outline */
 	--input: var(--ak-line);
 	--ring: var(--ak-marigold); /* focus — the one accent */
+	/* Dot-grid stipple — warm ink at low opacity so it reads on the paper
+	   ground in light mode too (the --ak-line hairline is near-invisible here). */
+	--ak-dot: color-mix(in srgb, var(--ak-ink) 13%, transparent);
 
 	/* App chrome */
 	--sidebar: var(--ak-white);
@@ -254,6 +257,8 @@
 	--border-strong: #525258;
 	--input: #3b3b3f;
 	--ring: var(--ak-marigold);
+	/* In dark the hairline already carries the dots well. */
+	--ak-dot: color-mix(in srgb, var(--border) 70%, transparent);
 
 	--sidebar: #121214;
 	--sidebar-foreground: #ecebe6;
@@ -369,10 +374,7 @@
 
 @utility ak-dotgrid {
 	background-color: var(--background);
-	background-image: radial-gradient(
-		color-mix(in srgb, var(--border) 70%, transparent) 1px,
-		transparent 1px
-	);
+	background-image: radial-gradient(var(--ak-dot) 1px, transparent 1px);
 	background-size: 28px 28px;
 	background-position: -1px -1px;
 }

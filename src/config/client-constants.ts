@@ -1,17 +1,39 @@
-import { AppNavItem, ProfileMenuItem } from "@/types/common";
+import {
+	AppNavItem,
+	ProfileIntegration,
+	ProfileMenuItem,
+	ProfileNavItem,
+	ProfileOAuthProvider,
+} from "@/types/common";
 import {
 	GalleryVerticalEnd,
+	Link2,
 	LogOut,
+	MessagesSquare,
+	Monitor,
 	Settings,
+	Shield,
 	SquarePlay,
 	SunMoon,
 	User,
 	Users,
+	Webhook,
 } from "lucide-react";
+import { FaGithub, FaGoogle, FaMicrosoft, FaSlack } from "react-icons/fa6";
+import { SiPagerduty } from "react-icons/si";
 
 export const SIGN_IN_URL = "/auth/sign-in";
 export const SIGN_UP_URL = "/auth/sign-up";
 export const DASHBOARD_URL = "/";
+export const PROFILE_URL = "/profile";
+
+/** Each profile section is its own route; the inner side-nav is the shell. */
+export const PROFILE_ROUTES = {
+	PROFILE: "/profile",
+	SECURITY: "/profile/security",
+	CONNECTED_ACCOUNTS: "/profile/connected-accounts",
+	SESSIONS: "/profile/sessions",
+} as const;
 
 export const OAUTH_ERROR_MAP: Record<string, string> = {
 	access_denied: "You cancelled the login process.",
@@ -67,6 +89,84 @@ export const PROFILE_MENU_ITEMS: ProfileMenuItem[] = [
 		label: "Sign out",
 		Icon: LogOut,
 		isDestructive: true,
+	},
+];
+
+/** Inner side-nav of the profile page. Each entry is a dedicated route. */
+export const PROFILE_NAV_ITEMS: ProfileNavItem[] = [
+	{ label: "Profile", href: PROFILE_ROUTES.PROFILE, Icon: User },
+	{ label: "Security", href: PROFILE_ROUTES.SECURITY, Icon: Shield },
+	{
+		label: "Connected accounts",
+		href: PROFILE_ROUTES.CONNECTED_ACCOUNTS,
+		Icon: Link2,
+	},
+	{ label: "Sessions", href: PROFILE_ROUTES.SESSIONS, Icon: Monitor },
+];
+
+/**
+ * Keys under Clerk `user.unsafeMetadata` for fields that are not part of the
+ * standard Clerk profile (job title, company, phone). Client-writable.
+ */
+export const PROFILE_METADATA_KEYS = {
+	JOB_TITLE: "jobTitle",
+	COMPANY: "company",
+	PHONE: "phone",
+} as const;
+
+/** OAuth sign-in providers enabled in our Clerk instance. */
+export const PROFILE_OAUTH_PROVIDERS: ProfileOAuthProvider[] = [
+	{
+		provider: "google",
+		strategy: "oauth_google",
+		label: "Google",
+		description: "Sign in with your Google account",
+		Icon: FaGoogle,
+	},
+	{
+		provider: "microsoft",
+		strategy: "oauth_microsoft",
+		label: "Microsoft",
+		description: "Sign in with Microsoft / Entra ID",
+		Icon: FaMicrosoft,
+	},
+	{
+		provider: "github",
+		strategy: "oauth_github",
+		label: "GitHub",
+		description: "Sign in with your GitHub account",
+		Icon: FaGithub,
+	},
+];
+
+/**
+ * Alert & notification integrations. Not backed by Clerk — rendered as disabled
+ * "coming soon" placeholders until a dedicated integrations backend exists.
+ */
+export const PROFILE_INTEGRATIONS: ProfileIntegration[] = [
+	{
+		id: "slack",
+		label: "Slack",
+		description: "Post workflow alerts to a channel",
+		Icon: FaSlack,
+	},
+	{
+		id: "microsoft-teams",
+		label: "Microsoft Teams",
+		description: "Post alerts to a Teams channel",
+		Icon: MessagesSquare,
+	},
+	{
+		id: "pagerduty",
+		label: "PagerDuty",
+		description: "Trigger incidents on workflow failure",
+		Icon: SiPagerduty,
+	},
+	{
+		id: "webhooks",
+		label: "Webhooks",
+		description: "Send events to any HTTPS endpoint",
+		Icon: Webhook,
 	},
 ];
 
