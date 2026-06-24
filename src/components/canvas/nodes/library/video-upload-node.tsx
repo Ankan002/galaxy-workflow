@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import { useReactFlow, type NodeProps } from "@xyflow/react";
 import { NodeType } from "../registry/types";
 import { BaseNode } from "../base-node";
@@ -8,23 +8,21 @@ import type { NodeDefinition } from "../registry/types";
 import { useUpdateNodeConfig } from "../use-update-node-config";
 
 import { useWorkflowCanvasStore } from "@/store";
-import { useTransloaditUpload } from "@/hooks/use-transloadit-upload";
+import { FilePickerDialog } from "@/components/gallery";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Progress } from "@/components/ui/progress";
 import { VideoIcon, Upload } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const DEFAULT_ACCEPT = "video/mp4,video/quicktime,video/webm,video/x-m4v";
-const ACCEPT_TYPES = DEFAULT_ACCEPT.split(",").map((s) => s.trim());
-
-function isAcceptedVideoType(type: string): boolean {
-	return ACCEPT_TYPES.some((a) => type === a || type.startsWith("video/"));
-}
-
 export interface VideoUploadNodeConfig {
-	/** Preview URL after upload (via Transloadit). Shown in video player preview. */
+	/** Public S3 URL of the selected video. Consumed by downstream nodes. */
 	previewUrl?: string;
+	/** Mirror of previewUrl (full-flow execution reads url as fallback). */
+	url?: string;
+	/** Gallery item the video came from (for reference/persistence). */
+	galleryItemId?: string;
+	/** S3 object key of the selected video. */
+	key?: string;
 }
 
 export const VIDEO_UPLOAD_DEFINITION: Omit<
@@ -34,8 +32,8 @@ export const VIDEO_UPLOAD_DEFINITION: Omit<
 	type: NodeType.VIDEO_UPLOAD,
 	label: "Upload Video",
 	description:
-		"Upload via Transloadit. Accepted: mp4, mov, webm, m4v. Output: video URL.",
-	provider: "TRANSLOADIT",
+		"Pick from your gallery or upload a new video. Accepted: mp4, mov, webm, m4v. Output: video URL.",
+	provider: "INTERNAL",
 	inputHandles: [],
 	outputHandles: [{ key: "url", type: "string" }],
 	defaultConfig: {},
@@ -45,9 +43,8 @@ export function VideoUploadNode({ id, data, selected }: NodeProps) {
 	const { getNode } = useReactFlow();
 	const { workflowId, onNodeDetailsBlur } = useWorkflowCanvasStore();
 	const updateConfig = useUpdateNodeConfig(id);
-	
-	const fileInputRef = useRef<HTMLInputElement>(null);
-	const [isDragOver, setIsDragOver] = useState(false);
+
+	const [pickerOpen, setPickerOpen] = useState(false);
 	const config = (data?.config ??
 		VIDEO_UPLOAD_DEFINITION.defaultConfig) as VideoUploadNodeConfig;
 	const status = data?.status as
@@ -58,59 +55,10 @@ export function VideoUploadNode({ id, data, selected }: NodeProps) {
 		| undefined;
 	const previewUrl = config.previewUrl ?? "";
 
-	const { uploadFile, isUploading, progressPercent, error } =
-		useTransloaditUpload({
-			workflowId: workflowId ?? "",
-			nodeId: id,
-			type: "video",
-			onSuccess: (url) => updateConfig({ previewUrl: url }),
-		});
-
 	const setPreviewUrl = useCallback(
-		(v: string) => updateConfig({ previewUrl: v }),
+		(v: string) => updateConfig({ previewUrl: v, url: v }),
 		[updateConfig],
 	);
-
-	const startUpload = useCallback(
-		(file: File) => {
-			if (!workflowId || isUploading) return;
-			if (!isAcceptedVideoType(file.type)) return;
-			uploadFile(file);
-		},
-		[workflowId, isUploading, uploadFile],
-	);
-
-	const onFileChange = useCallback(
-		(e: React.ChangeEvent<HTMLInputElement>) => {
-			const file = e.target.files?.[0];
-			if (file) startUpload(file);
-			e.target.value = "";
-		},
-		[startUpload],
-	);
-
-	const onDrop = useCallback(
-		(e: React.DragEvent) => {
-			e.preventDefault();
-			e.stopPropagation();
-			setIsDragOver(false);
-			const file = e.dataTransfer.files?.[0];
-			if (file) startUpload(file);
-		},
-		[startUpload],
-	);
-
-	const onDragOver = useCallback((e: React.DragEvent) => {
-		e.preventDefault();
-		e.stopPropagation();
-		setIsDragOver(true);
-	}, []);
-
-	const onDragLeave = useCallback((e: React.DragEvent) => {
-		e.preventDefault();
-		e.stopPropagation();
-		setIsDragOver(false);
-	}, []);
 
 	const handleBlur = useCallback(
 		(e: React.FocusEvent) => {
@@ -143,47 +91,25 @@ export function VideoUploadNode({ id, data, selected }: NodeProps) {
 		>
 			<div className="space-y-2 nodrag nopan" onBlur={handleBlur}>
 				<div className="space-y-1">
-					{workflowId ? (
-						<input
-							ref={fileInputRef}
-							type="file"
-							accept={DEFAULT_ACCEPT}
-							onChange={onFileChange}
-							className="hidden"
-							disabled={isUploading}
-						/>
-					) : null}
 					<div
 						role="button"
 						tabIndex={0}
-						onClick={() =>
-							workflowId &&
-							!isUploading &&
-							fileInputRef.current?.click()
-						}
+						onClick={() => workflowId && setPickerOpen(true)}
 						onKeyDown={(e) => {
 							if (
 								(e.key === "Enter" || e.key === " ") &&
-								workflowId &&
-								!isUploading
+								workflowId
 							) {
 								e.preventDefault();
-								fileInputRef.current?.click();
+								setPickerOpen(true);
 							}
 						}}
-						onDrop={onDrop}
-						onDragOver={onDragOver}
-						onDragLeave={onDragLeave}
 						className={cn(
 							"relative aspect-video min-h-[120px] flex items-center justify-center overflow-hidden cursor-pointer transition-all duration-200 rounded-xl border border-border/80 bg-ink",
-							workflowId &&
-								!isUploading &&
-								"hover:border-ring/40 hover:shadow-md",
-							isDragOver &&
-								"ring-2 ring-ring ring-offset-2 ring-offset-background border-ring/60 scale-[1.01]",
+							workflowId && "hover:border-ring/40 hover:shadow-md",
 							previewUrl && "shadow-lg",
 						)}
-						aria-label="Click or drop video to upload"
+						aria-label="Choose or upload a video"
 					>
 						{previewUrl ? (
 							<>
@@ -199,7 +125,7 @@ export function VideoUploadNode({ id, data, selected }: NodeProps) {
 									preload="metadata"
 									onClick={(e) => e.stopPropagation()}
 								/>
-								{workflowId && !isUploading && (
+								{workflowId && (
 									<Button
 										type="button"
 										variant="secondary"
@@ -207,12 +133,12 @@ export function VideoUploadNode({ id, data, selected }: NodeProps) {
 										className="absolute bottom-2 right-2 z-20 h-7 gap-1 px-2 text-[10px] shadow-md"
 										onClick={(e) => {
 											e.stopPropagation();
-											fileInputRef.current?.click();
+											setPickerOpen(true);
 										}}
-										aria-label="Upload new video"
+										aria-label="Choose another video"
 									>
 										<Upload className="size-3" />
-										Upload new
+										Change
 									</Button>
 								)}
 							</>
@@ -222,25 +148,15 @@ export function VideoUploadNode({ id, data, selected }: NodeProps) {
 									<VideoIcon className="size-7 text-neutral-400" />
 								</div>
 								<span className="text-[11px] font-medium text-neutral-400">
-									{isDragOver
-										? "Drop video here"
-										: "Click or drop video"}
+									Pick or upload video
 								</span>
 							</div>
 						)}
 					</div>
-					{isUploading && (
-						<Progress value={progressPercent} className="h-1.5" />
-					)}
-					{error && (
-						<p className="text-[10px] text-destructive">
-							{error.message}
-						</p>
-					)}
 					<Input
 						value={previewUrl}
 						onChange={(e) => setPreviewUrl(e.target.value)}
-						placeholder="Preview URL (e.g. after upload)"
+						placeholder="Video URL"
 						className="h-7 text-xs"
 					/>
 				</div>
@@ -248,6 +164,21 @@ export function VideoUploadNode({ id, data, selected }: NodeProps) {
 					Output: video URL
 				</p>
 			</div>
+
+			<FilePickerDialog
+				open={pickerOpen}
+				onOpenChange={setPickerOpen}
+				filterType="video"
+				title="Choose a video"
+				onSelect={(item) =>
+					updateConfig({
+						previewUrl: item.url,
+						url: item.url,
+						galleryItemId: item.id,
+						key: item.key,
+					})
+				}
+			/>
 		</BaseNode>
 	);
 }

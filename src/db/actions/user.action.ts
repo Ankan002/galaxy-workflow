@@ -34,6 +34,13 @@ export const createUsers = async (args: CreateUsersArgs) => {
 
 export const getAllUsers = async () => prisma.user.findMany();
 
+export const getUserByClerkId = async (clerkId: string) =>
+	prisma.user.findUnique({
+		where: {
+			clerk_id: clerkId,
+		},
+	});
+
 interface UpdateUserArgs {
 	clerkId: string;
 }

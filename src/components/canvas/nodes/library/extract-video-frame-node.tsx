@@ -23,7 +23,7 @@ export const EXTRACT_VIDEO_FRAME_DEFINITION: Omit<
 	type: NodeType.EXTRACT_VIDEO_FRAME,
 	label: "Extract Frame from Video",
 	description:
-		"Extract a single frame from video via FFmpeg (Trigger.dev). Input: video_url (mp4, mov, webm, m4v), optional timestamp (seconds or e.g. 50%). Output: frame image URL (jpg/png, via Transloadit).",
+		"Extract a single frame from video via FFmpeg (Trigger.dev). Input: video_url (mp4, mov, webm, m4v), optional timestamp (seconds or e.g. 50%). Output: frame image URL (jpg/png).",
 	provider: "TRIGGER_DEV",
 	inputHandles: [
 		{ key: "video_url", type: "video", required: true },
@@ -106,8 +106,7 @@ export function ExtractVideoFrameNode({ id, data, selected }: NodeProps) {
 					/>
 				</div>
 				<p className="text-[10px] text-muted-foreground">
-					Output: extracted frame image URL (jpg or png, via
-					Transloadit)
+					Output: extracted frame image URL (jpg or png)
 				</p>
 			</div>
 		</BaseNode>

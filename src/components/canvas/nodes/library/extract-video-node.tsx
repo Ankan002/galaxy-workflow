@@ -23,7 +23,7 @@ export const EXTRACT_VIDEO_DEFINITION: Omit<
 	type: NodeType.EXTRACT_VIDEO,
 	label: "Extract Video",
 	description: "Extract a segment from a video",
-	provider: "TRANSLOADIT",
+	provider: "TRIGGER_DEV",
 	inputHandles: [{ key: "video", type: "video", required: true }],
 	outputHandles: [
 		{ key: "video", type: "video" },

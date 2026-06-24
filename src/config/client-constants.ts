@@ -7,6 +7,7 @@ import {
 } from "@/types/common";
 import {
 	GalleryVerticalEnd,
+	Images,
 	Link2,
 	LogOut,
 	MessagesSquare,
@@ -53,6 +54,11 @@ export const APP_NAV_ITEMS: AppNavItem[] = [
 		Icon: GalleryVerticalEnd,
 		label: "My Files",
 		href: "/",
+	},
+	{
+		Icon: Images,
+		label: "Gallery",
+		href: "/gallery",
 	},
 	{
 		Icon: Users,
@@ -171,8 +177,33 @@ export const PROFILE_INTEGRATIONS: ProfileIntegration[] = [
 ];
 
 const workflowFileBase = "/api/workflow-file";
+const galleryBase = "/api/gallery";
 
 export const API_ROUTES = {
+	GALLERY: {
+		LIST: {
+			path: galleryBase,
+			method: "GET" as const,
+			key: "get-gallery-items",
+		},
+		UPLOAD_URL: {
+			path: `${galleryBase}/upload-url`,
+			method: "POST" as const,
+			key: "gallery-upload-url",
+		},
+		CONFIRM: {
+			path: galleryBase,
+			method: "POST" as const,
+			key: "create-gallery-item",
+		},
+		DELETE: {
+			path: `${galleryBase}/:galleryItemId`,
+			dynamicPath: (galleryItemId: string) =>
+				`${galleryBase}/${galleryItemId}`,
+			method: "DELETE" as const,
+			key: "delete-gallery-item",
+		},
+	},
 	WORKFLOW_FILE: {
 		CREATE: {
 			path: workflowFileBase,
@@ -288,20 +319,6 @@ export const API_ROUTES = {
 				`${workflowFileBase}/${workflowId}/nodes/${nodeId}`,
 			method: "DELETE" as const,
 			key: "delete-workflow-node",
-		},
-		UPLOAD_PREPARE: {
-			path: `${workflowFileBase}/:workflowId/nodes/:nodeId/upload/prepare`,
-			dynamicPath: (workflowId: string, nodeId: string) =>
-				`${workflowFileBase}/${workflowId}/nodes/${nodeId}/upload/prepare`,
-			method: "POST" as const,
-			key: "upload-prepare",
-		},
-		UPLOAD_COMPLETE: {
-			path: `${workflowFileBase}/:workflowId/nodes/:nodeId/upload/complete`,
-			dynamicPath: (workflowId: string, nodeId: string) =>
-				`${workflowFileBase}/${workflowId}/nodes/${nodeId}/upload/complete`,
-			method: "POST" as const,
-			key: "upload-complete",
 		},
 		EXECUTE: {
 			path: `${workflowFileBase}/:workflowId/nodes/:nodeId/execute`,

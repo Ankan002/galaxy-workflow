@@ -27,20 +27,20 @@ export const serverEnv = createEnv({
 		TRIGGER_PROJECT_REF: z.string({
 			error: "TRIGGER_PROJECT_REF is required",
 		}),
-		TRANSLOADIT_PUBLIC_KEY: z.string({
-			error: "TRANSLOADIT_PUBLIC_KEY is required",
-		}),
-		TRANSLOADIT_SECRET_KEY: z.string({
-			error: "TRANSLOADIT_SECRET_KEY is required",
-		}),
 		GEMINI_API_KEY: z.string({
 			error: "GEMINI_API_KEY is required",
 		}),
-		TRANSLOADIT_IMAGE_TEMPLATE_ID: z.string({
-			error: "TRANSLOADIT_IMAGE_TEMPLATE_ID is required",
+		AWS_BUCKET_NAME: z.string({
+			error: "AWS_BUCKET_NAME is required",
 		}),
-		TRANSLOADIT_VIDEO_TEMPLATE_ID: z.string({
-			error: "TRANSLOADIT_VIDEO_TEMPLATE_ID is required",
+		AWS_BUCKET_REGION: z.string({
+			error: "AWS_BUCKET_REGION is required",
+		}),
+		AWS_KEY_ID: z.string({
+			error: "AWS_KEY_ID is required",
+		}),
+		AWS_KEY_SECRET: z.string({
+			error: "AWS_KEY_SECRET is required",
 		}),
 	},
 	runtimeEnv: {
@@ -52,12 +52,10 @@ export const serverEnv = createEnv({
 		CLERK_WEBHOOK_SIGNING_SECRET: process.env.CLERK_WEBHOOK_SIGNING_SECRET,
 		TRIGGER_SECRET_KEY: process.env.TRIGGER_SECRET_KEY,
 		TRIGGER_PROJECT_REF: process.env.TRIGGER_PROJECT_REF,
-		TRANSLOADIT_PUBLIC_KEY: process.env.TRANSLOADIT_PUBLIC_KEY,
-		TRANSLOADIT_SECRET_KEY: process.env.TRANSLOADIT_SECRET_KEY,
 		GEMINI_API_KEY: process.env.GEMINI_API_KEY,
-		TRANSLOADIT_IMAGE_TEMPLATE_ID:
-			process.env.TRANSLOADIT_IMAGE_TEMPLATE_ID,
-		TRANSLOADIT_VIDEO_TEMPLATE_ID:
-			process.env.TRANSLOADIT_VIDEO_TEMPLATE_ID,
+		AWS_BUCKET_NAME: process.env.AWS_BUCKET_NAME,
+		AWS_BUCKET_REGION: process.env.AWS_BUCKET_REGION,
+		AWS_KEY_ID: process.env.AWS_KEY_ID,
+		AWS_KEY_SECRET: process.env.AWS_KEY_SECRET,
 	},
 });

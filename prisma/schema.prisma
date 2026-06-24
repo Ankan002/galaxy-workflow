@@ -1,151 +1,177 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../src/db/prisma"
+    provider = "prisma-client"
+    output   = "../src/db/prisma"
 }
 
 datasource db {
-  provider     = "postgresql"
-  relationMode = "foreignKeys"
+    provider     = "postgresql"
+    relationMode = "foreignKeys"
 }
 
 enum workflow_type {
-  user_created
-  system_example
+    user_created
+    system_example
 }
 
 enum workflow_node_type {
-  text
-  image_upload
-  video_upload
-  run_llm
-  crop_image
-  extract_video_frame
+    text
+    image_upload
+    video_upload
+    run_llm
+    crop_image
+    extract_video_frame
 }
 
 enum workflow_node_provider {
-  internal
-  trigger
-  transloadit
+    internal
+    trigger
+    transloadit
 }
 
 enum workflow_execution_type {
-  full
-  one_node
+    full
+    one_node
 }
 
 enum node_execution_status {
-  pending
-  running
-  completed
-  failed
+    pending
+    running
+    completed
+    failed
 }
 
 enum workflow_execution_status {
-  pending
-  running
-  completed
-  failed
+    pending
+    running
+    completed
+    failed
+}
+
+enum gallery_item_type {
+    image
+    video
+    document
+    others
 }
 
 model user {
-  id         String          @id @default(ulid())
-  clerk_id   String          @unique
-  created_at DateTime        @default(now())
-  updated_at DateTime        @updatedAt
-  files      workflow_file[]
+    id            String          @id @default(ulid())
+    clerk_id      String          @unique
+    created_at    DateTime        @default(now())
+    updated_at    DateTime        @updatedAt
+    files         workflow_file[]
+    gallery_items gallery_item[]
 }
 
 model workflow_file {
-  id         String        @id @default(ulid())
-  name       String
-  type       workflow_type @default(user_created)
-  user_id    String?
-  created_at DateTime      @default(now())
-  updated_at DateTime      @updatedAt
+    id         String        @id @default(ulid())
+    name       String
+    type       workflow_type @default(user_created)
+    user_id    String?
+    created_at DateTime      @default(now())
+    updated_at DateTime      @updatedAt
 
-  user            user?                @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  nodes           workflow_node[]
-  edges           workflow_edge[]
-  executions      workflow_execution[]
-  node_executions node_execution[]
+    user            user?                @relation(fields: [user_id], references: [id], onDelete: Cascade)
+    nodes           workflow_node[]
+    edges           workflow_edge[]
+    executions      workflow_execution[]
+    node_executions node_execution[]
+}
+
+model gallery_item {
+    id         String            @id @default(ulid())
+    user_id    String
+    type       gallery_item_type
+    name       String
+    key        String            @unique
+    url        String
+    extension  String
+    mime_type  String
+    size       Int
+    created_at DateTime          @default(now())
+    updated_at DateTime          @updatedAt
+
+    user user @relation(references: [id], fields: [user_id], onDelete: Cascade)
+
+    @@index([user_id, created_at])
 }
 
 model workflow_node {
-  id          String                 @id @default(ulid())
-  workflow_id String
-  type        workflow_node_type
-  provider    workflow_node_provider
-  position_x  Float
-  position_y  Float
-  config      Json
-  metadata    Json?                  @default("{}")
-  created_at  DateTime               @default(now())
-  updated_at  DateTime               @updatedAt
+    id          String                 @id @default(ulid())
+    workflow_id String
+    type        workflow_node_type
+    provider    workflow_node_provider
+    position_x  Float
+    position_y  Float
+    config      Json
+    metadata    Json?                  @default("{}")
+    created_at  DateTime               @default(now())
+    updated_at  DateTime               @updatedAt
 
-  workflow     workflow_file    @relation(fields: [workflow_id], references: [id], onDelete: Cascade)
-  source_edges workflow_edge[]  @relation("edge_source")
-  target_edges workflow_edge[]  @relation("edge_target")
-  executions   node_execution[]
+    workflow     workflow_file    @relation(fields: [workflow_id], references: [id], onDelete: Cascade)
+    source_edges workflow_edge[]  @relation("edge_source")
+    target_edges workflow_edge[]  @relation("edge_target")
+    executions   node_execution[]
 }
 
 model workflow_edge {
-  id             String   @id @default(ulid())
-  workflow_id    String
-  source_node_id String
-  target_node_id String
-  source_handle  String
-  target_handle  String
-  created_at     DateTime @default(now())
-  updated_at     DateTime @updatedAt
+    id             String   @id @default(ulid())
+    workflow_id    String
+    source_node_id String
+    target_node_id String
+    source_handle  String
+    target_handle  String
+    created_at     DateTime @default(now())
+    updated_at     DateTime @updatedAt
 
-  workflow    workflow_file @relation(fields: [workflow_id], references: [id], onDelete: Cascade)
-  source_node workflow_node @relation("edge_source", fields: [source_node_id], references: [id], onDelete: Cascade)
-  target_node workflow_node @relation("edge_target", fields: [target_node_id], references: [id], onDelete: Cascade)
+    workflow    workflow_file @relation(fields: [workflow_id], references: [id], onDelete: Cascade)
+    source_node workflow_node @relation("edge_source", fields: [source_node_id], references: [id], onDelete: Cascade)
+    target_node workflow_node @relation("edge_target", fields: [target_node_id], references: [id], onDelete: Cascade)
 
-  @@unique([workflow_id, source_node_id, target_node_id, source_handle, target_handle])
-  @@index([workflow_id])
-  @@index([source_node_id])
-  @@index([target_node_id])
+    @@unique([workflow_id, source_node_id, target_node_id, source_handle, target_handle])
+    @@index([workflow_id])
+    @@index([source_node_id])
+    @@index([target_node_id])
 }
 
 model workflow_execution {
-  id             String                     @id @default(ulid())
-  workflow_id    String
-  execution_type workflow_execution_type
-  status         workflow_execution_status  @default(pending)
-  error          Json?
-  result         Json?
-  created_at     DateTime                  @default(now())
-  updated_at     DateTime                  @updatedAt
+    id             String                    @id @default(ulid())
+    workflow_id    String
+    execution_type workflow_execution_type
+    status         workflow_execution_status @default(pending)
+    error          Json?
+    result         Json?
+    created_at     DateTime                  @default(now())
+    updated_at     DateTime                  @updatedAt
 
-  workflow        workflow_file    @relation(fields: [workflow_id], references: [id], onDelete: Cascade)
-  node_executions node_execution[]
+    workflow        workflow_file    @relation(fields: [workflow_id], references: [id], onDelete: Cascade)
+    node_executions node_execution[]
 }
 
 model node_execution {
-  id                    String                @id @default(ulid())
-  workflow_id           String
-  node_id               String
-  workflow_execution_id String
-  status                node_execution_status @default(pending)
-  output                Json?
-  error                 Json?
-  created_at            DateTime              @default(now())
-  updated_at            DateTime              @updatedAt
+    id                    String                @id @default(ulid())
+    workflow_id           String
+    node_id               String
+    workflow_execution_id String
+    status                node_execution_status @default(pending)
+    output                Json?
+    error                 Json?
+    created_at            DateTime              @default(now())
+    updated_at            DateTime              @updatedAt
 
-  workflow           workflow_file      @relation(fields: [workflow_id], references: [id], onDelete: Cascade)
-  node               workflow_node      @relation(fields: [node_id], references: [id], onDelete: Cascade)
-  workflow_execution workflow_execution @relation(fields: [workflow_execution_id], references: [id], onDelete: Cascade)
+    workflow           workflow_file      @relation(fields: [workflow_id], references: [id], onDelete: Cascade)
+    node               workflow_node      @relation(fields: [node_id], references: [id], onDelete: Cascade)
+    workflow_execution workflow_execution @relation(fields: [workflow_execution_id], references: [id], onDelete: Cascade)
 
-  @@unique([workflow_execution_id, node_id])
+    @@unique([workflow_execution_id, node_id])
 }
 
 model workflow_template {
-  id         String   @id @default(ulid())
-  name       String
-  json       Json
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+    id         String   @id @default(ulid())
+    name       String
+    json       Json
+    created_at DateTime @default(now())
+    updated_at DateTime @updatedAt
 
-  @@index([name])
+    @@index([name])
 }

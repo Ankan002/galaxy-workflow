@@ -12,7 +12,7 @@
 4. [Near–Real-Time Execution Status](#near-real-time-execution-status)
 5. [Auth (Clerk)](#auth-clerk)
 6. [Trigger.dev](#triggerdev)
-7. [TUS / Transloadit](#tus--transloadit)
+7. [File storage (AWS S3)](#file-storage-aws-s3)
 8. [App Features](#app-features)
 9. [Basic Usage Guide](#basic-usage-guide)
 10. [Using the Template Section](#using-the-template-section)
@@ -36,7 +36,7 @@
 | **Database**        | PostgreSQL, Prisma ORM                                                |
 | **Auth**            | Clerk (middleware + API `auth()`)                                     |
 | **Background jobs** | Trigger.dev (workflow-orchestrator, run-llm, crop-image, extract-video-frame) |
-| **Uploads**         | TUS (tus-js-client) + Transloadit (prepare → TUS → notify → complete) |
+| **Uploads**         | AWS S3 via presigned PUT URLs (presign → direct PUT → confirm) |
 | **LLM / Vision**    | Google Gemini (Gemini 2.5 Flash / Pro)                                |
 | **Package manager** | Bun                                                                   |
 
@@ -53,7 +53,7 @@
 - **Execution:**  
   - **Full flow:** User clicks "Run flow" → API creates `workflow_execution` (type `full`) and source `node_execution` rows (text, image_upload, video_upload) → API triggers a single Trigger.dev task **workflow-orchestrator** with `{ workflowId, workflowExecutionId }`. The orchestrator runs entirely on Trigger: it loads nodes/edges from the DB (Prisma), repeatedly computes ready nodes, resolves inputs from predecessor outputs, creates `node_execution` rows, and calls **batch.triggerAndWait** for each wave (crop-image, run-llm, extract-video-frame). Child tasks are invoked **without** `completionUrl`, so they do not POST to the webhook; the orchestrator gets results from `batch.triggerAndWait` and updates `node_execution` (output/error) via Prisma. When no more ready nodes remain, the orchestrator updates `workflow_execution` (status, result, error). Orchestration thus lives inside Trigger (durability, dashboard visibility, native retry).  
   - **Single-node run:** User runs one node → API creates `workflow_execution` (type `one_node`) and `node_execution` → API triggers the corresponding Trigger task with `_executionMeta` including `completionUrl`. The task runs, then calls `notifyExecutionComplete`, which POSTs to `/api/webhooks/execution-complete`. The webhook updates `node_execution` and `workflow_execution`.
-- **Uploads:** Image/Video node → Prepare (Transloadit assembly + TUS URL) → Client uploads via TUS → Transloadit notifies our webhook → We update node config with preview/URL and optionally call upload-complete API.
+- **Uploads:** Gallery or Image/Video node → Presign API (`/api/gallery/upload-url`) → Client `PUT`s directly to S3 → Confirm API (`/api/gallery`) creates the `gallery_item` → node config gets the public URL.
 
 ### Data Flow Summary
 
@@ -61,7 +61,7 @@
 2. **Execution:**  
    - **Full flow:** UI → `POST /api/workflow-file/:workflowId/execute-flow` → DB (create `workflow_execution` + source `node_execution` rows) → `tasks.trigger("workflow-orchestrator", { workflowId, workflowExecutionId })` → Orchestrator loads DAG, `batch.triggerAndWait`(initial ready nodes) → updates DB from results. Each child task, on completion, calls `tasks.trigger("process-node-completion", ...)` → process-node-completion updates node, loops: get ready → `batch.triggerAndWait` → update DB until no more ready → updates `workflow_execution` when all terminal. Event-driven; no webhook for full flow.  
    - **Single-node:** UI → Execute node API → DB (create `workflow_execution` + `node_execution`) → `tasks.trigger(taskId, payload)` with `completionUrl` → Task runs → Task POSTs to `/api/webhooks/execution-complete` → Webhook updates `node_execution` and `workflow_execution`.
-3. **Uploads:** UI → Prepare API → Transloadit assembly + TUS URL → Client TUS upload → Transloadit webhook → Our notify route updates node → Optional complete API for UI state.
+3. **Uploads:** UI → Presign API → presigned S3 PUT URL → client uploads directly to S3 → Confirm API creates the `gallery_item` and the node/gallery shows the public URL.
 
 ---
 
@@ -109,15 +109,17 @@
 
 ---
 
-## TUS / Transloadit
+## File storage (AWS S3)
 
-- **Role:** Image and video uploads use **TUS** (resumable uploads) and **Transloadit** for processing and storage. The app does not store file bytes itself; Transloadit returns public URLs that we store in node config.
-- **Flow:**
-    1. **Prepare:** Client calls `POST .../nodes/[nodeId]/upload/prepare` with `{ type: "image" | "video" }`. Server creates a Transloadit assembly (with template ID for image or video), returns `assembly_id`, `assembly_ssl_url`, `tus_url`.
-    2. **Upload:** Client uses `tus-js-client` to upload the file to `tus_url`.
-    3. **Notify:** Transloadit runs the template and POSTs to our `/api/transloadit/notify` (with `workflow_id`, `node_id` in query). We verify the HMAC signature, parse the assembly result, get the public URL, and update the workflow node's config (e.g. `previewUrl`, `url`).
-    4. **Complete:** Client may call `POST .../nodes/[nodeId]/upload/complete` with `assembly_ssl_url` to confirm and refresh UI state.
-- **Security:** Notify route validates the Transloadit signature using `TRANSLOADIT_SECRET_KEY`.
+- **Role:** All files (uploads and generated outputs) live in **AWS S3**. The bucket is **public-read**, so each object has a permanent URL we store in `gallery_item.url` and node config. Object keys follow `<user_id>/<random_id>-<cuid>.<ext>` (user id = internal ulid).
+- **Upload flow (browser):**
+    1. **Presign:** Client calls `POST /api/gallery/upload-url` with `{ name, contentType, size }`. Server resolves the internal user id, builds the key, and returns a presigned **PUT** URL plus the final public `url`/`key`.
+    2. **Upload:** Client `PUT`s the file straight to S3 (progress via `XMLHttpRequest`).
+    3. **Confirm:** Client calls `POST /api/gallery` with `{ name, key, contentType, size }`; server validates the key prefix and creates the `gallery_item` row.
+- **Gallery:** `GET /api/gallery?cursor=&query=&type=` is cursor-paginated (`useInfiniteQuery`); `DELETE /api/gallery/:id` removes the S3 object and the row (ownership-checked).
+- **Node file picker:** Image/Video upload nodes open a picker dialog to browse existing gallery items or upload a new one; the chosen item's public URL is written to node config (`previewUrl`/`url`).
+- **Generated outputs:** The `crop-image` and `extract-video-frame` Trigger.dev tasks upload their FFmpeg output to S3 and create a `gallery_item` for the workflow owner, so processed assets also appear in the gallery.
+- **Util:** `serverUtilsRegistry.s3` (`src/utils/server/s3.ts`) wraps the runtime-agnostic helpers in `src/lib/s3/` used by both the Next server and Trigger.dev tasks.
 
 ---
 
@@ -126,7 +128,7 @@
 - **Dashboard (My Files):** List of workflow files, search, create new file, rename (context menu), delete (context menu). Prebuilt workflows section with "Workflow library" and "Tutorials" tabs; using a template creates a new file from its JSON and redirects to that workflow.
 - **Desktop-only gate:** On viewports below the desktop breakpoint, a full-screen gate is shown (logo, "Your masterpiece needs a bigger canvas", copy link). The app is intended for desktop use.
 - **Workflow canvas:** React Flow with dot grid; left sidebar with node types (Text, Upload Image, Upload Video, LLM, Crop Image, Extract Frame); right sidebar with Run node / Run flow / Stop flow and execution history. Nodes show a pulsating glow when that node is running.
-- **Nodes:** Text (textarea + value handle), Image Upload (Transloadit + preview), Video Upload (Transloadit + player), Run LLM (model selector, prompts, temperature, image inputs), Crop Image (FFmpeg via Trigger), Extract Frame (FFmpeg via Trigger). Edges are animated (purple).
+- **Nodes:** Text (textarea + value handle), Image Upload (gallery picker / S3 + preview), Video Upload (gallery picker / S3 + player), Run LLM (model selector, prompts, temperature, image inputs), Crop Image (FFmpeg via Trigger), Extract Frame (FFmpeg via Trigger). Edges are animated (purple).
 - **Execution:** Run selected node or run full flow. Executions appear in the right panel; expanding a run shows node-level history (status, output preview: image/video/LLM with "Know more" for full content). Stop-flow button per running run to force-stop that execution.
 - **Persistence:** Workflows (nodes, edges, positions, config) and execution history are stored in PostgreSQL. Config and position are saved on blur / on change (e.g. model selector) for the current workflow.
 - **Export / Import:** Export workflow as JSON (version, name, nodes, edges). Import creates a new workflow from that JSON (used also when using a template).
@@ -171,7 +173,7 @@
 
 - Node 18+ (or Bun)
 - PostgreSQL (local or hosted, e.g. Supabase)
-- Accounts: Clerk, Trigger.dev, Transloadit, Google AI (Gemini)
+- Accounts: Clerk, Trigger.dev, AWS (S3 bucket), Google AI (Gemini)
 
 ### Setup
 
@@ -243,8 +245,8 @@ See `.env.example` for the full list. Summary:
 - **Database:** `DATABASE_URL`, `DIRECT_URL`
 - **App:** `ENV`, `HOST` (used for webhook callback URL)
 - **Clerk:** `CLERK_SECRET_KEY`, `CLERK_WEBHOOK_SIGNING_SECRET`, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
-- **Trigger.dev:** `TRIGGER_SECRET_KEY`, `TRIGGER_PROJECT_REF`. For the workflow-orchestrator task, set **DATABASE_URL** in the Trigger.dev project environment (same DB as the app).
-- **Transloadit:** `TRANSLOADIT_PUBLIC_KEY`, `TRANSLOADIT_SECRET_KEY`, `TRANSLOADIT_IMAGE_TEMPLATE_ID`, `TRANSLOADIT_VIDEO_TEMPLATE_ID`
+- **Trigger.dev:** `TRIGGER_SECRET_KEY`, `TRIGGER_PROJECT_REF`. For the workflow-orchestrator and crop/extract tasks, set **DATABASE_URL** and the **AWS_\*** vars in the Trigger.dev project environment (same DB + bucket as the app), since those tasks upload outputs to S3.
+- **AWS S3:** `AWS_BUCKET_NAME`, `AWS_BUCKET_REGION`, `AWS_KEY_ID`, `AWS_KEY_SECRET` (bucket must be public-read via bucket policy)
 - **Gemini:** `GEMINI_API_KEY`
 - **Public:** `NEXT_PUBLIC_HOST`, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
 
@@ -261,8 +263,8 @@ This checklist mirrors the "Required" list for the Weavy clone. **Please confirm
 - [x] **Node-level execution history when clicking a run** — Expanding a run shows each node's status and output preview.
 - [x] **React Flow canvas with dot grid background** — Canvas uses React Flow and dot grid.
 - [x] **Functional Text Node with textarea and output handle** — Value handle, config persisted.
-- [x] **Functional Upload Image Node with Transloadit upload and image preview** — Prepare → TUS → Transloadit notify → preview.
-- [x] **Functional Upload Video Node with Transloadit upload and video player preview** — Same flow; video preview and URL.
+- [x] **Functional Upload Image Node with S3 upload and image preview** — Gallery picker / presigned S3 upload → preview.
+- [x] **Functional Upload Video Node with S3 upload and video player preview** — Same flow; video preview and URL.
 - [x] **Functional LLM Node with model selector, prompts, and run capability** — Gemini; model selector (e.g. 2.5 Flash/Pro), system/user prompts, run.
 - [x] **Functional Crop Image Node (FFmpeg via Trigger.dev)** — Trigger task, FFmpeg crop.
 - [x] **Functional Extract Frame from Video Node (FFmpeg via Trigger.dev)** — Trigger task, FFmpeg frame extraction.

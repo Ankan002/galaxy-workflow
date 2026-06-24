@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import { useReactFlow, type NodeProps } from "@xyflow/react";
 import { NodeType } from "../registry/types";
 import { BaseNode } from "../base-node";
@@ -8,22 +8,20 @@ import type { NodeDefinition } from "../registry/types";
 import { useUpdateNodeConfig } from "../use-update-node-config";
 
 import { useWorkflowCanvasStore } from "@/store";
-import { useTransloaditUpload } from "@/hooks/use-transloadit-upload";
+import { FilePickerDialog } from "@/components/gallery";
 import { Input } from "@/components/ui/input";
-import { Progress } from "@/components/ui/progress";
 import { ImageIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const DEFAULT_ACCEPT = "image/jpeg,image/png,image/webp,image/gif";
-const ACCEPT_TYPES = DEFAULT_ACCEPT.split(",").map((s) => s.trim());
-
-function isAcceptedImageType(type: string): boolean {
-	return ACCEPT_TYPES.includes(type) || type.startsWith("image/");
-}
-
 export interface ImageUploadNodeConfig {
-	/** Preview URL after upload (via Transloadit). Shown in image preview. */
+	/** Public S3 URL of the selected image. Consumed by downstream nodes. */
 	previewUrl?: string;
+	/** Mirror of previewUrl (full-flow execution reads url as fallback). */
+	url?: string;
+	/** Gallery item the image came from (for reference/persistence). */
+	galleryItemId?: string;
+	/** S3 object key of the selected image. */
+	key?: string;
 }
 
 export const IMAGE_UPLOAD_DEFINITION: Omit<
@@ -33,8 +31,8 @@ export const IMAGE_UPLOAD_DEFINITION: Omit<
 	type: NodeType.IMAGE_UPLOAD,
 	label: "Upload Image",
 	description:
-		"Upload via Transloadit. Accepted: jpg, png, webp, gif. Output: image URL.",
-	provider: "TRANSLOADIT",
+		"Pick from your gallery or upload a new image. Accepted: jpg, png, webp, gif. Output: image URL.",
+	provider: "INTERNAL",
 	inputHandles: [],
 	outputHandles: [{ key: "image", type: "image" }],
 	defaultConfig: {},
@@ -44,9 +42,8 @@ export function ImageUploadNode({ id, data, selected }: NodeProps) {
 	const { getNode } = useReactFlow();
 	const { workflowId, onNodeDetailsBlur } = useWorkflowCanvasStore();
 	const updateConfig = useUpdateNodeConfig(id);
-	
-	const fileInputRef = useRef<HTMLInputElement>(null);
-	const [isDragOver, setIsDragOver] = useState(false);
+
+	const [pickerOpen, setPickerOpen] = useState(false);
 	const config = (data?.config ??
 		IMAGE_UPLOAD_DEFINITION.defaultConfig) as ImageUploadNodeConfig;
 	const status = data?.status as
@@ -57,59 +54,10 @@ export function ImageUploadNode({ id, data, selected }: NodeProps) {
 		| undefined;
 	const previewUrl = config.previewUrl ?? "";
 
-	const { uploadFile, isUploading, progressPercent, error } =
-		useTransloaditUpload({
-			workflowId: workflowId ?? "",
-			nodeId: id,
-			type: "image",
-			onSuccess: (url) => updateConfig({ previewUrl: url }),
-		});
-
 	const setPreviewUrl = useCallback(
-		(v: string) => updateConfig({ previewUrl: v }),
+		(v: string) => updateConfig({ previewUrl: v, url: v }),
 		[updateConfig],
 	);
-
-	const startUpload = useCallback(
-		(file: File) => {
-			if (!workflowId || isUploading) return;
-			if (!isAcceptedImageType(file.type)) return;
-			uploadFile(file);
-		},
-		[workflowId, isUploading, uploadFile],
-	);
-
-	const onFileChange = useCallback(
-		(e: React.ChangeEvent<HTMLInputElement>) => {
-			const file = e.target.files?.[0];
-			if (file) startUpload(file);
-			e.target.value = "";
-		},
-		[startUpload],
-	);
-
-	const onDrop = useCallback(
-		(e: React.DragEvent) => {
-			e.preventDefault();
-			e.stopPropagation();
-			setIsDragOver(false);
-			const file = e.dataTransfer.files?.[0];
-			if (file) startUpload(file);
-		},
-		[startUpload],
-	);
-
-	const onDragOver = useCallback((e: React.DragEvent) => {
-		e.preventDefault();
-		e.stopPropagation();
-		setIsDragOver(true);
-	}, []);
-
-	const onDragLeave = useCallback((e: React.DragEvent) => {
-		e.preventDefault();
-		e.stopPropagation();
-		setIsDragOver(false);
-	}, []);
 
 	const handleBlur = useCallback(
 		(e: React.FocusEvent) => {
@@ -142,46 +90,27 @@ export function ImageUploadNode({ id, data, selected }: NodeProps) {
 		>
 			<div className="space-y-2 nodrag nopan" onBlur={handleBlur}>
 				<div className="space-y-1">
-					{workflowId ? (
-						<input
-							ref={fileInputRef}
-							type="file"
-							accept={DEFAULT_ACCEPT}
-							onChange={onFileChange}
-							className="hidden"
-							disabled={isUploading}
-						/>
-					) : null}
 					<div
 						role="button"
 						tabIndex={0}
-						onClick={() =>
-							workflowId &&
-							!isUploading &&
-							fileInputRef.current?.click()
-						}
+						onClick={() => workflowId && setPickerOpen(true)}
 						onKeyDown={(e) => {
 							if (
 								(e.key === "Enter" || e.key === " ") &&
-								workflowId &&
-								!isUploading
+								workflowId
 							) {
 								e.preventDefault();
-								fileInputRef.current?.click();
+								setPickerOpen(true);
 							}
 						}}
-						onDrop={onDrop}
-						onDragOver={onDragOver}
-						onDragLeave={onDragLeave}
 						className={cn(
 							"rounded-md border border-border bg-muted/30 aspect-video min-h-[80px] flex items-center justify-center overflow-hidden cursor-pointer transition-colors",
-							workflowId && !isUploading && "hover:bg-muted/50",
-							isDragOver && "ring-2 ring-ring bg-muted/50",
+							workflowId && "hover:bg-muted/50",
 						)}
-						aria-label="Click or drop image to upload"
+						aria-label="Choose or upload an image"
 					>
 						{previewUrl ? (
-							// eslint-disable-next-line @next/next/no-img-element -- Transloadit URLs are dynamic; next/image requires config
+							// eslint-disable-next-line @next/next/no-img-element -- S3 URLs are dynamic; next/image requires config
 							<img
 								src={previewUrl}
 								alt="Upload preview"
@@ -191,25 +120,15 @@ export function ImageUploadNode({ id, data, selected }: NodeProps) {
 							<div className="flex flex-col items-center gap-1 text-muted-foreground pointer-events-none">
 								<ImageIcon className="size-8" />
 								<span className="text-[10px]">
-									{isDragOver
-										? "Drop image here"
-										: "Click or drop image"}
+									Pick or upload image
 								</span>
 							</div>
 						)}
 					</div>
-					{isUploading && (
-						<Progress value={progressPercent} className="h-1.5" />
-					)}
-					{error && (
-						<p className="text-[10px] text-destructive">
-							{error.message}
-						</p>
-					)}
 					<Input
 						value={previewUrl}
 						onChange={(e) => setPreviewUrl(e.target.value)}
-						placeholder="Preview URL (e.g. after upload)"
+						placeholder="Image URL"
 						className="h-7 text-xs"
 					/>
 				</div>
@@ -217,6 +136,21 @@ export function ImageUploadNode({ id, data, selected }: NodeProps) {
 					Output: image (URL)
 				</p>
 			</div>
+
+			<FilePickerDialog
+				open={pickerOpen}
+				onOpenChange={setPickerOpen}
+				filterType="image"
+				title="Choose an image"
+				onSelect={(item) =>
+					updateConfig({
+						previewUrl: item.url,
+						url: item.url,
+						galleryItemId: item.id,
+						key: item.key,
+					})
+				}
+			/>
 		</BaseNode>
 	);
 }

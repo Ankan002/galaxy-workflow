@@ -1,5 +1,5 @@
 import { Clerk } from "./clerk";
-import { TUS } from "./tus";
+import { S3 } from "./s3";
 import { logger } from "./logger";
 import { sendJsonApiResponse } from "./api";
 import { createApi } from "./api-factory";
@@ -10,6 +10,6 @@ export const serverUtilsRegistry = Object.freeze({
 	sendJsonApiResponse,
 	createApi,
 	clerk: new Clerk(),
-	tus: new TUS(),
+	s3: new S3(),
 	googleGemini: new GoogleGemini(),
 });

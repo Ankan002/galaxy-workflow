@@ -4,7 +4,7 @@ Guidance for AI agents and contributors implementing features in this codebase. 
 
 ## Project overview
 
-**Galaxy x Waevy Workflow** is a visual AI workflow builder (Weavy clone). Users build node graphs on a React Flow canvas; workflows persist in PostgreSQL and execute via Trigger.dev (LLM, FFmpeg crop/frame extraction). Auth is Clerk; uploads use TUS + Transloadit.
+**Galaxy x Waevy Workflow** is a visual AI workflow builder (Weavy clone). Users build node graphs on a React Flow canvas; workflows persist in PostgreSQL and execute via Trigger.dev (LLM, FFmpeg crop/frame extraction). Auth is Clerk; files are stored in AWS S3 (presigned-URL uploads) and surfaced through a gallery + node file picker.
 
 For architecture, data flow, and setup, see [README.md](./README.md).
 
@@ -37,7 +37,7 @@ galaxy-workflow/
 ├── trigger.config.ts               # Trigger.dev config (Bun runtime, FFmpeg, Prisma)
 ├── src/
 │   ├── app/                        # App Router: thin pages + API route handlers
-│   │   ├── api/                    # REST endpoints (workflow-file, webhooks, transloadit, …)
+│   │   ├── api/                    # REST endpoints (workflow-file, gallery, webhooks, …)
 │   │   ├── auth/                   # Clerk sign-in / sign-up pages
 │   │   ├── workflow/[id]/          # Workflow editor page
 │   │   ├── layout.tsx              # Root providers (auth, query, theme, sidebar, desktop gate)
@@ -58,7 +58,7 @@ galaxy-workflow/
 │   ├── trigger/                    # Trigger.dev tasks
 │   ├── lib/                        # Domain logic (execution, workflow-export, utils)
 │   ├── utils/
-│   │   ├── server/                 # createApi, logger, clerk, tus, … (serverUtilsRegistry)
+│   │   ├── server/                 # createApi, logger, clerk, s3, … (serverUtilsRegistry)
 │   │   └── client/                 # error mapper, query client, UI helpers (clientUtils)
 │   ├── config/                     # Env (server-env, client-env) + constants
 │   ├── types/                      # Shared TS types (api, errors, common)
@@ -229,7 +229,8 @@ TypeScript: **strict mode** — avoid `any`; prefer Prisma/Zod inferred types.
 - Clerk middleware: `src/proxy.ts` — protect all routes except `PUBLIC_ROUTES` in `server-constants.ts`.
 - Ensure root `middleware.ts` re-exports the proxy (see README).
 - Workflow APIs: always `requireAuth: true` + `assertWorkflowOwnership`.
-- Webhooks (`/api/webhooks/*`, `/api/transloadit/notify`): verify signatures; keep in `PUBLIC_ROUTES`.
+- Webhooks (`/api/webhooks/*`): verify signatures; keep in `PUBLIC_ROUTES`.
+- File storage: uploads go straight to S3 via presigned PUT URLs from `/api/gallery/upload-url`; the bucket is public-read so stored URLs are permanent. Gallery/file APIs use `requireAuth` and scope every object key under the caller's internal user id.
 - Do not commit secrets (`.env`, keys). Warn if asked to commit them.
 
 ---

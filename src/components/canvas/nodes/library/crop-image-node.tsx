@@ -34,7 +34,7 @@ export const CROP_IMAGE_DEFINITION: Omit<
 	label: "Crop Image",
 	description:
 		"Crop an image by percentage region (jpg, jpeg, png, webp, gif)",
-	provider: "TRANSLOADIT",
+	provider: "TRIGGER_DEV",
 	inputHandles: [
 		{ key: "image_url", type: "image", required: true },
 		...CROP_PERCENT_HANDLES,

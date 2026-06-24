@@ -17,3 +17,16 @@ export function formatRelativeTime(date: Date): string {
   const days = Math.floor(hours / 24)
   return days === 1 ? "1 day ago" : `${days} days ago`
 }
+
+/** Human-readable file size (e.g. "2.4 MB", "812 KB"). */
+export function formatFileSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`
+  const units = ["KB", "MB", "GB", "TB"]
+  let size = bytes / 1024
+  let unitIndex = 0
+  while (size >= 1024 && unitIndex < units.length - 1) {
+    size /= 1024
+    unitIndex++
+  }
+  return `${size.toFixed(size >= 10 || size % 1 === 0 ? 0 : 1)} ${units[unitIndex]}`
+}
