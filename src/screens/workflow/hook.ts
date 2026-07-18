@@ -474,6 +474,22 @@ export const useWorkflowFile = ({ workflowId }: UseWorkflowFileArgs) => {
 		);
 	}, [runningNodeIds, setNodes, workflowNodes, workflowEdges]);
 
+	// Mark edges as animated when they touch a running node, so the marching
+	// sparkle only plays where data is actually flowing during a run.
+	useEffect(() => {
+		setEdges((prev) =>
+			prev.map((e) => ({
+				...e,
+				data: {
+					...e.data,
+					animated:
+						runningNodeIds.includes(e.source) ||
+						runningNodeIds.includes(e.target),
+				},
+			})),
+		);
+	}, [runningNodeIds, setEdges]);
+
 	useEffect(() => {
 		if (workflowNodesError) {
 			getWorkflowNodesErrorHandler(workflowNodesError);

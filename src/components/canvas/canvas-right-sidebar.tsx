@@ -77,7 +77,7 @@ export function CanvasRightSidebar({
 					)}
 				</Button>
 				<Button
-					variant="outline"
+					variant="default"
 					size="icon"
 					className="size-9 shrink-0"
 					title="Trigger whole flow"
@@ -130,7 +130,7 @@ export function CanvasRightSidebar({
 					Run node
 				</Button>
 				<Button
-					variant="outline"
+					variant="default"
 					size="sm"
 					className="min-w-0 flex-1 justify-center gap-1.5"
 					title="Trigger whole flow"

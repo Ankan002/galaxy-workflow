@@ -254,9 +254,7 @@ export function CanvasNodeSidebar({
 				</DropdownMenu>
 
 				{!collapsed && (
-					<span className="px-1 text-xs font-medium uppercase tracking-widest text-sidebar-foreground/70">
-						Nodes
-					</span>
+					<span className="ak-eyebrow px-1">Nodes</span>
 				)}
 
 				{!collapsed && (
@@ -292,9 +290,7 @@ export function CanvasNodeSidebar({
 				)}
 			>
 				{!collapsed && (
-					<p className="px-1 text-xs font-medium uppercase tracking-widest text-sidebar-foreground/70">
-						Quick Access
-					</p>
+					<p className="ak-eyebrow px-1">Quick Access</p>
 				)}
 				<ScrollArea className="min-h-0 flex-1 overflow-x-visible">
 					<div

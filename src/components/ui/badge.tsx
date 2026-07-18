@@ -18,8 +18,9 @@ const badgeVariants = cva(
 					"border-data-string bg-data-string/15 text-data-string",
 				"connection-image":
 					"border-data-image bg-data-image/15 text-data-image",
-				success: "bg-status-completed text-white",
-				warning: "bg-primary text-primary-foreground",
+				success:
+					"border-status-completed/30 bg-status-completed/12 text-foreground",
+				warning: "border-warning/30 bg-warning/12 text-foreground",
 			},
 			size: {
 				default: "",

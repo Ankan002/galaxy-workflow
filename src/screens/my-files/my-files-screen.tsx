@@ -15,7 +15,8 @@ import {
 	InputGroupInput,
 	Label,
 } from "@/components/ui";
-import { Loader2, Plus, Search, Volleyball } from "lucide-react";
+import { Loader2, Plus, Search } from "lucide-react";
+import { WorkflowIcon } from "@/components/elements";
 import { PrebuiltWorkflows, SkeletonCard, WorkflowFileCard } from "./components";
 
 const MyFilesScreen = () => {
@@ -72,7 +73,7 @@ const MyFilesScreen = () => {
 			search.length === 0 && // TODO: Fix disappearing behaviour
 			workflowFiles.length === 0 ? (
 				<div className="flex-1 flex flex-col items-center justify-center">
-					<Volleyball size={40} strokeWidth={1.5} />
+					<WorkflowIcon className="size-10 text-muted-foreground" />
 					<p className="mt-5 font-display text-2xl tracking-tight">
 						Nothing here yet!
 					</p>

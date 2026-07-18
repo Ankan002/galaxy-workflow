@@ -11,7 +11,7 @@ const alertVariants = cva(
 				info: "[&>svg]:text-data-file",
 				destructive: "text-destructive [&>svg]:text-destructive",
 				success: "[&>svg]:text-status-completed",
-				warning: "[&>svg]:text-primary",
+				warning: "[&>svg]:text-warning",
 				brand: "[&>svg]:text-primary",
 			},
 		},

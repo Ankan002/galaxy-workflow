@@ -32,6 +32,8 @@
 	--color-accent-foreground: var(--accent-foreground);
 	--color-highlight: var(--highlight);
 	--color-highlight-foreground: var(--highlight-foreground);
+	--color-warning: var(--warning);
+	--color-warning-foreground: var(--warning-foreground);
 	--color-destructive: var(--destructive);
 	--color-destructive-foreground: var(--destructive-foreground);
 	--color-border: var(--border);
@@ -129,7 +131,7 @@
 	--ak-peacock: #1a8f93; /* peacock teal */
 	--ak-leaf: #2f8f5b; /* mehndi / leaf green */
 	--ak-sky: #2f93cf; /* sky blue */
-	--ak-red: #d6453b; /* error / destructive */
+	--ak-red: #c0392b; /* error / destructive — darkened to clear WCAG AA as both text-on-paper and white-on-red button */
 
 	/* ── Border weights & motion (used via var() in custom CSS / cva) ── */
 	--border-1: 1px; /* the hairline standard */
@@ -175,6 +177,11 @@
 
 	--destructive: var(--ak-red);
 	--destructive-foreground: #ffffff;
+
+	/* Warning = deep saffron. A distinct caution role (dark enough to clear AA
+	   as text on paper), kept apart from the pure marigold focus/running accent. */
+	--warning: #9a6700;
+	--warning-foreground: #ffffff;
 
 	--border: var(--ak-line); /* hairline default */
 	--border-strong: var(--ak-ink); /* rare emphasized divider/outline */
@@ -250,6 +257,10 @@
 
 	--destructive: #e8645a;
 	--destructive-foreground: #160e0d;
+
+	/* Lighter saffron so warning stays legible on the near-black ground. */
+	--warning: #e6b64a;
+	--warning-foreground: #160e0d;
 
 	/* Slightly stronger hairlines in dark so the brutalist structure reads
 	   (not a flat Vercel-minimal slab) while the ground stays neutral black. */

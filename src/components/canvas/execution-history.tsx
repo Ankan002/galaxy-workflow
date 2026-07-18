@@ -211,9 +211,7 @@ export function ExecutionHistory({
 
 	return (
 		<div className="flex h-full min-h-0 flex-col gap-2">
-			<h3 className="shrink-0 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-				Execution history
-			</h3>
+			<h3 className="ak-eyebrow shrink-0">Execution history</h3>
 			{isLoadingList ? (
 				<div className="flex items-center gap-2 py-2 text-muted-foreground">
 					<Loader2 className="size-3.5 animate-spin" />

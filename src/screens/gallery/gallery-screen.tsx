@@ -105,7 +105,11 @@ const GalleryScreen = () => {
 				</div>
 			) : isEmpty ? (
 				<div className="flex flex-1 flex-col items-center justify-center py-16">
-					<Images size={40} strokeWidth={1.5} />
+					<Images
+						size={40}
+						strokeWidth={1.5}
+						className="text-muted-foreground"
+					/>
 					<p className="mt-5 font-display text-2xl tracking-tight">
 						{search ? "No matches" : "Your gallery is empty"}
 					</p>

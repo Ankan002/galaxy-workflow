@@ -7,7 +7,6 @@ import {
 	type EdgeProps,
 } from "@xyflow/react";
 import { X } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui";
 
 export interface BaseEdgeData extends Record<string, unknown> {
@@ -80,37 +79,43 @@ export function WorkflowEdge({
 						strokeWidth,
 						transition: "stroke 150ms ease",
 					}}
-					className={cn(animated && "animated")}
 				/>
-				{/* Sparkle glow: soft halo behind the bright dash */}
-				<path
-					d={edgePath}
-					fill="none"
-					stroke={stroke}
-					strokeWidth={6}
-					strokeLinecap="round"
-					strokeDasharray="26 74"
-					pathLength={100}
-					opacity={0.4}
-					style={{
-						pointerEvents: "none",
-						animation: "edge-march 1.4s linear infinite",
-					}}
-				/>
-				{/* Sparkle: bright dash travels source → target, same color as edge */}
-				<path
-					d={edgePath}
-					fill="none"
-					stroke={stroke}
-					strokeWidth={Math.max(3.5, strokeWidth + 1.5)}
-					strokeLinecap="round"
-					strokeDasharray="26 74"
-					pathLength={100}
-					style={{
-						pointerEvents: "none",
-						animation: "edge-march 1.4s linear infinite",
-					}}
-				/>
+				{/* Motion means "data is flowing here right now": the marching sparkle
+				    only runs while this edge is part of an active run. Idle edges rest
+				    static so the canvas stays calm and the running path stands out. */}
+				{animated && (
+					<>
+						{/* Soft halo behind the bright dash */}
+						<path
+							d={edgePath}
+							fill="none"
+							stroke={stroke}
+							strokeWidth={6}
+							strokeLinecap="round"
+							strokeDasharray="26 74"
+							pathLength={100}
+							opacity={0.4}
+							style={{
+								pointerEvents: "none",
+								animation: "edge-march 1.4s linear infinite",
+							}}
+						/>
+						{/* Bright dash travels source → target, same colour as the edge */}
+						<path
+							d={edgePath}
+							fill="none"
+							stroke={stroke}
+							strokeWidth={Math.max(3.5, strokeWidth + 1.5)}
+							strokeLinecap="round"
+							strokeDasharray="26 74"
+							pathLength={100}
+							style={{
+								pointerEvents: "none",
+								animation: "edge-march 1.4s linear infinite",
+							}}
+						/>
+					</>
+				)}
 			</g>
 
 			{(label || (selected && onDelete)) && (

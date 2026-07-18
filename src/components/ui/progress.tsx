@@ -33,7 +33,7 @@ const Progress = React.forwardRef<
 	>
 		<ProgressPrimitive.Indicator
 			className={cn(
-				"h-full w-full flex-1 border-r-2 border-border bg-primary transition-all duration-300 [transition-timing-function:var(--ease-out)]",
+				"h-full w-full flex-1 border-r-2 border-border bg-primary transition-transform duration-300 [transition-timing-function:var(--ease-out)]",
 				variant === "destructive" && "bg-destructive"
 			)}
 			style={{ transform: `translateX(-${100 - (value || 0)}%)` }}

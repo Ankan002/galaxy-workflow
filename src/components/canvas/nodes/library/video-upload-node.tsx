@@ -105,7 +105,7 @@ export function VideoUploadNode({ id, data, selected }: NodeProps) {
 							}
 						}}
 						className={cn(
-							"relative aspect-video min-h-[120px] flex items-center justify-center overflow-hidden cursor-pointer transition-all duration-200 rounded-xl border border-border/80 bg-ink",
+							"relative aspect-video min-h-[120px] flex items-center justify-center overflow-hidden cursor-pointer rounded-xl border border-border/80 bg-muted/30 transition-[border-color,box-shadow] duration-150 [transition-timing-function:var(--ease-snap)]",
 							workflowId && "hover:border-ring/40 hover:shadow-md",
 							previewUrl && "shadow-lg",
 						)}
@@ -114,7 +114,7 @@ export function VideoUploadNode({ id, data, selected }: NodeProps) {
 						{previewUrl ? (
 							<>
 								<div
-									className="absolute inset-0 bg-neutral-950"
+									className="absolute inset-0 bg-ink"
 									aria-hidden
 								/>
 								<video
@@ -143,11 +143,9 @@ export function VideoUploadNode({ id, data, selected }: NodeProps) {
 								)}
 							</>
 						) : (
-							<div className="flex flex-col items-center gap-2 text-muted-foreground pointer-events-none">
-								<div className="rounded-full bg-neutral-800/80 p-3 ring-1 ring-neutral-700/50">
-									<VideoIcon className="size-7 text-neutral-400" />
-								</div>
-								<span className="text-[11px] font-medium text-neutral-400">
+							<div className="flex flex-col items-center gap-1 text-muted-foreground pointer-events-none">
+								<VideoIcon className="size-8" />
+								<span className="text-[10px]">
 									Pick or upload video
 								</span>
 							</div>

@@ -26,7 +26,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
 					success:
 						"group-[.toaster]:[--success-icon:var(--status-completed)]",
 					error: "group-[.toaster]:[--error-icon:var(--destructive)]",
-					warning: "group-[.toaster]:[--warning-icon:var(--primary)]",
+					warning: "group-[.toaster]:[--warning-icon:var(--warning)]",
 					info: "group-[.toaster]:[--info-icon:var(--data-file)]",
 				},
 			}}

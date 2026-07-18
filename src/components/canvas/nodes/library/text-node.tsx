@@ -80,7 +80,7 @@ export function TextNode({ id, data, selected }: NodeProps) {
 					rows={2}
 				/>
 				{isConnectedToCropPercent && (
-					<p className="text-[10px] text-amber-600 dark:text-amber-500">
+					<p className="text-[10px] text-warning">
 						Number only (0–100) when connected to Crop.
 					</p>
 				)}
